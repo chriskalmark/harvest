@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: harvest-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-harvest_db}
+      POSTGRES_USER: ${POSTGRES_USER:-harvest}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-harvest}
+    ports:
+      - "5432:5432"
+    volumes:
+      - harvest-postgres-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: harvest-app
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-harvest}:${POSTGRES_PASSWORD:-harvest}@db:5432/${POSTGRES_DB:-harvest_db}}
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: sh -c "if [ ! -x node_modules/.bin/next ]; then npm ci; fi && npm run dev -- --hostname 0.0.0.0"
+
+volumes:
+  harvest-postgres-data:

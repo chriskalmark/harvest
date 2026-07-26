@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+.env.*
+.next
+node_modules
+.tmp
+npm-debug.log*
+data/backup-week-*.md
+*.tsbuildinfo
+.DS_Store

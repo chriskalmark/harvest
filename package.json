@@ -1,0 +1,41 @@
+{
+  "name": "harvest",
+  "version": "0.1.0",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "seed:meal-plan": "tsx scripts/seedMealPlan.ts",
+    "meal-plan:bootstrap-markdown": "tsx scripts/bootstrapCurrentWeekMarkdown.ts",
+    "meal-plan:sync": "tsx scripts/syncCurrentWeek.ts",
+    "meal-plan:publish": "tsx scripts/publishMealPlan.ts",
+    "meal-plan:workflow": "tsx scripts/publishFromBackup.ts",
+    "meal-plan": "tsx scripts/mealPlanSkill.ts",
+    "test:shopping": "tsx scripts/testShoppingListOrder.ts",
+    "test:meal-plans": "tsx scripts/testMealPlanFixtures.ts",
+    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "next": "16.2.4",
+    "pg": "^8.16.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "swr": "^2.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.6",
+    "typescript": "^5"
+  }
+}

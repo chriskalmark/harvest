@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: harvest-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-harvest_db}
+      POSTGRES_USER: ${POSTGRES_USER:-harvest}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your environment}
+    # In production, you typically do NOT publish Postgres to the host.
+    # If you need host access, publish 5432 in docker-compose.dev.yml instead.
+    volumes:
+      - harvest-postgres-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: harvest-app
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-harvest}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-harvest_db}}
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+
+volumes:
+  harvest-postgres-data:

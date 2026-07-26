@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  /* Sage & cream foundation */
+  --background: #f4f1e7;
+  --foreground: #283029;
+  --harvest-green: #42584a;       /* primary sage */
+  --harvest-green-deep: #36473c;
+  --harvest-gold: #e5a06f;        /* apricot accent (legacy "gold" token) */
+  --harvest-terracotta: #d98a53;  /* apricot-deep (hearts / warm labels) */
+  --harvest-purple: #8e7ba0;      /* soft plum (junk) */
+  --harvest-sky: #e3eae0;         /* sage tint */
+  --harvest-glass: rgba(252, 251, 246, 0.94);
+  --card-bg: #fcfbf6;
+  --card-border: rgba(46, 58, 49, 0.10);
+  --muted-text: #74807a;
+  --font-jakarta: "Plus Jakarta Sans", "Avenir Next", "Segoe UI", sans-serif;
+  --font-fraunces: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+
+  /* Semantic UI tokens (source of truth for components) */
+  --surface-0: var(--background);
+  --surface-1: var(--card-bg);
+  --surface-2: var(--harvest-glass);
+  --border-subtle: var(--card-border);
+  --text-muted: var(--muted-text);
+  --text-subtle: rgba(40, 48, 41, 0.62);
+  --tint-green: #e3eae0;
+  --tint-gold: #f4d9c2;
+  --tint-stone: #ede9dd;
+  --surface-3: #ffffff;
+  --text-faint: #9aa39c;
+  --line-2: rgba(46, 58, 49, 0.06);
+  --apricot-soft: #f4d9c2;
+  --shadow-card: 0 6px 20px rgba(46, 58, 49, 0.08);
+  --shadow-elevated: 0 14px 40px rgba(46, 58, 49, 0.14);
+  --focus-ring: rgba(229, 160, 111, 0.55);
+
+  /* Macro / build indicator colors */
+  --c-cal: #c7a24e;
+  --c-cal-tint: #f0e6cb;
+  --c-pro: #6e8b76;
+  --c-pro-tint: #dce7dd;
+  --c-carb: #7b97a6;
+  --c-carb-tint: #dde8ec;
+  --c-fat: #9b8aa6;
+  --c-fat-tint: #e6dfec;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #0f1310;
+    --foreground: #e8ece5;
+    --harvest-green: #a9c2af;
+    --harvest-green-deep: #8aa493;
+    --harvest-gold: #e5a06f;
+    --harvest-terracotta: #efb184;
+    --harvest-purple: #b0a0bc;
+    --harvest-sky: rgba(138, 164, 147, 0.14);
+    --harvest-glass: rgba(23, 28, 24, 0.85);
+    --card-bg: #171c18;
+    --card-border: rgba(255, 255, 255, 0.09);
+    --muted-text: #9ba89f;
+
+    --text-subtle: rgba(232, 236, 229, 0.62);
+    --tint-green: rgba(138, 164, 147, 0.16);
+    --tint-gold: rgba(229, 160, 111, 0.16);
+    --tint-stone: rgba(255, 255, 255, 0.05);
+    --surface-3: #1e241f;
+    --text-faint: #6e7a72;
+    --line-2: rgba(255, 255, 255, 0.05);
+    --apricot-soft: rgba(229, 160, 111, 0.22);
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 14px 40px rgba(0, 0, 0, 0.5);
+    --focus-ring: rgba(229, 160, 111, 0.45);
+
+    --c-cal: #d6b569;
+    --c-cal-tint: rgba(214, 181, 105, 0.16);
+    --c-pro: #8aa493;
+    --c-pro-tint: rgba(138, 164, 147, 0.16);
+    --c-carb: #8faebe;
+    --c-carb-tint: rgba(143, 174, 190, 0.16);
+    --c-fat: #b0a0bc;
+    --c-fat-tint: rgba(176, 160, 188, 0.16);
+  }
+}
+
+:root.dark {
+  --background: #0f1310;
+  --foreground: #e8ece5;
+  --harvest-green: #a9c2af;
+  --harvest-green-deep: #8aa493;
+  --harvest-gold: #e5a06f;
+  --harvest-terracotta: #efb184;
+  --harvest-purple: #b0a0bc;
+  --harvest-sky: rgba(138, 164, 147, 0.14);
+  --harvest-glass: rgba(23, 28, 24, 0.85);
+  --card-bg: #171c18;
+  --card-border: rgba(255, 255, 255, 0.09);
+  --muted-text: #9ba89f;
+
+  --text-subtle: rgba(232, 236, 229, 0.62);
+  --tint-green: rgba(138, 164, 147, 0.16);
+  --tint-gold: rgba(229, 160, 111, 0.16);
+  --tint-stone: rgba(255, 255, 255, 0.05);
+  --surface-3: #1e241f;
+  --text-faint: #6e7a72;
+  --line-2: rgba(255, 255, 255, 0.05);
+  --apricot-soft: rgba(229, 160, 111, 0.22);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 14px 40px rgba(0, 0, 0, 0.5);
+  --focus-ring: rgba(229, 160, 111, 0.45);
+
+  --c-cal: #d6b569;
+  --c-cal-tint: rgba(214, 181, 105, 0.16);
+  --c-pro: #8aa493;
+  --c-pro-tint: rgba(138, 164, 147, 0.16);
+  --c-carb: #8faebe;
+  --c-carb-tint: rgba(143, 174, 190, 0.16);
+  --c-fat: #b0a0bc;
+  --c-fat-tint: rgba(176, 160, 188, 0.16);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-harvest-green: var(--harvest-green);
+  --color-harvest-gold: var(--harvest-gold);
+  --color-harvest-terracotta: var(--harvest-terracotta);
+  --color-harvest-purple: var(--harvest-purple);
+  --font-sans: var(--font-jakarta);
+  --font-serif: var(--font-fraunces);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background: var(--background);
+  transition: background-color 0.3s ease;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 520px at 12% -6%, rgba(110, 139, 118, 0.12), transparent 58%),
+    radial-gradient(820px 460px at 100% 0%, rgba(229, 160, 111, 0.08), transparent 55%),
+    var(--background);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-jakarta), sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
