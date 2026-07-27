@@ -16,7 +16,8 @@
     "meal-plan": "tsx scripts/mealPlanSkill.ts",
     "test:shopping": "tsx scripts/testShoppingListOrder.ts",
     "test:meal-plans": "tsx scripts/testMealPlanFixtures.ts",
-    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans"
+    "test:aggregation": "tsx scripts/testShoppingAggregation.ts",
+    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:aggregation"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
