@@ -785,7 +785,20 @@ git commit -m "Derive shopping quantities from servings instead of dropping them
 
 **Files:**
 - Create: `db/init/003_danish_quantities.sql`
-- Modify: alle filer under `scripts/`, som `tsc` stadig klager over
+- Modify: `lib/services/mealService.ts`
+- Modify: `components/MealEditorModal.tsx`
+- Modify: `scripts/testShoppingListDerivation.ts`
+
+Efter Task 2 er den fulde fejlliste kendt, og den rækker uden for `scripts/`:
+
+| Fil | Linje | Mangler |
+|---|---|---|
+| `components/MealEditorModal.tsx` | 104 | `amount`, `unit`, `zone` |
+| `lib/services/mealService.ts` | 53 | `amount`, `unit`, `zone` |
+| `lib/services/mealService.ts` | 86 | `servings`, `steps`, `imageUrl` |
+| `scripts/testShoppingListDerivation.ts` | 15 | `amount`, `unit`, `zone` |
+
+`components/MealEditorModal.tsx` skal i denne opgave kun **oversætte** — den skal ikke have felter til mængde, enhed og zone i brugerfladen. Den rigtige editor hører hjemme i udseende-planen sammen med resten af UI-arbejdet. Sæt defaults, så filen oversætter, og lad brugerfladen være.
 
 - [ ] **Step 1: Skriv migrationen**
 
