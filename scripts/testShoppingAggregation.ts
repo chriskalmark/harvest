@@ -82,8 +82,20 @@ function ing(
   const result = aggregateShoppingQuantities([
     { servings: 2, ingredients: [ing("hvidløg", 1, "stk")] },
     { servings: 2, ingredients: [ing("hvidløg", 5, "g")] },
-  ]);
+  ]).sort((a, b) => a.unit.localeCompare(b.unit));
   assert.equal(result.length, 2);
+  assert.deepEqual(result[0], {
+    name: "hvidløg",
+    amount: 10,
+    unit: "g",
+    zone: "Kolonial",
+  });
+  assert.deepEqual(result[1], {
+    name: "hvidløg",
+    amount: 2,
+    unit: "stk",
+    zone: "Kolonial",
+  });
 }
 
 // Nul portioner giver ingen varer.
@@ -100,6 +112,36 @@ function ing(
     { servings: 3, ingredients: [ing("hakkede tomater", 0.5, "dåse")] },
   ]);
   assert.equal(result[0].amount, 2);
+}
+
+// En lille mængde må aldrig runde ned til nul og forsvinde fra listen.
+{
+  const result = aggregateShoppingQuantities([
+    { servings: 2, ingredients: [ing("spidskommen", 0.02, "tsk")] },
+  ]);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].amount, 0.1);
+}
+
+// Ved modstridende zoner vinder den først sete. Bevidst og deterministisk —
+// prisen er én forkert gang i butikken, ikke en manglende vare.
+{
+  const result = aggregateShoppingQuantities([
+    { servings: 1, ingredients: [ing("løg", 100, "g", "Frugt & grønt")] },
+    { servings: 1, ingredients: [ing("løg", 100, "g", "Kolonial")] },
+  ]);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].zone, "Frugt & grønt");
+}
+
+// Flydende-komma-drift må ikke skubbe en hel enhed op.
+{
+  const meals = Array.from({ length: 3 }, () => ({
+    servings: 1,
+    ingredients: [ing("kokosmælk", 1 / 3, "dåse")],
+  }));
+  const result = aggregateShoppingQuantities(meals);
+  assert.equal(result[0].amount, 1);
 }
 
 console.log("shopping aggregation: OK");

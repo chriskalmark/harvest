@@ -55,6 +55,9 @@ export function aggregateShoppingQuantities(
         name,
         amount: scaled,
         unit: ingredient.unit,
+        // Ved modstridende zoner for samme vare vinder den først sete.
+        // Bevidst og deterministisk — prisen er én forkert gang i butikken,
+        // ikke en manglende vare.
         zone: ingredient.zone,
       });
     }
@@ -62,8 +65,23 @@ export function aggregateShoppingQuantities(
 
   return Array.from(byKey.values()).map((item) => ({
     ...item,
-    amount: WHOLE_UNITS.has(item.unit)
-      ? Math.ceil(item.amount)
-      : Math.round(item.amount * 10) / 10,
+    amount: roundForUnit(item.amount, item.unit),
   }));
+}
+
+/**
+ * Runder til noget, man kan stå med i en indkøbskurv.
+ *
+ * En positiv mængde må aldrig blive til 0: en ingrediens, der er kommet med i
+ * en opskrift, skal kunne ses på listen. Små mængder klemmes derfor op til
+ * mindste trin i stedet for at forsvinde.
+ */
+function roundForUnit(amount: number, unit: MealIngredientUnit): number {
+  if (WHOLE_UNITS.has(unit)) {
+    // Flydende-komma-drift (fx tre 1/3-dele der summerer til 1.0000000000000002)
+    // må ikke skubbe en hel enhed op — støjen fjernes før der rundes op.
+    return Math.max(1, Math.ceil(Number(amount.toFixed(6))));
+  }
+
+  return Math.max(0.1, Math.round(amount * 10) / 10);
 }
