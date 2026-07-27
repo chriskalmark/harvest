@@ -28,7 +28,7 @@ export function aggregateShoppingQuantities(
   const byKey = new Map<string, AggregatedIngredient>();
 
   for (const meal of meals) {
-    if (meal.servings <= 0) {
+    if (!Number.isFinite(meal.servings) || meal.servings <= 0) {
       continue;
     }
 

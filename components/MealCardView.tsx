@@ -109,7 +109,12 @@ export function MacroRow({ meal }: { meal: StoredMeal }) {
       <MacroStat tone="protein" label="Pro" value={`${meal.macros.p}g`} />
       <MacroStat tone="carb" label="Carb" value={`${meal.macros.c}g`} />
       <MacroStat tone="fat" label="Fat" value={`${meal.macros.f}g`} />
-      <MacroStat tone="fiber" label="Fiber" value={`${meal.macros.fiber}g`} highlight />
+      <MacroStat
+        tone="fiber"
+        label="Fiber"
+        value={`${meal.macros.fiber}g`}
+        highlight
+      />
     </div>
   );
 }
@@ -131,9 +136,7 @@ function MacroStat({
         highlight ? "ring-1 ring-inset ring-[var(--c-pro)]/40" : ""
       }`}
     >
-      <span className="relative block text-sm font-black">
-        {value}
-      </span>
+      <span className="relative block text-sm font-black">{value}</span>
       <span className="relative block text-[9px] font-black uppercase tracking-[0.18em] opacity-75">
         {label}
       </span>
@@ -158,43 +161,62 @@ const ingredientCategoryLabel: Record<MealIngredient["category"], string> = {
 const mealCardBuildPillClassByLabel: Record<string, string> = {
   Protein:
     "rounded-full border border-[var(--c-pro)]/30 bg-[var(--c-pro-tint)] text-[var(--c-pro)]",
-  Base:
-    "rounded-full border border-[var(--c-carb)]/30 bg-[var(--c-carb-tint)] text-[var(--c-carb)]",
-  Veg:
-    "rounded-full border border-[var(--c-pro)]/30 bg-[var(--c-pro-tint)] text-[var(--c-pro)]",
+  Base: "rounded-full border border-[var(--c-carb)]/30 bg-[var(--c-carb-tint)] text-[var(--c-carb)]",
+  Veg: "rounded-full border border-[var(--c-pro)]/30 bg-[var(--c-pro-tint)] text-[var(--c-pro)]",
   Engine:
     "rounded-full border border-[var(--c-fat)]/30 bg-[var(--c-fat-tint)] font-semibold text-[var(--c-fat)]",
 };
 
 function getMealBuildLabels(meal: StoredMeal): BuildLabel[] {
-  const ingredients = meal.ingredients?.filter((ingredient) => ingredient.name.trim()) ?? [];
+  const ingredients =
+    meal.ingredients?.filter((ingredient) => ingredient.name.trim()) ?? [];
   if (ingredients.length > 0) {
     return ingredients.map((ingredient) => ({
       label: ingredientCategoryLabel[ingredient.category],
       value: ingredient.name,
-      quantity: ingredient.quantity.trim() || undefined,
+      quantity: ingredient.quantity?.trim() || undefined,
       category: ingredient.category,
     }));
   }
 
   const labels: BuildLabel[] = [];
 
-  const proItems = Array.isArray(meal.build.pro) ? meal.build.pro : [meal.build.pro];
-  proItems.forEach((item) => labels.push({ label: "Protein", value: item, category: "pro" }));
+  const proItems = Array.isArray(meal.build.pro)
+    ? meal.build.pro
+    : [meal.build.pro];
+  proItems.forEach((item) =>
+    labels.push({ label: "Protein", value: item, category: "pro" }),
+  );
 
-  const baseItems = Array.isArray(meal.build.base) ? meal.build.base : [meal.build.base];
-  baseItems.forEach((item) => labels.push({ label: "Base", value: item, category: "base" }));
+  const baseItems = Array.isArray(meal.build.base)
+    ? meal.build.base
+    : [meal.build.base];
+  baseItems.forEach((item) =>
+    labels.push({ label: "Base", value: item, category: "base" }),
+  );
 
-  const vegItems = Array.isArray(meal.build.veg) ? meal.build.veg : [meal.build.veg];
-  vegItems.forEach((item) => labels.push({ label: "Veg", value: item, category: "veg" }));
+  const vegItems = Array.isArray(meal.build.veg)
+    ? meal.build.veg
+    : [meal.build.veg];
+  vegItems.forEach((item) =>
+    labels.push({ label: "Veg", value: item, category: "veg" }),
+  );
 
-  const engineItems = Array.isArray(meal.build.engine) ? meal.build.engine : [meal.build.engine];
-  engineItems.forEach((item) => labels.push({ label: "Engine", value: item, category: "engine" }));
+  const engineItems = Array.isArray(meal.build.engine)
+    ? meal.build.engine
+    : [meal.build.engine];
+  engineItems.forEach((item) =>
+    labels.push({ label: "Engine", value: item, category: "engine" }),
+  );
 
   return labels;
 }
 
-function IngredientGlyph({ category }: { category: MealIngredient["category"] }) {
+function IngredientGlyph({
+  category,
+}: {
+  category: MealIngredient["category"];
+}) {
   return (
     <svg
       aria-hidden="true"

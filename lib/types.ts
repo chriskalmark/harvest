@@ -26,7 +26,7 @@ export type MealIngredientUnit = (typeof MEAL_INGREDIENT_UNITS)[number];
 
 export interface MealIngredient {
   name: string;
-  quantity: string;
+  quantity?: string;
   amount: number;
   unit: MealIngredientUnit;
   zone: StoreZone;

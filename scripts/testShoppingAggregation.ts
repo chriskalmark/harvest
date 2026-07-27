@@ -144,4 +144,18 @@ function ing(
   assert.equal(result[0].amount, 1);
 }
 
+// Et manglende portionstal må aldrig give NaN-mængder.
+// (undefined <= 0 er false i JavaScript, så en naiv vagt slipper det igennem.)
+{
+  const broken = [
+    {
+      servings: undefined as unknown as number,
+      ingredients: [ing("kylling", 150, "g")],
+    },
+    { servings: Number.NaN, ingredients: [ing("kylling", 150, "g")] },
+  ];
+  const result = aggregateShoppingQuantities(broken);
+  assert.equal(result.length, 0);
+}
+
 console.log("shopping aggregation: OK");
