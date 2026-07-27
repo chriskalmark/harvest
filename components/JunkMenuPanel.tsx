@@ -3,18 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { Heart, Loader2, Plus, Undo2, X } from "lucide-react";
 import { JUNK_CATEGORY_ORDER } from "@/lib/constants";
-import { stripTraderJoesForDisplay } from "@/lib/displayFormatters";
 import { useListMutations } from "@/lib/hooks/useListMutations";
 import { ListCategory } from "@/lib/types";
 import { sectionLabelMutedClass } from "@/lib/uiClasses";
 
 function displayJunkCategories(data: ListCategory[]) {
-  const existing = new Map(data.map((category) => [category.category, category]));
+  const existing = new Map(
+    data.map((category) => [category.category, category]),
+  );
   const defaults = JUNK_CATEGORY_ORDER.map(
-    (category) => existing.get(category) ?? { category, items: [] }
+    (category) => existing.get(category) ?? { category, items: [] },
   );
   const customCategories = data.filter(
-    (category) => !JUNK_CATEGORY_ORDER.includes(category.category as typeof JUNK_CATEGORY_ORDER[number])
+    (category) =>
+      !JUNK_CATEGORY_ORDER.includes(
+        category.category as (typeof JUNK_CATEGORY_ORDER)[number],
+      ),
   );
 
   return [...defaults, ...customCategories];
@@ -85,7 +89,7 @@ export default function JunkMenuPanel({
     const restored = await addItem(
       recentlyDeleted.category,
       recentlyDeleted.name,
-      recentlyDeleted.q
+      recentlyDeleted.q,
     );
     if (restored) {
       setRecentlyDeleted(null);
@@ -101,7 +105,10 @@ export default function JunkMenuPanel({
       ) : null}
 
       {categories.map((category) => (
-        <section key={category.category} className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-1)] p-4 shadow-[var(--shadow-card)]">
+        <section
+          key={category.category}
+          className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-1)] p-4 shadow-[var(--shadow-card)]"
+        >
           <div className="mb-3 flex items-center justify-between gap-3">
             <h3 className={sectionLabelMutedClass}>{category.category}</h3>
             <span className="rounded-full bg-[var(--tint-stone)] px-2 py-0.5 text-[10px] font-bold text-[var(--text-muted)]">
@@ -116,7 +123,7 @@ export default function JunkMenuPanel({
               const pending = pendingHeartState[item.n];
               const liked = pending?.liked ?? baseLiked;
               const heartCount = pending?.heartCount ?? baseHeartCount;
-              const displayName = stripTraderJoesForDisplay(item.n);
+              const displayName = item.n;
 
               return (
                 <div key={item.n} className="flex items-center gap-3 py-2.5">
@@ -125,19 +132,25 @@ export default function JunkMenuPanel({
                       {displayName}
                     </p>
                     {item.q ? (
-                      <p className="text-xs font-medium text-[var(--text-muted)]">{item.q}</p>
+                      <p className="text-xs font-medium text-[var(--text-muted)]">
+                        {item.q}
+                      </p>
                     ) : null}
                   </div>
                   <button
                     type="button"
-                    onClick={() => void toggleJunkHeart(item.n, liked, heartCount)}
+                    onClick={() =>
+                      void toggleJunkHeart(item.n, liked, heartCount)
+                    }
                     disabled={!mealPlanId || Boolean(heartSavingItem)}
                     className={`inline-flex h-8 items-center gap-1 rounded-full px-2.5 text-[11px] font-black transition-colors ${
                       liked
                         ? "bg-harvest-terracotta/10 text-harvest-terracotta"
                         : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)] hover:text-harvest-terracotta"
                     } ${!mealPlanId || heartSavingItem ? "pointer-events-none opacity-50" : ""}`}
-                    aria-label={liked ? `Unheart ${displayName}` : `Heart ${displayName}`}
+                    aria-label={
+                      liked ? `Unheart ${displayName}` : `Heart ${displayName}`
+                    }
                   >
                     {heartSavingItem === item.n ? (
                       <Loader2 size={13} className="animate-spin" />
@@ -148,7 +161,9 @@ export default function JunkMenuPanel({
                   </button>
                   <button
                     type="button"
-                    onClick={() => void removeItem(category.category, item.n, item.q)}
+                    onClick={() =>
+                      void removeItem(category.category, item.n, item.q)
+                    }
                     disabled={isSaving}
                     className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50"
                     aria-label={`Delete ${displayName}`}
@@ -160,7 +175,9 @@ export default function JunkMenuPanel({
             })}
 
             {category.items.length === 0 ? (
-              <p className="py-2 text-sm text-[var(--text-muted)]">Nothing here yet.</p>
+              <p className="py-2 text-sm text-[var(--text-muted)]">
+                Nothing here yet.
+              </p>
             ) : null}
           </div>
 
@@ -220,7 +237,8 @@ export default function JunkMenuPanel({
         <div className="fixed inset-x-0 bottom-[150px] z-40 mx-auto flex max-w-md items-center justify-between gap-3 px-4">
           <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-2)] px-4 py-3 shadow-[var(--shadow-elevated)] backdrop-blur">
             <span className="min-w-0 truncate text-sm text-[var(--foreground)]">
-              Removed <strong className="font-semibold">{stripTraderJoesForDisplay(recentlyDeleted.name)}</strong>
+              Removed{" "}
+              <strong className="font-semibold">{recentlyDeleted.name}</strong>
             </span>
             <button
               type="button"

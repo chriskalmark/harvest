@@ -11,7 +11,7 @@ export type { StoreZone };
  * Zonen sættes af madplanens forfatter på hver ingrediens.
  * Denne funktion er kun en reserve for data uden gyldig zone.
  */
-export function getItemStoreZone(zone?: string): StoreZone {
+export function resolveStoreZone(zone?: string): StoreZone {
   return isStoreZone(zone) ? zone : DEFAULT_STORE_ZONE;
 }
 
@@ -28,7 +28,7 @@ export function organizeShoppingListForStoreLayout(
   const byZone = new Map<StoreZone, ListCategory>();
 
   for (const section of sections) {
-    const zone = getItemStoreZone(section.category);
+    const zone = resolveStoreZone(section.category);
     const existing = byZone.get(zone);
 
     if (existing) {

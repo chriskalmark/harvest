@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { normalizeShoppingName } from "@/lib/domain/shoppingUsage";
 import { aggregateShoppingQuantities } from "@/lib/domain/shoppingAggregation";
+import { deriveShoppingListFromMeals } from "@/lib/domain/shoppingListDerivation";
 import type { MealIngredient } from "@/lib/types";
 
 // Danske bogstaver skal overleve normaliseringen.
@@ -156,6 +157,47 @@ function ing(
   ];
   const result = aggregateShoppingQuantities(broken);
   assert.equal(result.length, 0);
+}
+
+// Mængder når hele vejen ud på listen, i den rigtige zone,
+// og afkrydsning overlever en genberegning.
+{
+  const meals = [
+    {
+      type: "Dinner" as const,
+      name: "Kylling og pasta",
+      build: { pro: [], base: [], veg: [], engine: [] },
+      ingredients: [ing("kyllingelår", 150, "g", "Kød & fjerkræ")],
+      macros: { cal: 500, p: 40, c: 40, f: 15, fiber: 5 },
+      servings: 2,
+      steps: [],
+      imageUrl: null,
+    },
+  ];
+
+  const first = deriveShoppingListFromMeals(meals);
+  const chicken = first
+    .flatMap((section) => section.items)
+    .find((item) => item.n === "kyllingelår");
+
+  assert.ok(chicken, "kyllingelår skal stå på listen");
+  assert.equal(chicken.q, "300 g");
+
+  // Varen skal stå i sin egen zone, ikke i reservezonen.
+  const section = first.find((s) => s.items.some((i) => i.n === "kyllingelår"));
+  assert.equal(section?.category, "Kød & fjerkræ");
+
+  chicken.checked = true;
+  const second = deriveShoppingListFromMeals(meals, first);
+  const recheck = second
+    .flatMap((section) => section.items)
+    .find((item) => item.n === "kyllingelår");
+
+  assert.equal(
+    recheck?.checked,
+    true,
+    "afkrydsning skal overleve genberegning",
+  );
 }
 
 console.log("shopping aggregation: OK");

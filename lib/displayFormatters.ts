@@ -1,10 +1,11 @@
-export function stripTraderJoesForDisplay(name: string) {
-  const stripped = name
-    .replace(/\btrader\s+joe(?:'|’)?s\b/gi, "")
-    .replace(/^[\s:–—-]+/, "")
-    .replace(/\s{2,}/g, " ")
-    .trim();
+import type { MealIngredientUnit } from "@/lib/types";
 
-  return stripped.length > 0 ? stripped : name;
+export function formatQuantity(
+  amount: number,
+  unit: MealIngredientUnit,
+): string {
+  const rounded = Number.isInteger(amount)
+    ? amount
+    : Math.round(amount * 10) / 10;
+  return `${rounded.toString().replace(".", ",")} ${unit}`;
 }
-

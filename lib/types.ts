@@ -83,6 +83,7 @@ export interface ListItem {
   q?: string;
   pantry?: boolean;
   checked?: boolean;
+  zone?: string;
   shoppingSource?: "junk" | "household";
   // Junk-only enrichment fields (safe to be absent for shopping items)
   junkItemId?: number;

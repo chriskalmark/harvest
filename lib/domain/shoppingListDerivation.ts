@@ -1,7 +1,18 @@
 import { HOUSEHOLD_GOODS_SECTION } from "@/lib/constants";
-import { ListCategory, ListItem, MealInput, StoredMeal, HouseholdGoodsItem } from "@/lib/types";
-import { getItemStoreZone, organizeShoppingListForStoreLayout } from "@/lib/shoppingListOrder";
+import {
+  ListCategory,
+  ListItem,
+  MealInput,
+  StoredMeal,
+  HouseholdGoodsItem,
+} from "@/lib/types";
+import {
+  resolveStoreZone,
+  organizeShoppingListForStoreLayout,
+} from "@/lib/shoppingListOrder";
 import { normalizeShoppingName } from "@/lib/domain/shoppingUsage";
+import { aggregateShoppingQuantities } from "@/lib/domain/shoppingAggregation";
+import { formatQuantity } from "@/lib/displayFormatters";
 
 type DerivableMeal = MealInput | StoredMeal;
 
@@ -14,21 +25,19 @@ export function deriveShoppingListFromMeals(
   previousShoppingList: ListCategory[] = [],
   junkList: ListCategory[] = [],
   householdGoods: HouseholdGoodsItem[] = [],
-  options?: { pruneOrphans?: boolean }
+  options?: { pruneOrphans?: boolean },
 ): ListCategory[] {
   const previousByName = getPreviousItemsByName(previousShoppingList);
   const derivedByName = new Map<string, ListItem>();
 
-  for (const meal of meals) {
-    for (const ingredientName of getMealIngredientNames(meal)) {
-      const normalizedName = normalizeShoppingName(ingredientName);
-      if (!normalizedName || derivedByName.has(normalizedName)) {
-        continue;
-      }
+  for (const aggregated of aggregateShoppingQuantities(meals)) {
+    const previous = previousByName.get(aggregated.name)?.item;
 
-      const previous = previousByName.get(normalizedName)?.item;
-      derivedByName.set(normalizedName, buildShoppingItem(ingredientName, previous));
-    }
+    derivedByName.set(aggregated.name, {
+      ...buildShoppingItem(aggregated.name, previous),
+      q: formatQuantity(aggregated.amount, aggregated.unit),
+      zone: aggregated.zone,
+    });
   }
 
   for (const junkCategory of junkList) {
@@ -45,7 +54,7 @@ export function deriveShoppingListFromMeals(
         buildShoppingItem(itemName, previous, {
           q: junkItem.q,
           shoppingSource: "junk",
-        })
+        }),
       );
     }
   }
@@ -64,12 +73,15 @@ export function deriveShoppingListFromMeals(
 
   const storeLayoutList = organizeShoppingListForStoreLayout(
     Array.from(derivedByName.values()).map((item) => ({
-      category: getItemStoreZone(item.n),
+      category: resolveStoreZone(item.zone),
       items: [item],
-    }))
+    })),
   );
 
-  const householdSection = buildHouseholdGoodsSection(householdGoods, previousShoppingList);
+  const householdSection = buildHouseholdGoodsSection(
+    householdGoods,
+    previousShoppingList,
+  );
   if (!householdSection) {
     return storeLayoutList;
   }
@@ -79,27 +91,29 @@ export function deriveShoppingListFromMeals(
 
 function buildHouseholdGoodsSection(
   householdGoods: HouseholdGoodsItem[],
-  previousShoppingList: ListCategory[]
+  previousShoppingList: ListCategory[],
 ): ListCategory | null {
   if (householdGoods.length === 0) {
     return null;
   }
 
   const previousHousehold = previousShoppingList.find(
-    (category) => category.category === HOUSEHOLD_GOODS_SECTION
+    (category) => category.category === HOUSEHOLD_GOODS_SECTION,
   );
   const previousByName = new Map(
     (previousHousehold?.items ?? []).map((item) => [
       normalizeShoppingName(item.n),
       item,
-    ])
+    ]),
   );
 
   return {
     category: HOUSEHOLD_GOODS_SECTION,
     items: householdGoods.map((item) => {
       const previous = previousByName.get(normalizeShoppingName(item.n));
-      return buildShoppingItem(item.n, previous, { shoppingSource: "household" });
+      return buildShoppingItem(item.n, previous, {
+        shoppingSource: "household",
+      });
     }),
   };
 }
@@ -107,32 +121,17 @@ function buildHouseholdGoodsSection(
 function buildShoppingItem(
   itemName: string,
   previous?: ListItem,
-  options: { q?: string; shoppingSource?: "junk" | "household" } = {}
+  options: { q?: string; shoppingSource?: "junk" | "household" } = {},
 ): ListItem {
   return {
     n: itemName,
     q: previous?.q ?? options.q,
     pantry: previous?.pantry,
     checked: previous?.checked,
-    ...(options.shoppingSource ? { shoppingSource: options.shoppingSource } : {}),
+    ...(options.shoppingSource
+      ? { shoppingSource: options.shoppingSource }
+      : {}),
   };
-}
-
-function getMealIngredientNames(meal: DerivableMeal): string[] {
-  const ingredientNames = meal.ingredients
-    ?.map((ingredient) => ingredient.name.trim())
-    .filter(Boolean);
-
-  if (ingredientNames?.length) {
-    return ingredientNames;
-  }
-
-  return [
-    ...meal.build.pro,
-    ...meal.build.base,
-    ...meal.build.veg,
-    ...meal.build.engine,
-  ].filter(Boolean);
 }
 
 function getPreviousItemsByName(shoppingList: ListCategory[]) {

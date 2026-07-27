@@ -2,7 +2,6 @@
 
 import { MealIngredient, StoredMeal } from "@/lib/types";
 import { cardInteractiveClass } from "@/lib/uiClasses";
-import { stripTraderJoesForDisplay } from "@/lib/displayFormatters";
 
 export default function MealCardView({
   meal,
@@ -60,7 +59,7 @@ export function MealCardBody({
               }`}
             >
               <IngredientGlyph category={item.category} />
-              <span>{stripTraderJoesForDisplay(item.value)}</span>
+              <span>{item.value}</span>
               {item.quantity ? (
                 <span className="rounded-full bg-[var(--tint-stone)] px-1.5 py-0.5 text-[9px] font-bold tracking-[0.04em] text-[var(--text-muted)]">
                   {item.quantity}

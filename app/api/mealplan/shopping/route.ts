@@ -6,14 +6,18 @@ import {
 } from "@/lib/services/mealPlanService";
 import { ApiError, createRouteHandler } from "@/lib/apiUtils";
 import { requireString } from "@/lib/routeValidation";
-import { getItemStoreZone, organizeShoppingListForStoreLayout } from "@/lib/shoppingListOrder";
+import {
+  resolveStoreZone,
+  organizeShoppingListForStoreLayout,
+} from "@/lib/shoppingListOrder";
+import { DEFAULT_STORE_ZONE } from "@/lib/constants";
 import type { ListCategory, StoredMealPlan } from "@/lib/types";
 
 async function saveShoppingList(
   mealPlan: StoredMealPlan,
   shoppingList: ListCategory[],
   updatedFrom: string,
-  options?: { preserveItemOrder?: boolean }
+  options?: { preserveItemOrder?: boolean },
 ) {
   const organizedShoppingList = options?.preserveItemOrder
     ? shoppingList
@@ -34,18 +38,22 @@ async function saveShoppingList(
 function findShoppingItemIndex(
   shoppingList: ListCategory[],
   category: string,
-  itemName: string
+  itemName: string,
 ): { categoryIndex: number; itemIndex: number } | null {
   const categoryIndex = shoppingList.findIndex((c) => c.category === category);
   if (categoryIndex !== -1) {
-    const itemIndex = shoppingList[categoryIndex].items.findIndex((item) => item.n === itemName);
+    const itemIndex = shoppingList[categoryIndex].items.findIndex(
+      (item) => item.n === itemName,
+    );
     if (itemIndex !== -1) {
       return { categoryIndex, itemIndex };
     }
   }
 
   for (const [fallbackCategoryIndex, categoryGroup] of shoppingList.entries()) {
-    const itemIndex = categoryGroup.items.findIndex((item) => item.n === itemName);
+    const itemIndex = categoryGroup.items.findIndex(
+      (item) => item.n === itemName,
+    );
     if (itemIndex !== -1) {
       return { categoryIndex: fallbackCategoryIndex, itemIndex };
     }
@@ -56,48 +64,65 @@ function findShoppingItemIndex(
 
 export const POST = createRouteHandler(async (request: NextRequest) => {
   const body = (await request.json()) as unknown;
-  const obj = (body && typeof body === "object") ? (body as Record<string, unknown>) : {};
+  const obj =
+    body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
   const category = requireString(obj.category, "category");
-  const itemObj = (obj.item && typeof obj.item === "object") ? (obj.item as Record<string, unknown>) : {};
+  const itemObj =
+    obj.item && typeof obj.item === "object"
+      ? (obj.item as Record<string, unknown>)
+      : {};
   const itemName = requireString(itemObj.n, "item.n");
-  const itemQty = typeof itemObj.q === "string" && itemObj.q.trim() ? itemObj.q.trim() : undefined;
+  const itemQty =
+    typeof itemObj.q === "string" && itemObj.q.trim()
+      ? itemObj.q.trim()
+      : undefined;
 
-  const mealPlan = weekRange ? await getMealPlanByWeekRange(weekRange) : await getLatestMealPlan();
+  const mealPlan = weekRange
+    ? await getMealPlanByWeekRange(weekRange)
+    : await getLatestMealPlan();
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
   }
 
-    // Find or create the persisted store-zone category for the item.
-    const shoppingList = [...mealPlan.shoppingList];
-    const itemStoreZone = getItemStoreZone(itemName);
-    let categoryIndex = shoppingList.findIndex(c => c.category === itemStoreZone);
-    if (categoryIndex === -1) {
-      categoryIndex = shoppingList.findIndex(c => c.category === category);
-    }
-    
-    if (categoryIndex === -1) {
-      shoppingList.push({
-        category: itemStoreZone,
-        items: []
-      });
-      categoryIndex = shoppingList.length - 1;
-    }
+  // Find or create the persisted store-zone category for the item.
+  // `category` is the zone the caller asked to place this item under.
+  const shoppingList = [...mealPlan.shoppingList];
+  const itemStoreZone = resolveStoreZone(category);
+  let categoryIndex = shoppingList.findIndex(
+    (c) => c.category === itemStoreZone,
+  );
+  if (categoryIndex === -1) {
+    categoryIndex = shoppingList.findIndex((c) => c.category === category);
+  }
 
-    // Add item
-    shoppingList[categoryIndex].items.push({
-      n: itemName,
-      ...(itemQty ? { q: itemQty } : {}),
+  if (categoryIndex === -1) {
+    shoppingList.push({
+      category: itemStoreZone,
+      items: [],
     });
+    categoryIndex = shoppingList.length - 1;
+  }
 
-    const updated = await saveShoppingList(mealPlan, shoppingList, "shopping_list_add");
+  // Add item
+  shoppingList[categoryIndex].items.push({
+    n: itemName,
+    ...(itemQty ? { q: itemQty } : {}),
+  });
+
+  const updated = await saveShoppingList(
+    mealPlan,
+    shoppingList,
+    "shopping_list_add",
+  );
 
   return { shoppingList: updated.shoppingList };
 });
 
 export const PUT = createRouteHandler(async (request: NextRequest) => {
   const body = (await request.json()) as unknown;
-  const obj = (body && typeof body === "object") ? (body as Record<string, unknown>) : {};
+  const obj =
+    body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
   const shoppingListRaw = obj.shoppingList;
   if (!Array.isArray(shoppingListRaw)) {
@@ -105,43 +130,56 @@ export const PUT = createRouteHandler(async (request: NextRequest) => {
   }
   const shoppingList = shoppingListRaw as ListCategory[];
 
-  const mealPlan = weekRange ? await getMealPlanByWeekRange(weekRange) : await getLatestMealPlan();
+  const mealPlan = weekRange
+    ? await getMealPlanByWeekRange(weekRange)
+    : await getLatestMealPlan();
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
   }
 
-    const updated = await saveShoppingList(mealPlan, shoppingList, "shopping_list_update");
+  const updated = await saveShoppingList(
+    mealPlan,
+    shoppingList,
+    "shopping_list_update",
+  );
 
   return { shoppingList: updated.shoppingList };
 });
 
 export const DELETE = createRouteHandler(async (request: NextRequest) => {
   const body = (await request.json()) as unknown;
-  const obj = (body && typeof body === "object") ? (body as Record<string, unknown>) : {};
+  const obj =
+    body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
   const category = requireString(obj.category, "category");
   const itemName = requireString(obj.itemName, "itemName");
 
-  const mealPlan = weekRange ? await getMealPlanByWeekRange(weekRange) : await getLatestMealPlan();
+  const mealPlan = weekRange
+    ? await getMealPlanByWeekRange(weekRange)
+    : await getLatestMealPlan();
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
   }
 
-    const shoppingList = [...mealPlan.shoppingList];
-    const target = findShoppingItemIndex(shoppingList, category, itemName);
-    
-    if (target) {
-      shoppingList[target.categoryIndex].items = shoppingList[target.categoryIndex].items.filter(
-        item => item.n !== itemName
-      );
+  const shoppingList = [...mealPlan.shoppingList];
+  const target = findShoppingItemIndex(shoppingList, category, itemName);
 
-      // Remove empty categories
-      if (shoppingList[target.categoryIndex].items.length === 0) {
-        shoppingList.splice(target.categoryIndex, 1);
-      }
+  if (target) {
+    shoppingList[target.categoryIndex].items = shoppingList[
+      target.categoryIndex
+    ].items.filter((item) => item.n !== itemName);
+
+    // Remove empty categories
+    if (shoppingList[target.categoryIndex].items.length === 0) {
+      shoppingList.splice(target.categoryIndex, 1);
     }
+  }
 
-    const updated = await saveShoppingList(mealPlan, shoppingList, "shopping_list_delete");
+  const updated = await saveShoppingList(
+    mealPlan,
+    shoppingList,
+    "shopping_list_delete",
+  );
 
   return { shoppingList: updated.shoppingList };
 });
@@ -149,7 +187,8 @@ export const DELETE = createRouteHandler(async (request: NextRequest) => {
 // PATCH: Toggle pantry and/or checked status for an item
 export const PATCH = createRouteHandler(async (request: NextRequest) => {
   const body = (await request.json()) as unknown;
-  const obj = (body && typeof body === "object") ? (body as Record<string, unknown>) : {};
+  const obj =
+    body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
   const category = requireString(obj.category, "category");
   const itemName = requireString(obj.itemName, "itemName");
@@ -159,31 +198,35 @@ export const PATCH = createRouteHandler(async (request: NextRequest) => {
     throw new ApiError("pantry or checked is required", 400);
   }
 
-  const mealPlan = weekRange ? await getMealPlanByWeekRange(weekRange) : await getLatestMealPlan();
+  const mealPlan = weekRange
+    ? await getMealPlanByWeekRange(weekRange)
+    : await getLatestMealPlan();
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
   }
 
-    const shoppingList = [...mealPlan.shoppingList];
-    const target = findShoppingItemIndex(shoppingList, category, itemName);
-    
-    if (!target) {
-      throw new ApiError("Item not found", 404);
-    }
+  const shoppingList = [...mealPlan.shoppingList];
+  const target = findShoppingItemIndex(shoppingList, category, itemName);
 
-    // Update pantry and/or checked status
-    shoppingList[target.categoryIndex].items[target.itemIndex] = {
-      ...shoppingList[target.categoryIndex].items[target.itemIndex],
-      ...(pantry !== undefined ? { pantry } : {}),
-      ...(checked !== undefined ? { checked } : {}),
-    };
+  if (!target) {
+    throw new ApiError("Item not found", 404);
+  }
 
-    const updated = await saveShoppingList(
-      mealPlan,
-      shoppingList,
-      checked !== undefined ? "shopping_list_checked_toggle" : "shopping_list_pantry_toggle",
-      { preserveItemOrder: true }
-    );
+  // Update pantry and/or checked status
+  shoppingList[target.categoryIndex].items[target.itemIndex] = {
+    ...shoppingList[target.categoryIndex].items[target.itemIndex],
+    ...(pantry !== undefined ? { pantry } : {}),
+    ...(checked !== undefined ? { checked } : {}),
+  };
+
+  const updated = await saveShoppingList(
+    mealPlan,
+    shoppingList,
+    checked !== undefined
+      ? "shopping_list_checked_toggle"
+      : "shopping_list_pantry_toggle",
+    { preserveItemOrder: true },
+  );
 
   return { shoppingList: updated.shoppingList };
 });

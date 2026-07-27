@@ -9,7 +9,6 @@ import MealPlanGate from "@/components/MealPlanGate";
 import { useMealHeart } from "@/lib/hooks/useMealHeart";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { MealIngredient, StoredMeal } from "@/lib/types";
-import { stripTraderJoesForDisplay } from "@/lib/displayFormatters";
 import { cardClass } from "@/lib/uiClasses";
 import { buildHref } from "@/lib/urlState";
 
@@ -52,7 +51,11 @@ export default function MealDetailPage() {
             </button>
 
             {meal ? (
-              <MealDetail mealPlanId={readyPlan.id} meal={meal} onChanged={refresh} />
+              <MealDetail
+                mealPlanId={readyPlan.id}
+                meal={meal}
+                onChanged={refresh}
+              />
             ) : (
               <p className="text-sm text-[var(--muted-text)]">
                 This meal isn&apos;t part of the selected week.
@@ -109,7 +112,11 @@ function MealDetail({
           {isSaving ? (
             <Loader2 size={18} className="animate-spin" />
           ) : (
-            <Heart size={18} fill="currentColor" className={liked ? "scale-110" : ""} />
+            <Heart
+              size={18}
+              fill="currentColor"
+              className={liked ? "scale-110" : ""}
+            />
           )}
         </button>
       </div>
@@ -132,10 +139,13 @@ function MealDetail({
         {ingredients.length > 0 ? (
           <ul className="space-y-2.5">
             {ingredients.map((ingredient, idx) => (
-              <li key={`${ingredient.name}-${idx}`} className="flex items-start justify-between gap-3">
+              <li
+                key={`${ingredient.name}-${idx}`}
+                className="flex items-start justify-between gap-3"
+              >
                 <div className="min-w-0">
                   <span className="block text-sm font-semibold text-[var(--foreground)]">
-                    {stripTraderJoesForDisplay(ingredient.name)}
+                    {ingredient.name}
                   </span>
                   <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                     {categoryLabel[ingredient.category]}
@@ -150,11 +160,14 @@ function MealDetail({
           </ul>
         ) : (
           <ul className="space-y-1.5 text-sm text-[var(--foreground)]">
-            {[...meal.build.pro, ...meal.build.base, ...meal.build.veg, ...meal.build.engine].map(
-              (item, idx) => (
-                <li key={`${item}-${idx}`}>{stripTraderJoesForDisplay(item)}</li>
-              )
-            )}
+            {[
+              ...meal.build.pro,
+              ...meal.build.base,
+              ...meal.build.veg,
+              ...meal.build.engine,
+            ].map((item, idx) => (
+              <li key={`${item}-${idx}`}>{item}</li>
+            ))}
           </ul>
         )}
       </div>

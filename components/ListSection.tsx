@@ -9,7 +9,6 @@ import {
   ShoppingUsageByKey,
 } from "@/lib/domain/shoppingUsage";
 import { sectionLabelMutedClass } from "@/lib/uiClasses";
-import { stripTraderJoesForDisplay } from "@/lib/displayFormatters";
 import { useListMutations } from "@/lib/hooks/useListMutations";
 import { useOfflineChecklist } from "@/lib/hooks/useOfflineChecklist";
 import { JUNK_CATEGORY_ORDER, STORE_CATEGORY_ORDER } from "@/lib/constants";
@@ -26,7 +25,7 @@ export default function ListSection({
   mealPlanId,
   type = "shopping",
   itemUsageByKey,
-  onUpdate
+  onUpdate,
 }: {
   data: ListCategory[];
   colorClass?: string;
@@ -39,10 +38,16 @@ export default function ListSection({
 }) {
   const displayData = useMemo(() => {
     if (type === "shopping") {
-      const order = new Map(STORE_CATEGORY_ORDER.map((category, index) => [category, index]));
+      const order = new Map(
+        STORE_CATEGORY_ORDER.map((category, index) => [category, index]),
+      );
       return [...data].sort((a, b) => {
-        const aIndex = order.get(a.category as typeof STORE_CATEGORY_ORDER[number]) ?? Number.MAX_SAFE_INTEGER;
-        const bIndex = order.get(b.category as typeof STORE_CATEGORY_ORDER[number]) ?? Number.MAX_SAFE_INTEGER;
+        const aIndex =
+          order.get(a.category as (typeof STORE_CATEGORY_ORDER)[number]) ??
+          Number.MAX_SAFE_INTEGER;
+        const bIndex =
+          order.get(b.category as (typeof STORE_CATEGORY_ORDER)[number]) ??
+          Number.MAX_SAFE_INTEGER;
         return aIndex - bIndex;
       });
     }
@@ -51,25 +56,30 @@ export default function ListSection({
       return data;
     }
 
-    const existing = new Map(data.map((category) => [category.category, category]));
-    const defaults = JUNK_CATEGORY_ORDER.map((category) =>
-      existing.get(category) ?? { category, items: [] }
+    const existing = new Map(
+      data.map((category) => [category.category, category]),
+    );
+    const defaults = JUNK_CATEGORY_ORDER.map(
+      (category) => existing.get(category) ?? { category, items: [] },
     );
     const customCategories = data.filter(
-      (category) => !JUNK_CATEGORY_ORDER.includes(category.category as typeof JUNK_CATEGORY_ORDER[number])
+      (category) =>
+        !JUNK_CATEGORY_ORDER.includes(
+          category.category as (typeof JUNK_CATEGORY_ORDER)[number],
+        ),
     );
 
     return [...defaults, ...customCategories];
   }, [data, editable, type]);
-  
+
   const initialPantryItems = useMemo(
     () =>
       displayData.flatMap((category) =>
         category.items
           .filter((item) => item.pantry)
-          .map((item) => listItemKey(category.category, item.n))
+          .map((item) => listItemKey(category.category, item.n)),
       ),
-    [displayData]
+    [displayData],
   );
   const [pantryItems, setPantryItems] = useState<string[]>(initialPantryItems);
   const initialCheckedItems = useMemo(
@@ -77,9 +87,9 @@ export default function ListSection({
       displayData.flatMap((category) =>
         category.items
           .filter((item) => item.checked)
-          .map((item) => listItemKey(category.category, item.n))
+          .map((item) => listItemKey(category.category, item.n)),
       ),
-    [displayData]
+    [displayData],
   );
   const {
     isChecked,
@@ -115,16 +125,18 @@ export default function ListSection({
 
   const totalItemCount = useMemo(
     () => displayData.reduce((sum, category) => sum + category.items.length, 0),
-    [displayData]
+    [displayData],
   );
   const checkedVisibleCount = useMemo(
     () =>
       displayData.reduce(
         (sum, category) =>
-          sum + category.items.filter((item) => isChecked(category.category, item.n)).length,
-        0
+          sum +
+          category.items.filter((item) => isChecked(category.category, item.n))
+            .length,
+        0,
       ),
-    [displayData, isChecked]
+    [displayData, isChecked],
   );
   const pantryCount = useMemo(
     () =>
@@ -132,14 +144,16 @@ export default function ListSection({
         (sum, category) =>
           sum +
           category.items.filter((item) =>
-            pantryItems.includes(listItemKey(category.category, item.n))
+            pantryItems.includes(listItemKey(category.category, item.n)),
           ).length,
-        0
+        0,
       ),
-    [displayData, pantryItems]
+    [displayData, pantryItems],
   );
   const progressPercent =
-    totalItemCount > 0 ? Math.round((checkedVisibleCount / totalItemCount) * 100) : 0;
+    totalItemCount > 0
+      ? Math.round((checkedVisibleCount / totalItemCount) * 100)
+      : 0;
 
   useEffect(() => {
     // When week/data changes, derived UI state must re-sync to avoid stale pantry/heart state.
@@ -170,11 +184,15 @@ export default function ListSection({
       pantry: newPantryStatus,
       onOptimisticUpdate: () =>
         setPantryItems((prev) =>
-          prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
+          prev.includes(key)
+            ? prev.filter((item) => item !== key)
+            : [...prev, key],
         ),
       onRollback: () =>
         setPantryItems((prev) =>
-          newPantryStatus ? prev.filter((item) => item !== key) : [...prev, key]
+          newPantryStatus
+            ? prev.filter((item) => item !== key)
+            : [...prev, key],
         ),
     });
   };
@@ -189,7 +207,7 @@ export default function ListSection({
     const restored = await saveAddItem(
       recentlyDeleted.category,
       recentlyDeleted.name,
-      recentlyDeleted.q
+      recentlyDeleted.q,
     );
     if (restored) {
       setRecentlyDeleted(null);
@@ -218,7 +236,10 @@ export default function ListSection({
             <div className="flex items-center gap-2">
               <span className="text-sm font-black text-[var(--foreground)]">
                 {checkedVisibleCount}
-                <span className="text-[var(--text-muted)]"> / {totalItemCount}</span>
+                <span className="text-[var(--text-muted)]">
+                  {" "}
+                  / {totalItemCount}
+                </span>
               </span>
               <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 {checkedVisibleCount >= totalItemCount ? "All set" : "in cart"}
@@ -275,187 +296,201 @@ export default function ListSection({
       {displayData.map((category) => {
         const visibleItems =
           type === "shopping" && hideChecked
-            ? category.items.filter((item) => !isChecked(category.category, item.n))
+            ? category.items.filter(
+                (item) => !isChecked(category.category, item.n),
+              )
             : category.items;
 
-        if (visibleItems.length === 0 && (!editable || (type === "shopping" && hideChecked))) {
+        if (
+          visibleItems.length === 0 &&
+          (!editable || (type === "shopping" && hideChecked))
+        ) {
           return null;
         }
 
         return (
-        <section key={category.category}>
-          <h3 className={`mb-3 px-1 ${sectionLabelMutedClass}`}>
-            {category.category}
-          </h3>
-          <div className="space-y-2">
-            {visibleItems.map((item) => {
-              const key = listItemKey(category.category, item.n);
-              const checked = isChecked(category.category, item.n);
-              const isPantry = pantryItems.includes(key);
-              const baseLiked = Boolean(item.likedForCurrentWeek);
-              const baseHeartCount = item.heartCount ?? 0;
-              const pending = pendingHeartState[item.n];
-              const liked = pending?.liked ?? baseLiked;
-              const heartCount = pending?.heartCount ?? baseHeartCount;
-              const itemUsage = itemUsageByKey?.[getShoppingUsageKey(category.category, item.n)];
-              const displayName = stripTraderJoesForDisplay(item.n);
-              const isPantrySaving = pantrySavingItem === key;
+          <section key={category.category}>
+            <h3 className={`mb-3 px-1 ${sectionLabelMutedClass}`}>
+              {category.category}
+            </h3>
+            <div className="space-y-2">
+              {visibleItems.map((item) => {
+                const key = listItemKey(category.category, item.n);
+                const checked = isChecked(category.category, item.n);
+                const isPantry = pantryItems.includes(key);
+                const baseLiked = Boolean(item.likedForCurrentWeek);
+                const baseHeartCount = item.heartCount ?? 0;
+                const pending = pendingHeartState[item.n];
+                const liked = pending?.liked ?? baseLiked;
+                const heartCount = pending?.heartCount ?? baseHeartCount;
+                const itemUsage =
+                  itemUsageByKey?.[
+                    getShoppingUsageKey(category.category, item.n)
+                  ];
+                const displayName = item.n;
+                const isPantrySaving = pantrySavingItem === key;
 
-              return (
-                <div
-                  key={key}
-                   className={`flex w-full items-center gap-3 rounded-2xl border p-4 transition-all group ${
-                     checked
-                       ? "border-[var(--border-subtle)] bg-[var(--border-subtle)] opacity-50"
-                      : isPantry
-                      ? "border-harvest-gold/60 bg-[var(--tint-gold)] shadow-[0_6px_18px_rgba(240,192,90,0.1)]"
-                       : "border-[var(--border-subtle)] bg-[var(--surface-1)] shadow-[0_6px_18px_rgba(45,90,39,0.05)]"
-                   }`}
-                >
+                return (
+                  <div
+                    key={key}
+                    className={`flex w-full items-center gap-3 rounded-2xl border p-4 transition-all group ${
+                      checked
+                        ? "border-[var(--border-subtle)] bg-[var(--border-subtle)] opacity-50"
+                        : isPantry
+                          ? "border-harvest-gold/60 bg-[var(--tint-gold)] shadow-[0_6px_18px_rgba(240,192,90,0.1)]"
+                          : "border-[var(--border-subtle)] bg-[var(--surface-1)] shadow-[0_6px_18px_rgba(45,90,39,0.05)]"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggle(category.category, item.n)}
+                      aria-pressed={checked}
+                      className="flex min-w-0 flex-1 items-center gap-3"
+                    >
+                      <div
+                        className={`flex h-7 w-7 items-center justify-center rounded-lg border-2 transition-colors shrink-0 ${
+                          checked
+                            ? `${colorClass} border-transparent text-white`
+                            : "border-[var(--border-subtle)]"
+                        }`}
+                      >
+                        {checked ? <Check size={16} strokeWidth={3} /> : null}
+                      </div>
+                      <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                        <span className="min-w-0 text-left">
+                          <span
+                            className={`block text-sm font-medium text-[var(--foreground)] ${checked ? "line-through" : ""}`}
+                          >
+                            {displayName}
+                          </span>
+                          {item.q && type !== "shopping" ? (
+                            <span className="mt-0.5 block text-xs font-medium text-[var(--text-muted)]">
+                              {item.q}
+                            </span>
+                          ) : null}
+                          {type === "shopping" &&
+                          item.shoppingSource !== "household" ? (
+                            <ShoppingSourcePills
+                              usage={itemUsage}
+                              isJunk={item.shoppingSource === "junk"}
+                            />
+                          ) : null}
+                        </span>
+                      </span>
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      {type === "junk" ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void toggleJunkHeart(item.n, liked, heartCount);
+                          }}
+                          disabled={!mealPlanId || Boolean(heartSavingItem)}
+                          className={`h-7 px-2 flex items-center justify-center rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
+                            liked
+                              ? "bg-harvest-terracotta/10 text-harvest-terracotta"
+                              : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)] hover:text-harvest-terracotta"
+                          } ${!mealPlanId || heartSavingItem ? "opacity-50 pointer-events-none" : ""}`}
+                          title={liked ? "Unheart" : "Heart"}
+                          aria-label={liked ? "Unheart" : "Heart"}
+                        >
+                          {heartSavingItem === item.n ? (
+                            <Loader2 size={12} className="animate-spin" />
+                          ) : (
+                            <Heart
+                              size={12}
+                              fill={liked ? "currentColor" : "none"}
+                              className={liked ? "scale-110" : "scale-100"}
+                            />
+                          )}
+                          <span className="ml-1">{heartCount}</span>
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePantry(category.category, item.n);
+                        }}
+                        className={`h-9 px-2.5 flex items-center justify-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                          isPantry
+                            ? "bg-harvest-gold/20 text-harvest-gold"
+                            : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
+                        } ${isPantrySaving ? "opacity-50 pointer-events-none" : ""}`}
+                        title="Mark to check pantry"
+                      >
+                        Pantry
+                      </button>
+                      {type !== "shopping" &&
+                      item.shoppingSource !== "household" ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteItem(category.category, item.n, item.q);
+                          }}
+                          disabled={isSaving}
+                          className="h-9 w-9 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-500 transition-colors disabled:opacity-50"
+                          title="Delete item"
+                          aria-label={`Delete ${displayName}`}
+                        >
+                          <X size={16} />
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {editable && type !== "shopping" && (
+              <div className="mt-2">
+                {addingCategory === category.category ? (
+                  <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-1)] p-4 space-y-3 shadow-[var(--shadow-card)]">
+                    <input
+                      type="text"
+                      placeholder="Item name..."
+                      value={newItemName}
+                      onChange={(e) => setNewItemName(e.target.value)}
+                      className="w-full text-sm px-3 py-2 border border-[var(--border-subtle)] rounded-lg bg-[var(--tint-stone)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => addItem(category.category)}
+                        disabled={isSaving}
+                        className={`flex-1 text-sm font-medium rounded-lg ${colorClass} text-white py-2 disabled:opacity-50`}
+                      >
+                        {isSaving ? "Saving..." : "Add Item"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddingCategory(null);
+                          setNewItemName("");
+                        }}
+                        className="px-4 text-sm text-[var(--text-muted)] border border-[var(--border-subtle)] rounded-lg bg-[var(--surface-1)]"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => toggle(category.category, item.n)}
-                    aria-pressed={checked}
-                    className="flex min-w-0 flex-1 items-center gap-3"
+                    onClick={() => setAddingCategory(category.category)}
+                    className="flex w-full items-center justify-center gap-1.5 py-3 text-sm font-medium text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] rounded-2xl hover:bg-[var(--tint-stone)] transition-colors"
                   >
-                    <div
-                      className={`flex h-7 w-7 items-center justify-center rounded-lg border-2 transition-colors shrink-0 ${
-                        checked ? `${colorClass} border-transparent text-white` : "border-[var(--border-subtle)]"
-                      }`}
-                    >
-                      {checked ? <Check size={16} strokeWidth={3} /> : null}
-                    </div>
-                    <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
-                      <span className="min-w-0 text-left">
-                        <span className={`block text-sm font-medium text-[var(--foreground)] ${checked ? "line-through" : ""}`}>
-                          {displayName}
-                        </span>
-                        {item.q && type !== "shopping" ? (
-                          <span className="mt-0.5 block text-xs font-medium text-[var(--text-muted)]">
-                            {item.q}
-                          </span>
-                        ) : null}
-                        {type === "shopping" && item.shoppingSource !== "household" ? (
-                          <ShoppingSourcePills
-                            usage={itemUsage}
-                            isJunk={item.shoppingSource === "junk"}
-                          />
-                        ) : null}
-                      </span>
-                    </span>
+                    <Plus size={15} />
+                    Add item to {category.category}
                   </button>
-                  
-                  <div className="flex items-center gap-1">
-                    {type === "junk" ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void toggleJunkHeart(item.n, liked, heartCount);
-                        }}
-                        disabled={!mealPlanId || Boolean(heartSavingItem)}
-                        className={`h-7 px-2 flex items-center justify-center rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
-                          liked
-                            ? "bg-harvest-terracotta/10 text-harvest-terracotta"
-                            : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)] hover:text-harvest-terracotta"
-                        } ${!mealPlanId || heartSavingItem ? "opacity-50 pointer-events-none" : ""}`}
-                        title={liked ? "Unheart" : "Heart"}
-                        aria-label={liked ? "Unheart" : "Heart"}
-                      >
-                        {heartSavingItem === item.n ? (
-                          <Loader2 size={12} className="animate-spin" />
-                        ) : (
-                          <Heart
-                            size={12}
-                            fill={liked ? "currentColor" : "none"}
-                            className={liked ? "scale-110" : "scale-100"}
-                          />
-                        )}
-                        <span className="ml-1">{heartCount}</span>
-                      </button>
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePantry(category.category, item.n);
-                      }}
-                      className={`h-9 px-2.5 flex items-center justify-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
-                        isPantry 
-                          ? "bg-harvest-gold/20 text-harvest-gold" 
-                          : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
-                      } ${isPantrySaving ? 'opacity-50 pointer-events-none' : ''}`}
-                      title="Mark to check pantry"
-                    >
-                      Pantry
-                    </button>
-                    {type !== "shopping" && item.shoppingSource !== "household" ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteItem(category.category, item.n, item.q);
-                        }}
-                        disabled={isSaving}
-                        className="h-9 w-9 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-500 transition-colors disabled:opacity-50"
-                        title="Delete item"
-                        aria-label={`Delete ${displayName}`}
-                      >
-                        <X size={16} />
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {editable && type !== "shopping" && (
-            <div className="mt-2">
-              {addingCategory === category.category ? (
-                <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-1)] p-4 space-y-3 shadow-[var(--shadow-card)]">
-                  <input
-                    type="text"
-                    placeholder="Item name..."
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    className="w-full text-sm px-3 py-2 border border-[var(--border-subtle)] rounded-lg bg-[var(--tint-stone)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-                    autoFocus
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => addItem(category.category)}
-                      disabled={isSaving}
-                      className={`flex-1 text-sm font-medium rounded-lg ${colorClass} text-white py-2 disabled:opacity-50`}
-                    >
-                      {isSaving ? "Saving..." : "Add Item"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAddingCategory(null);
-                        setNewItemName("");
-                      }}
-                      className="px-4 text-sm text-[var(--text-muted)] border border-[var(--border-subtle)] rounded-lg bg-[var(--surface-1)]"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setAddingCategory(category.category)}
-                  className="flex w-full items-center justify-center gap-1.5 py-3 text-sm font-medium text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] rounded-2xl hover:bg-[var(--tint-stone)] transition-colors"
-                >
-                  <Plus size={15} />
-                  Add item to {category.category}
-                </button>
-              )}
-            </div>
-          )}
-        </section>
+                )}
+              </div>
+            )}
+          </section>
         );
       })}
 
@@ -470,9 +505,7 @@ export default function ListSection({
           <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-2)] px-4 py-3 shadow-[var(--shadow-elevated)] backdrop-blur">
             <span className="min-w-0 truncate text-sm text-[var(--foreground)]">
               Removed{" "}
-              <strong className="font-semibold">
-                {stripTraderJoesForDisplay(recentlyDeleted.name)}
-              </strong>
+              <strong className="font-semibold">{recentlyDeleted.name}</strong>
             </span>
             <button
               type="button"
@@ -490,7 +523,10 @@ export default function ListSection({
   );
 }
 
-const mealTypeUsageDisplay: Record<MealType, { label: string; shortLabel: string; chipClass: string }> = {
+const mealTypeUsageDisplay: Record<
+  MealType,
+  { label: string; shortLabel: string; chipClass: string }
+> = {
   Breakfast: {
     label: "Breakfast",
     shortLabel: "B",
@@ -546,7 +582,9 @@ function ShoppingSourcePills({
           className="inline-flex items-center gap-1 rounded-full bg-[#e6dfec] px-2 py-0.5 text-[10px] font-semibold text-[#7d6f8c] dark:bg-[#9b8aa6]/18 dark:text-[#b9a9c6]"
           title="Junk"
         >
-          <span aria-hidden="true" className="font-black">J</span>
+          <span aria-hidden="true" className="font-black">
+            J
+          </span>
           <span className="font-medium">Junk</span>
         </span>
       ) : null}
@@ -558,7 +596,9 @@ function ShoppingSourcePills({
             className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${display.chipClass}`}
             title={`${display.label}: ${meal.name}`}
           >
-            <span aria-hidden="true" className="font-black">{display.shortLabel}</span>
+            <span aria-hidden="true" className="font-black">
+              {display.shortLabel}
+            </span>
             <span className="font-medium">{meal.name}</span>
           </span>
         );
@@ -566,4 +606,3 @@ function ShoppingSourcePills({
     </span>
   );
 }
-
