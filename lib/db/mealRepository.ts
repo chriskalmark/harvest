@@ -3,7 +3,7 @@ import {
   MealPlanRow,
   MealRow,
   MealPlanMealRow,
-  MealFeedbackRow
+  MealFeedbackRow,
 } from "@/lib/types";
 
 /**
@@ -14,29 +14,29 @@ import {
 
 export async function getMealPlanById(
   client: PoolClient,
-  id: number
+  id: number,
 ): Promise<MealPlanRow | null> {
   const result = await client.query<MealPlanRow>(
     `SELECT * FROM meal_plans WHERE id = $1 LIMIT 1`,
-    [id]
+    [id],
   );
   return result.rows[0] ?? null;
 }
 
 export async function getMealPlanByWeekRange(
   client: PoolClient,
-  weekRange: string
+  weekRange: string,
 ): Promise<MealPlanRow | null> {
   const result = await client.query<MealPlanRow>(
     `SELECT * FROM meal_plans WHERE week_range = $1 LIMIT 1`,
-    [weekRange]
+    [weekRange],
   );
   return result.rows[0] ?? null;
 }
 
 export async function getMealPlanByWeekStartDate(
   client: PoolClient,
-  weekStartDateOnly: string
+  weekStartDateOnly: string,
 ): Promise<MealPlanRow | null> {
   const result = await client.query<MealPlanRow>(
     `
@@ -45,13 +45,13 @@ export async function getMealPlanByWeekStartDate(
       WHERE week_start_date = $1::date
       LIMIT 1
     `,
-    [weekStartDateOnly]
+    [weekStartDateOnly],
   );
   return result.rows[0] ?? null;
 }
 
 export async function getMostRecentlyUpdatedMealPlan(
-  client: PoolClient
+  client: PoolClient,
 ): Promise<MealPlanRow | null> {
   const result = await client.query<MealPlanRow>(
     `
@@ -59,18 +59,20 @@ export async function getMostRecentlyUpdatedMealPlan(
       FROM meal_plans
       ORDER BY updated_at DESC, id DESC
       LIMIT 1
-    `
+    `,
   );
   return result.rows[0] ?? null;
 }
 
-export async function listMealPlanWeeks(client: PoolClient): Promise<MealPlanRow[]> {
+export async function listMealPlanWeeks(
+  client: PoolClient,
+): Promise<MealPlanRow[]> {
   const result = await client.query<MealPlanRow>(
     `
       SELECT *
       FROM meal_plans
       ORDER BY week_start_date DESC NULLS LAST, updated_at DESC, id DESC
-    `
+    `,
   );
   return result.rows;
 }
@@ -84,7 +86,7 @@ export async function upsertMealPlanRow(
     source: string;
     status: string;
     generationContextJson: string;
-  }
+  },
 ): Promise<MealPlanRow> {
   const result = await client.query<MealPlanRow>(
     `
@@ -107,7 +109,7 @@ export async function upsertMealPlanRow(
       input.source,
       input.status,
       input.generationContextJson,
-    ]
+    ],
   );
   if (!result.rows[0]) {
     throw new Error("Failed to upsert meal plan.");
@@ -124,7 +126,7 @@ export async function updateMealPlanLists(
     householdGoodsJson: string;
     source: string;
     generationContextJson: string;
-  }
+  },
 ): Promise<MealPlanRow> {
   const result = await client.query<MealPlanRow>(
     `
@@ -154,7 +156,7 @@ export async function updateMealPlanLists(
       input.householdGoodsJson,
       input.source,
       input.generationContextJson,
-    ]
+    ],
   );
   if (!result.rows[0]) {
     throw new Error("Failed to update meal plan lists.");
@@ -164,7 +166,7 @@ export async function updateMealPlanLists(
 
 export async function getDistinctMealIdsForPlan(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<Array<{ meal_id: number | string }>> {
   const result = await client.query<{ meal_id: number | string }>(
     `
@@ -172,13 +174,18 @@ export async function getDistinctMealIdsForPlan(
       FROM meal_plan_meals
       WHERE meal_plan_id = $1
     `,
-    [mealPlanId]
+    [mealPlanId],
   );
   return result.rows;
 }
 
-export async function deleteMealPlanMeals(client: PoolClient, mealPlanId: number): Promise<void> {
-  await client.query(`DELETE FROM meal_plan_meals WHERE meal_plan_id = $1`, [mealPlanId]);
+export async function deleteMealPlanMeals(
+  client: PoolClient,
+  mealPlanId: number,
+): Promise<void> {
+  await client.query(`DELETE FROM meal_plan_meals WHERE meal_plan_id = $1`, [
+    mealPlanId,
+  ]);
 }
 
 export async function insertMealPlanMeal(
@@ -187,7 +194,7 @@ export async function insertMealPlanMeal(
     mealPlanId: number;
     slotOrder: number;
     mealId: number;
-  }
+  },
 ): Promise<void> {
   await client.query(
     `
@@ -198,18 +205,14 @@ export async function insertMealPlanMeal(
       )
       VALUES ($1, $2, $3)
     `,
-    [
-      input.mealPlanId,
-      input.slotOrder,
-      input.mealId,
-    ]
+    [input.mealPlanId, input.slotOrder, input.mealId],
   );
 }
 
 export async function getMealPlanMealAtSlot(
   client: PoolClient,
   mealPlanId: number,
-  slotOrder: number
+  slotOrder: number,
 ): Promise<{ meal_id: number | string } | null> {
   const result = await client.query<{ meal_id: number | string }>(
     `
@@ -218,14 +221,14 @@ export async function getMealPlanMealAtSlot(
       WHERE meal_plan_id = $1
         AND slot_order = $2
     `,
-    [mealPlanId, slotOrder]
+    [mealPlanId, slotOrder],
   );
   return result.rows[0] ?? null;
 }
 
 export async function getMaxSlotOrderForPlan(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<number> {
   const result = await client.query<{ max_slot: number | null }>(
     `
@@ -233,7 +236,7 @@ export async function getMaxSlotOrderForPlan(
       FROM meal_plan_meals
       WHERE meal_plan_id = $1
     `,
-    [mealPlanId]
+    [mealPlanId],
   );
   const maxSlot = result.rows[0]?.max_slot;
   return typeof maxSlot === "number" ? maxSlot : -1;
@@ -245,7 +248,7 @@ export async function updateMealPlanMealAtSlot(
     mealPlanId: number;
     slotOrder: number;
     mealId: number;
-  }
+  },
 ): Promise<void> {
   const result = await client.query(
     `
@@ -254,7 +257,7 @@ export async function updateMealPlanMealAtSlot(
       WHERE meal_plan_id = $1
         AND slot_order = $2
     `,
-    [input.mealPlanId, input.slotOrder, input.mealId]
+    [input.mealPlanId, input.slotOrder, input.mealId],
   );
 
   if (result.rowCount === 0) {
@@ -265,7 +268,7 @@ export async function updateMealPlanMealAtSlot(
 export async function deleteMealPlanMealAtSlot(
   client: PoolClient,
   mealPlanId: number,
-  slotOrder: number
+  slotOrder: number,
 ): Promise<number | null> {
   const existing = await getMealPlanMealAtSlot(client, mealPlanId, slotOrder);
   if (!existing) {
@@ -278,7 +281,7 @@ export async function deleteMealPlanMealAtSlot(
       WHERE meal_plan_id = $1
         AND slot_order = $2
     `,
-    [mealPlanId, slotOrder]
+    [mealPlanId, slotOrder],
   );
 
   await client.query(
@@ -288,7 +291,7 @@ export async function deleteMealPlanMealAtSlot(
       WHERE meal_plan_id = $1
         AND slot_order > $2
     `,
-    [mealPlanId, slotOrder]
+    [mealPlanId, slotOrder],
   );
 
   return toNumber(existing.meal_id);
@@ -301,7 +304,7 @@ function toNumber(value: number | string): number {
 export async function isMealOnPlan(
   client: PoolClient,
   mealPlanId: number,
-  mealId: number
+  mealId: number,
 ): Promise<boolean> {
   const result = await client.query<{ exists: boolean }>(
     `
@@ -312,14 +315,14 @@ export async function isMealOnPlan(
           AND meal_id = $2
       ) AS exists
     `,
-    [mealPlanId, mealId]
+    [mealPlanId, mealId],
   );
   return Boolean(result.rows[0]?.exists);
 }
 
 export async function getMealsForMealPlan(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<MealPlanMealRow[]> {
   const result = await client.query<MealPlanMealRow>(
     `
@@ -335,14 +338,14 @@ export async function getMealsForMealPlan(
       WHERE mpm.meal_plan_id = $1
       ORDER BY mpm.slot_order ASC
     `,
-    [mealPlanId]
+    [mealPlanId],
   );
   return result.rows;
 }
 
 export async function getMealFeedbackForPlan(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<MealFeedbackRow[]> {
   const result = await client.query<MealFeedbackRow>(
     `
@@ -351,14 +354,14 @@ export async function getMealFeedbackForPlan(
       WHERE meal_plan_id = $1
       ORDER BY updated_at DESC
     `,
-    [mealPlanId]
+    [mealPlanId],
   );
   return result.rows;
 }
 
 export async function removeStaleMealFeedback(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<void> {
   await client.query(
     `
@@ -371,7 +374,7 @@ export async function removeStaleMealFeedback(
             AND mpm.meal_id = mf.meal_id
         )
     `,
-    [mealPlanId]
+    [mealPlanId],
   );
 }
 
@@ -389,7 +392,7 @@ export async function findMealByExactSignature(
     carbs_grams: number;
     fat_grams: number;
     fiber_grams: number;
-  }
+  },
 ): Promise<MealRow | null> {
   const result = await client.query<MealRow>(
     `
@@ -420,7 +423,7 @@ export async function findMealByExactSignature(
       meal.carbs_grams,
       meal.fat_grams,
       meal.fiber_grams,
-    ]
+    ],
   );
   return result.rows[0] ?? null;
 }
@@ -435,7 +438,7 @@ export async function insertMeal(
     | "heart_count"
     | "appearance_count"
     | "last_served_at"
-  >
+  >,
 ): Promise<{ id: number | string }> {
   const result = await client.query<{ id: number | string }>(
     `
@@ -451,9 +454,12 @@ export async function insertMeal(
         protein_grams,
         carbs_grams,
         fat_grams,
-        fiber_grams
+        fiber_grams,
+        servings,
+        steps,
+        image_url
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12)
+      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id
     `,
     [
@@ -469,7 +475,10 @@ export async function insertMeal(
       mealData.carbs_grams,
       mealData.fat_grams,
       mealData.fiber_grams,
-    ]
+      mealData.servings,
+      mealData.steps,
+      mealData.image_url,
+    ],
   );
   if (!result.rows[0]) {
     throw new Error("Failed to insert meal.");
@@ -477,7 +486,10 @@ export async function insertMeal(
   return result.rows[0];
 }
 
-export async function getMealById(client: PoolClient, mealId: number): Promise<MealRow | null> {
+export async function getMealById(
+  client: PoolClient,
+  mealId: number,
+): Promise<MealRow | null> {
   const result = await client.query<MealRow>(
     `
       SELECT *
@@ -485,14 +497,14 @@ export async function getMealById(client: PoolClient, mealId: number): Promise<M
       WHERE id = $1
       LIMIT 1
     `,
-    [mealId]
+    [mealId],
   );
   return result.rows[0] ?? null;
 }
 
 export async function getMealLikedForPlan(
   client: PoolClient,
-  input: { mealPlanId: number; mealId: number }
+  input: { mealPlanId: number; mealId: number },
 ): Promise<{ liked: boolean } | null> {
   const result = await client.query<{ liked: boolean }>(
     `
@@ -503,12 +515,15 @@ export async function getMealLikedForPlan(
       ORDER BY updated_at DESC
       LIMIT 1
     `,
-    [input.mealPlanId, input.mealId]
+    [input.mealPlanId, input.mealId],
   );
   return result.rows[0] ?? null;
 }
 
-export async function refreshMealStats(client: PoolClient, mealIds: number[]): Promise<void> {
+export async function refreshMealStats(
+  client: PoolClient,
+  mealIds: number[],
+): Promise<void> {
   if (!mealIds.length) return;
 
   await client.query(
@@ -547,13 +562,13 @@ export async function refreshMealStats(client: PoolClient, mealIds: number[]): P
       ) AS stats
       WHERE m.id = stats.meal_id
     `,
-    [mealIds]
+    [mealIds],
   );
 }
 
 export async function upsertMealFeedback(
   client: PoolClient,
-  input: { mealPlanId: number; mealId: number; liked: boolean }
+  input: { mealPlanId: number; mealId: number; liked: boolean },
 ): Promise<MealFeedbackRow> {
   const result = await client.query<MealFeedbackRow>(
     `
@@ -569,7 +584,7 @@ export async function upsertMealFeedback(
         updated_at = NOW()
       RETURNING *
     `,
-    [input.mealPlanId, input.mealId, input.liked]
+    [input.mealPlanId, input.mealId, input.liked],
   );
   if (!result.rows[0]) {
     throw new Error("Failed to upsert meal feedback.");
@@ -593,7 +608,10 @@ export async function updateMeal(
     carbs_grams: number;
     fat_grams: number;
     fiber_grams: number;
-  }
+    servings: number;
+    steps: string[];
+    image_url: string | null;
+  },
 ): Promise<MealRow | null> {
   const result = await client.query<MealRow>(
     `
@@ -611,6 +629,9 @@ export async function updateMeal(
         carbs_grams = $11,
         fat_grams = $12,
         fiber_grams = $13,
+        servings = $14,
+        steps = $15,
+        image_url = $16,
         updated_at = NOW()
       WHERE id = $1
       RETURNING *
@@ -629,7 +650,10 @@ export async function updateMeal(
       input.carbs_grams,
       input.fat_grams,
       input.fiber_grams,
-    ]
+      input.servings,
+      input.steps,
+      input.image_url,
+    ],
   );
   return result.rows[0] ?? null;
 }
@@ -644,7 +668,7 @@ export async function insertMealReturningRow(
     | "heart_count"
     | "appearance_count"
     | "last_served_at"
-  >
+  >,
 ): Promise<MealRow> {
   const result = await client.query<MealRow>(
     `
@@ -660,9 +684,12 @@ export async function insertMealReturningRow(
         protein_grams,
         carbs_grams,
         fat_grams,
-        fiber_grams
+        fiber_grams,
+        servings,
+        steps,
+        image_url
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12)
+      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING *
     `,
     [
@@ -678,7 +705,10 @@ export async function insertMealReturningRow(
       mealData.carbs_grams,
       mealData.fat_grams,
       mealData.fiber_grams,
-    ]
+      mealData.servings,
+      mealData.steps,
+      mealData.image_url,
+    ],
   );
   if (!result.rows[0]) {
     throw new Error("Failed to insert meal.");
@@ -686,7 +716,10 @@ export async function insertMealReturningRow(
   return result.rows[0];
 }
 
-export async function ensureMealPlanExists(client: PoolClient, mealPlanId: number): Promise<void> {
+export async function ensureMealPlanExists(
+  client: PoolClient,
+  mealPlanId: number,
+): Promise<void> {
   const result = await client.query<{ id: number | string }>(
     `
       SELECT id
@@ -694,14 +727,17 @@ export async function ensureMealPlanExists(client: PoolClient, mealPlanId: numbe
       WHERE id = $1
       LIMIT 1
     `,
-    [mealPlanId]
+    [mealPlanId],
   );
   if (!result.rows[0]) {
     throw new Error("Meal plan not found.");
   }
 }
 
-export async function findOrCreateJunkItem(client: PoolClient, name: string): Promise<number | string> {
+export async function findOrCreateJunkItem(
+  client: PoolClient,
+  name: string,
+): Promise<number | string> {
   const normalized = name.trim();
   if (!normalized) {
     throw new Error("Junk item name is required.");
@@ -714,7 +750,7 @@ export async function findOrCreateJunkItem(client: PoolClient, name: string): Pr
       WHERE name = $1
       LIMIT 1
     `,
-    [normalized]
+    [normalized],
   );
   if (existing.rows[0]) {
     return existing.rows[0].id;
@@ -728,7 +764,7 @@ export async function findOrCreateJunkItem(client: PoolClient, name: string): Pr
       DO UPDATE SET updated_at = NOW()
       RETURNING id
     `,
-    [normalized]
+    [normalized],
   );
   if (!inserted.rows[0]) {
     throw new Error("Failed to create junk item.");
@@ -738,7 +774,7 @@ export async function findOrCreateJunkItem(client: PoolClient, name: string): Pr
 
 export async function upsertJunkFeedback(
   client: PoolClient,
-  input: { mealPlanId: number; junkItemId: number; liked: boolean }
+  input: { mealPlanId: number; junkItemId: number; liked: boolean },
 ): Promise<{
   id: number | string;
   meal_plan_id: number | string;
@@ -768,7 +804,7 @@ export async function upsertJunkFeedback(
         updated_at = NOW()
       RETURNING *
     `,
-    [input.mealPlanId, input.junkItemId, input.liked]
+    [input.mealPlanId, input.junkItemId, input.liked],
   );
   if (!result.rows[0]) {
     throw new Error("Failed to upsert junk feedback.");
@@ -776,7 +812,10 @@ export async function upsertJunkFeedback(
   return result.rows[0];
 }
 
-export async function refreshJunkItemStats(client: PoolClient, junkItemIds: number[]): Promise<void> {
+export async function refreshJunkItemStats(
+  client: PoolClient,
+  junkItemIds: number[],
+): Promise<void> {
   if (!junkItemIds.length) return;
 
   await client.query(
@@ -801,22 +840,26 @@ export async function refreshJunkItemStats(client: PoolClient, junkItemIds: numb
       ) AS stats
       WHERE ji.id = stats.junk_item_id
     `,
-    [junkItemIds]
+    [junkItemIds],
   );
 }
 
 export async function getJunkItemById(
   client: PoolClient,
-  junkItemId: number
+  junkItemId: number,
 ): Promise<{ id: number | string; name: string; heart_count: number } | null> {
-  const result = await client.query<{ id: number | string; name: string; heart_count: number }>(
+  const result = await client.query<{
+    id: number | string;
+    name: string;
+    heart_count: number;
+  }>(
     `
       SELECT id, name, heart_count
       FROM junk_items
       WHERE id = $1
       LIMIT 1
     `,
-    [junkItemId]
+    [junkItemId],
   );
   return result.rows[0] ?? null;
 }
