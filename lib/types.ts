@@ -1,3 +1,5 @@
+import type { StoreZone } from "@/lib/constants";
+
 export interface Macros {
   cal: number;
   p: number;
@@ -6,9 +8,28 @@ export interface Macros {
   fiber: number;
 }
 
+export const MEAL_INGREDIENT_UNITS = [
+  "g",
+  "kg",
+  "ml",
+  "l",
+  "dl",
+  "stk",
+  "tsk",
+  "spsk",
+  "bundt",
+  "dåse",
+  "pakke",
+] as const;
+
+export type MealIngredientUnit = (typeof MEAL_INGREDIENT_UNITS)[number];
+
 export interface MealIngredient {
   name: string;
   quantity: string;
+  amount: number;
+  unit: MealIngredientUnit;
+  zone: StoreZone;
   category: "pro" | "base" | "veg" | "engine";
   macros: Macros;
 }
@@ -28,6 +49,9 @@ export interface MealInput {
   build: MealBuild;
   ingredients?: MealIngredient[];
   macros: Macros;
+  servings: number;
+  steps: string[];
+  imageUrl: string | null;
 }
 
 export interface StoredMeal extends MealInput {
@@ -126,6 +150,9 @@ export interface UpdateMealInput {
   build: MealBuild;
   ingredients?: MealIngredient[];
   macros: Macros;
+  servings: number;
+  steps: string[];
+  imageUrl: string | null;
 }
 
 // Database Row Types
@@ -158,6 +185,9 @@ export interface MealRow {
   carbs_grams: number;
   fat_grams: number;
   fiber_grams: number;
+  servings: number;
+  steps: string[];
+  image_url: string | null;
   heart_count: number;
   appearance_count: number;
   last_served_at: Date | null;
