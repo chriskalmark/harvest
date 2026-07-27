@@ -229,4 +229,82 @@ function ing(
   assert.equal(section?.category, "Non-food");
 }
 
+// Samme vare i to enheder skal give to linjer på listen — ingen må forsvinde.
+{
+  const meal = (amount: number, unit: MealIngredient["unit"]) => ({
+    type: "Dinner" as const,
+    name: "ret",
+    build: { pro: [], base: [], veg: [], engine: [] },
+    ingredients: [ing("Løg", amount, unit, "Frugt & grønt")],
+    macros: { cal: 0, p: 0, c: 0, f: 0, fiber: 0 },
+    servings: 2,
+    steps: [],
+    imageUrl: null,
+  });
+
+  const items = deriveShoppingListFromMeals([meal(1, "stk"), meal(50, "g")])
+    .flatMap((section) => section.items)
+    .filter((item) => item.n === "Løg");
+
+  assert.equal(items.length, 2, "begge enheder skal overleve");
+  assert.deepEqual(items.map((i) => i.q).sort(), ["100 g", "2 stk"]);
+}
+
+// En afkrydsning fra en tidligere liste med kun én enhed må ikke gætte,
+// hvilken af to nye enheds-linjer den hører til — den skal droppes helt,
+// ikke hoppe over på en tilfældig linje.
+{
+  const previous = [
+    {
+      category: "Frugt & grønt",
+      items: [{ n: "Løg", q: "1 stk", checked: true }],
+    },
+  ];
+  const meal = (amount: number, unit: MealIngredient["unit"]) => ({
+    type: "Dinner" as const,
+    name: "ret",
+    build: { pro: [], base: [], veg: [], engine: [] },
+    ingredients: [ing("Løg", amount, unit, "Frugt & grønt")],
+    macros: { cal: 0, p: 0, c: 0, f: 0, fiber: 0 },
+    servings: 2,
+    steps: [],
+    imageUrl: null,
+  });
+
+  const items = deriveShoppingListFromMeals(
+    [meal(1, "stk"), meal(50, "g")],
+    previous,
+  )
+    .flatMap((section) => section.items)
+    .filter((item) => item.n === "Løg");
+
+  assert.equal(items.length, 2);
+  assert.ok(
+    items.every((item) => item.checked !== true),
+    "en tvetydig afkrydsning må ikke overleve på nogen af linjerne",
+  );
+}
+
+// En vare fra madplanen og en identisk vare på ønskesedlen skal stadig kun
+// give ÉN linje — den eksisterende sammenlægning må ikke gå i stykker.
+{
+  const meal = {
+    type: "Dinner" as const,
+    name: "ret",
+    build: { pro: [], base: [], veg: [], engine: [] },
+    ingredients: [ing("Persille", 1, "bundt", "Frugt & grønt")],
+    macros: { cal: 0, p: 0, c: 0, f: 0, fiber: 0 },
+    servings: 2,
+    steps: [],
+    imageUrl: null,
+  };
+  const junkList = [{ category: "Frugt & grønt", items: [{ n: "Persille" }] }];
+
+  const items = deriveShoppingListFromMeals([meal], [], junkList)
+    .flatMap((section) => section.items)
+    .filter((item) => item.n === "Persille");
+
+  assert.equal(items.length, 1, "skal stadig lægges sammen til én linje");
+}
+
 console.log("shopping aggregation: OK");

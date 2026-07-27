@@ -20,6 +20,22 @@ interface PreservedShoppingItem {
   item: ListItem;
 }
 
+/**
+ * `derivedByName` is keyed by `${normalizedName}::${discriminator}`, not by
+ * name alone. The same ingredient can legitimately appear in two units (an
+ * onion at "1 stk" in one meal and "50 g" in another) and both must survive
+ * as separate lines — keying by name alone let the second overwrite the
+ * first with no warning. The discriminator is the unit for meal-derived
+ * lines, and a fixed tag for junk/orphan lines, which have no unit of their
+ * own. Cross-writer de-duplication (so a junk item doesn't duplicate a meal
+ * ingredient of the same name) is done separately via `derivedNames`, a set
+ * of normalized names already represented — not via key equality, since the
+ * key shapes differ by discriminator on purpose.
+ */
+function derivationKey(normalizedName: string, discriminator: string): string {
+  return `${normalizedName}::${discriminator}`;
+}
+
 export function deriveShoppingListFromMeals(
   meals: DerivableMeal[],
   previousShoppingList: ListCategory[] = [],
@@ -29,21 +45,37 @@ export function deriveShoppingListFromMeals(
 ): ListCategory[] {
   const previousByName = getPreviousItemsByName(previousShoppingList);
   const derivedByName = new Map<string, ListItem>();
+  const derivedNames = new Set<string>();
 
-  for (const aggregated of aggregateShoppingQuantities(meals)) {
-    const previous = previousByName.get(aggregated.name)?.item;
-
-    derivedByName.set(aggregated.name, {
-      ...buildShoppingItem(aggregated.displayName, previous),
-      q: formatQuantity(aggregated.amount, aggregated.unit),
-      zone: aggregated.zone,
-    });
+  const aggregated = aggregateShoppingQuantities(meals);
+  const unitCountByName = new Map<string, number>();
+  for (const item of aggregated) {
+    unitCountByName.set(item.name, (unitCountByName.get(item.name) ?? 0) + 1);
   }
 
-  mergeJunkItems(derivedByName, junkList, previousByName);
+  for (const item of aggregated) {
+    // When a name resolves to more than one unit, a previously-checked item
+    // can't be attributed to either new line without guessing which one the
+    // user meant — so we drop the previous state rather than risking the
+    // tick landing on the wrong line. Losing a tick is an acceptable
+    // degradation; silently moving it to the wrong item is not.
+    const previous =
+      unitCountByName.get(item.name) === 1
+        ? previousByName.get(item.name)?.item
+        : undefined;
+
+    derivedByName.set(derivationKey(item.name, item.unit), {
+      ...buildShoppingItem(item.displayName, previous),
+      q: formatQuantity(item.amount, item.unit),
+      zone: item.zone,
+    });
+    derivedNames.add(item.name);
+  }
+
+  mergeJunkItems(derivedByName, derivedNames, junkList, previousByName);
 
   if (!options?.pruneOrphans) {
-    preserveOrphanItems(derivedByName, previousByName);
+    preserveOrphanItems(derivedByName, derivedNames, previousByName);
   }
 
   const storeLayoutList = organizeShoppingListForStoreLayout(
@@ -111,6 +143,7 @@ function buildShoppingItem(
 
 function mergeJunkItems(
   derivedByName: Map<string, ListItem>,
+  derivedNames: Set<string>,
   junkList: ListCategory[],
   previousByName: Map<string, PreservedShoppingItem>,
 ): void {
@@ -118,33 +151,41 @@ function mergeJunkItems(
     for (const junkItem of junkCategory.items) {
       const itemName = junkItem.n.trim();
       const normalizedName = normalizeShoppingName(itemName);
-      if (!normalizedName || derivedByName.has(normalizedName)) {
+      // A meal ingredient of the same name already covers this line —
+      // regardless of which unit-discriminated key it landed under.
+      if (!normalizedName || derivedNames.has(normalizedName)) {
         continue;
       }
 
       const previous = previousByName.get(normalizedName)?.item;
       derivedByName.set(
-        normalizedName,
+        derivationKey(normalizedName, "junk"),
         buildShoppingItem(itemName, previous, {
           q: junkItem.q,
           shoppingSource: "junk",
         }),
       );
+      derivedNames.add(normalizedName);
     }
   }
 }
 
 function preserveOrphanItems(
   derivedByName: Map<string, ListItem>,
+  derivedNames: Set<string>,
   previousByName: Map<string, PreservedShoppingItem>,
 ): void {
   for (const [normalizedName, preserved] of previousByName) {
     if (
-      !derivedByName.has(normalizedName) &&
+      !derivedNames.has(normalizedName) &&
       preserved.item.shoppingSource !== "junk" &&
       preserved.item.shoppingSource !== "household"
     ) {
-      derivedByName.set(normalizedName, preserved.item);
+      derivedByName.set(
+        derivationKey(normalizedName, "orphan"),
+        preserved.item,
+      );
+      derivedNames.add(normalizedName);
     }
   }
 }
