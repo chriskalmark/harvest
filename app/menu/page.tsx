@@ -20,6 +20,7 @@ import {
 } from "@/lib/types";
 import { buildHref } from "@/lib/urlState";
 import { formatWeekRangeDanish } from "@/lib/weekRange";
+import { pluralize } from "@/lib/displayFormatters";
 
 const MENU_GROUPS: { type: MealType; label: string }[] = [
   { type: "Breakfast", label: "Morgenmad" },
@@ -319,12 +320,16 @@ export default function MenuPage() {
                 bare mad.
               </h2>
               <div className="mt-3 text-[0.9rem] font-medium opacity-[0.82]">
-                {readyPlan.meals.length} retter · {dinnerCount} aftener
-                {itemCount ? ` · ${itemCount} varer` : ""}
+                {readyPlan.meals.length}{" "}
+                {pluralize(readyPlan.meals.length, "ret", "retter")} ·{" "}
+                {dinnerCount} {pluralize(dinnerCount, "aften", "aftener")}
+                {itemCount
+                  ? ` · ${itemCount} ${pluralize(itemCount, "vare", "varer")}`
+                  : ""}
               </div>
             </div>
 
-            <div className="relative -mt-5 rounded-t-[34px] bg-[var(--surface-0)] px-4 pt-5">
+            <div className="relative -mt-5 rounded-t-[34px] bg-[var(--surface-1)] px-4 pt-5">
               <MenuContent
                 groups={groups}
                 junkList={readyPlan.junkList}

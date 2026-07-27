@@ -6,6 +6,7 @@ import MealEditorModal from "@/components/MealEditorModal";
 import { useMealsInfiniteQuery } from "@/lib/hooks/useExploreMeals";
 import { Macros, MealType, StoredMeal } from "@/lib/types";
 import { cardClass, inputClass } from "@/lib/uiClasses";
+import { pluralize } from "@/lib/displayFormatters";
 
 type PickerMode = "swap" | "add";
 
@@ -124,7 +125,7 @@ export default function MealSwapPickerModal({
               {title}
             </p>
             <p className="mt-1 text-sm text-[var(--muted-text)]">
-              {total} retter at vælge mellem
+              {total} {pluralize(total, "ret", "retter")} at vælge mellem
             </p>
           </div>
           <button

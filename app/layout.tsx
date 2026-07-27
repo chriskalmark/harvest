@@ -83,7 +83,7 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <Suspense fallback={null}>
           <MealPlanProvider>
-            <div className="relative mx-auto min-h-screen max-w-md pb-[120px]">
+            <div className="relative mx-auto min-h-screen max-w-md pb-[calc(170px+env(safe-area-inset-bottom))]">
               <Header />
               {children}
               <BottomNav />

@@ -10,6 +10,7 @@ import { X, Loader2, Plus, Trash2 } from "lucide-react";
 import { MealIngredient, MealType, StoredMeal } from "@/lib/types";
 import { DEFAULT_STORE_ZONE, MEAL_TYPES } from "@/lib/constants";
 import { cardClass, inputClass, sectionLabelMutedClass } from "@/lib/uiClasses";
+import { pluralize } from "@/lib/displayFormatters";
 
 interface MealEditorModalProps {
   meal?: StoredMeal; // Optional for create mode
@@ -352,10 +353,12 @@ export default function MealEditorModal({
           <div className={`mt-5 p-4 ${cardClass}`}>
             <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.18em]">
               <span className="rounded-full bg-harvest-green/10 px-3 py-1 text-harvest-green">
-                {meal.appearanceCount} gange på menuen
+                {meal.appearanceCount}{" "}
+                {pluralize(meal.appearanceCount, "gang", "gange")} på menuen
               </span>
               <span className="rounded-full bg-harvest-terracotta/10 px-3 py-1 text-harvest-terracotta">
-                {meal.heartCount} hjerter
+                {meal.heartCount}{" "}
+                {pluralize(meal.heartCount, "hjerte", "hjerter")}
               </span>
               <span className="rounded-full bg-[var(--tint-stone)] px-3 py-1 text-[var(--text-muted)]">
                 {meal.lastServedAt
