@@ -1,5 +1,9 @@
-import { MealIngredient, MealType, StoredMeal, StoredMealPlan } from "@/lib/types";
-import { stripTraderJoesForDisplay } from "@/lib/displayFormatters";
+import {
+  MealIngredient,
+  MealType,
+  StoredMeal,
+  StoredMealPlan,
+} from "@/lib/types";
 
 export interface ShoppingUsageMeal {
   mealId: number;
@@ -22,32 +26,19 @@ export function getShoppingUsageKey(category: string, itemName: string) {
 }
 
 export function normalizeShoppingName(name: string) {
-  return stripTraderJoesForDisplay(name)
+  return name
     .toLowerCase()
+    .normalize("NFC")
     .replace(/\([^)]*\)/g, " ")
-    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/[^a-z0-9æøå]+/g, " ")
     .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((token) => {
-      if (token.endsWith("ies") && token.length > 4) {
-        return `${token.slice(0, -3)}y`;
-      }
-
-      if (token.endsWith("oes") && token.length > 4) {
-        return token.slice(0, -2);
-      }
-
-      if (token.endsWith("s") && token.length > 3 && !token.endsWith("ss")) {
-        return token.slice(0, -1);
-      }
-
-      return token;
-    })
-    .join(" ");
+    .replace(/\s+/g, " ");
 }
 
-export function shoppingItemMatchesMealIngredient(itemName: string, ingredientName: string) {
+export function shoppingItemMatchesMealIngredient(
+  itemName: string,
+  ingredientName: string,
+) {
   const item = normalizeShoppingName(itemName);
   const ingredient = normalizeShoppingName(ingredientName);
 
@@ -55,7 +46,11 @@ export function shoppingItemMatchesMealIngredient(itemName: string, ingredientNa
     return false;
   }
 
-  return item === ingredient || item.includes(ingredient) || ingredient.includes(item);
+  return (
+    item === ingredient ||
+    item.includes(ingredient) ||
+    ingredient.includes(item)
+  );
 }
 
 export function getShoppingItemUsage(plan: StoredMealPlan): ShoppingUsageByKey {
@@ -66,15 +61,20 @@ export function getShoppingItemUsage(plan: StoredMealPlan): ShoppingUsageByKey {
       category.items.map((item) => [
         getShoppingUsageKey(category.category, item.n),
         getUsageForItem(item.n, meals),
-      ])
-    )
+      ]),
+    ),
   );
 }
 
-function getUsageForItem(itemName: string, meals: StoredMeal[]): ShoppingItemUsage {
+function getUsageForItem(
+  itemName: string,
+  meals: StoredMeal[],
+): ShoppingItemUsage {
   const usedMeals = meals.filter((meal) => {
     const ingredients = getMealIngredientNames(meal);
-    return ingredients.some((ingredient) => shoppingItemMatchesMealIngredient(itemName, ingredient));
+    return ingredients.some((ingredient) =>
+      shoppingItemMatchesMealIngredient(itemName, ingredient),
+    );
   });
 
   return {
@@ -84,7 +84,7 @@ function getUsageForItem(itemName: string, meals: StoredMeal[]): ShoppingItemUsa
         ...counts,
         [mealType]: usedMeals.filter((meal) => meal.type === mealType).length,
       }),
-      {} as Record<MealType, number>
+      {} as Record<MealType, number>,
     ),
     meals: usedMeals.map((meal) => ({
       mealId: meal.mealId,
