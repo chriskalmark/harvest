@@ -10,8 +10,10 @@ import {
   MealInput,
   MealRow,
   MealFeedbackRow,
-  MealPlanMealRow
+  MealPlanMealRow,
+  MEAL_INGREDIENT_UNITS,
 } from "@/lib/types";
+import { isStoreZone } from "@/lib/shoppingListOrder";
 
 function toNumber(value: number | string): number {
   return typeof value === "number" ? value : Number(value);
@@ -34,7 +36,12 @@ function normalizeIngredients(value: unknown): MealIngredient[] {
     const candidate = ingredient as Partial<MealIngredient>;
     return (
       typeof candidate.name === "string" &&
-      typeof candidate.quantity === "string" &&
+      typeof candidate.amount === "number" &&
+      Number.isFinite(candidate.amount) &&
+      (MEAL_INGREDIENT_UNITS as readonly string[]).includes(
+        candidate.unit as string,
+      ) &&
+      isStoreZone(candidate.zone) &&
       typeof candidate.category === "string" &&
       Boolean(candidate.macros)
     );
@@ -44,7 +51,7 @@ function normalizeIngredients(value: unknown): MealIngredient[] {
 export function mapMeal(
   row: MealRow,
   likedForCurrentWeek = false,
-  slotOrder = 0
+  slotOrder = 0,
 ): StoredMeal {
   return {
     mealId: toNumber(row.id),
@@ -58,6 +65,11 @@ export function mapMeal(
       engine: row.engine,
     },
     ingredients: normalizeIngredients(row.ingredients),
+    servings: row.servings,
+    steps: Array.isArray(row.steps)
+      ? row.steps.filter((s) => typeof s === "string")
+      : [],
+    imageUrl: row.image_url,
     macros: {
       cal: row.calories,
       p: row.protein_grams,
@@ -96,6 +108,9 @@ export function toMealInput(meal: StoredMeal): MealInput {
     build: meal.build,
     ingredients: meal.ingredients,
     macros: meal.macros,
+    servings: meal.servings,
+    steps: meal.steps,
+    imageUrl: meal.imageUrl,
   };
 }
 
@@ -124,7 +139,17 @@ export function mealMatches(row: MealRow, meal: MealInput): boolean {
   );
 }
 
-export function mealInputToRow(mealInput: MealInput): Omit<MealRow, 'id' | 'created_at' | 'updated_at' | 'heart_count' | 'appearance_count' | 'last_served_at'> {
+export function mealInputToRow(
+  mealInput: MealInput,
+): Omit<
+  MealRow,
+  | "id"
+  | "created_at"
+  | "updated_at"
+  | "heart_count"
+  | "appearance_count"
+  | "last_served_at"
+> {
   return {
     name: mealInput.name,
     meal_type: mealInput.type,
@@ -138,6 +163,9 @@ export function mealInputToRow(mealInput: MealInput): Omit<MealRow, 'id' | 'crea
     carbs_grams: mealInput.macros.c,
     fat_grams: mealInput.macros.f,
     fiber_grams: mealInput.macros.fiber,
+    servings: mealInput.servings,
+    steps: mealInput.steps,
+    image_url: mealInput.imageUrl,
   };
 }
 
