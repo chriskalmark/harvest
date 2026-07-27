@@ -159,7 +159,7 @@ function MealDetail({
             <button
               type="button"
               onClick={() => setServings((s) => Math.max(1, s - 1))}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-harvest-green-deep transition active:scale-90"
+              className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90"
               aria-label="Færre portioner"
             >
               <Minus size={15} />
@@ -170,7 +170,7 @@ function MealDetail({
             <button
               type="button"
               onClick={() => setServings((s) => s + 1)}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-harvest-green-deep transition active:scale-90"
+              className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90"
               aria-label="Flere portioner"
             >
               <Plus size={15} />
@@ -186,7 +186,7 @@ function MealDetail({
                 key={idx}
                 className="flex gap-4 border-b border-[var(--border-subtle)] py-5 last:border-b-0"
               >
-                <span className="w-8 shrink-0 font-serif text-[1.55rem] font-extrabold leading-none text-harvest-green-bright">
+                <span className="w-8 shrink-0 font-serif text-[1.55rem] font-extrabold leading-none text-[var(--harvest-green-bright)]">
                   {idx + 1}
                 </span>
                 <p className="max-w-[34ch] text-[1.05rem] leading-[1.55] text-[var(--foreground)]">
