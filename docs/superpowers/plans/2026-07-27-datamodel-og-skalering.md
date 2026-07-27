@@ -662,6 +662,8 @@ git commit -m "Map servings, steps, image and structured ingredients"
 **Files:**
 - Modify: `lib/domain/shoppingListDerivation.ts`
 
+> **Advarsel — en tavs fejl venter her.** Task 5 ændrede `getItemStoreZone` fra at tage et vare*navn* til at tage en *zone*. Begge er `string`, så compileren siger ikke et ord, og testene består. Men kaldet i denne fil sender stadig `item.n` — et navn — og da intet navn er en gyldig zone, ryger **hver eneste vare i reservezonen "Kolonial"**. Indkøbslisten ser ud til at virke og er i praksis usorteret. Rettelsen i Step 3 er derfor ikke kosmetik, og Step 1's test skal bevise, at varer havner i den rigtige zone — ellers kan fejlen komme snigende tilbage.
+
 - [ ] **Step 1: Skriv den fejlende test**
 
 Tilføj til `scripts/testShoppingAggregation.ts`, over `console.log`-linjen:
@@ -699,6 +701,10 @@ import { deriveShoppingListFromMeals } from "@/lib/domain/shoppingListDerivation
     .find((item) => item.n === "kyllingelår");
 
   assert.equal(recheck?.checked, true, "afkrydsning skal overleve genberegning");
+
+  // Varen skal stå i sin egen zone, ikke i reservezonen.
+  const section = first.find((s) => s.items.some((i) => i.n === "kyllingelår"));
+  assert.equal(section?.category, "Kød & fjerkræ");
 }
 ```
 
@@ -799,6 +805,12 @@ Efter Task 2 er den fulde fejlliste kendt, og den rækker uden for `scripts/`:
 | `scripts/testShoppingListDerivation.ts` | 15 | `amount`, `unit`, `zone` |
 
 `components/MealEditorModal.tsx` skal i denne opgave kun **oversætte** — den skal ikke have felter til mængde, enhed og zone i brugerfladen. Den rigtige editor hører hjemme i udseende-planen sammen med resten af UI-arbejdet. Sæt defaults, så filen oversætter, og lad brugerfladen være.
+
+**Dertil `scripts/mealPlanValidation.ts`**, som Task 5 brækkede: den importerer `classifyShoppingItem` (linje 4) og bruger den omkring linje 215 til at advare, når klassifikatoren måtte gætte en zone. Funktionen findes ikke længere.
+
+Hensigten skal bevares, ikke fjernes. Den er stadig værdifuld — den fortæller madplanens forfatter, at systemet ikke vidste, hvor en vare hører hjemme. Den skal bare stille et andet spørgsmål nu, hvor zonen er data i stedet for et gæt: **advar, når en ingrediens mangler en gyldig zone.** Erstat kaldet med `isStoreZone` fra `@/lib/shoppingListOrder`, og lad beskeden pege på ingrediensen frem for på indkøbslistens kategori.
+
+Filen bruges af `scripts/mealPlanSkill.ts` (agent-workflowet) og `scripts/testMealPlanFixtures.ts`, så den er ikke død kode — begge skal stadig køre bagefter.
 
 - [ ] **Step 1: Skriv migrationen**
 
