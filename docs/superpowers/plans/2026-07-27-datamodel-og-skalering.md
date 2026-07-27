@@ -79,7 +79,9 @@ Måltidstypernes nøgler bliver på engelsk med vilje — se specen. Kun visning
 - [ ] **Step 3: Bekræft at det oversætter**
 
 Run: `npx tsc --noEmit`
-Expected: fejl i `lib/shoppingListOrder.ts` og `lib/domain/shoppingListDerivation.ts` om zonenavne, der ikke findes. Det er forventet — de rettes i Task 5 og 7. Der må **ikke** være fejl i `lib/constants.ts` selv.
+Expected: **ingen fejl overhovedet.**
+
+Det er ikke, fordi intet afhænger af listen, men fordi `lib/shoppingListOrder.ts` definerer sin **egen** kopi af zonerne som `TRADER_JOES_STORE_ORDER`. De to lister har aldrig været koblet sammen. Eneste forbruger af `STORE_CATEGORY_ORDER` er `components/ListSection.tsx`, og den caster med `as`, hvilket undertrykker enhver typefejl. Task 5 fjerner dobbeltdefinitionen.
 
 - [ ] **Step 4: Commit**
 
@@ -431,9 +433,15 @@ git commit -m "Add serving-aware ingredient aggregation for the shopping list"
 
 Zonen kommer nu fra dataene. `lib/shoppingListOrder.ts` er i dag ~400 linjer eksakte Trader Joe's-produktnavne og nøgleordsregler, som alle er værdiløse for danske varer. Den skal ikke oversættes — den skal skrumpe til en reserve.
 
+Filen definerer desuden sin egen kopi af zonelisten, `TRADER_JOES_STORE_ORDER`, uafhængigt af `STORE_CATEGORY_ORDER` i `lib/constants.ts`. **Denne opgave fjerner dobbeltdefinitionen** — det er en del af pointen, ikke en sidegevinst. Efter opgaven må zonelisten kun findes ét sted.
+
+`scripts/testShoppingListDerivation.ts` importerer `TRADER_JOES_STORE_ORDER` og skal rettes med. Bemærk at scriptet ikke er tilmeldt `npm run test:meal-plan-tools` — det tilmeldes i Step 5, så det faktisk bliver kørt.
+
 **Files:**
 - Modify: `lib/shoppingListOrder.ts`
 - Modify: `scripts/testShoppingListOrder.ts`
+- Modify: `scripts/testShoppingListDerivation.ts`
+- Modify: `package.json`
 
 - [ ] **Step 1: Erstat testen**
 
@@ -543,10 +551,24 @@ Bemærk signaturændringen: `getItemStoreZone` tog før et *varenavn* og gætted
 Run: `npx tsx scripts/testShoppingListOrder.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Ret det andet testscript og tilmeld det**
+
+`scripts/testShoppingListDerivation.ts` importerer `TRADER_JOES_STORE_ORDER` på linje 4 og bruger den på linje 72-73. Erstat begge steder med `STORE_CATEGORY_ORDER` fra `@/lib/constants`, og fjern `as`-castet — det er unødvendigt, når `isStoreZone` findes.
+
+Scriptet er ikke tilmeldt testpakken i dag. Tilføj det i `package.json`:
+
+```json
+"test:derivation": "tsx scripts/testShoppingListDerivation.ts",
+"test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation"
+```
+
+Run: `npm run test:meal-plan-tools`
+Expected: fire OK-linjer.
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add lib/shoppingListOrder.ts scripts/testShoppingListOrder.ts
+git add lib/shoppingListOrder.ts scripts/testShoppingListOrder.ts scripts/testShoppingListDerivation.ts package.json
 git commit -m "Reduce store zone classifier to a fallback now that zones come from data"
 ```
 
