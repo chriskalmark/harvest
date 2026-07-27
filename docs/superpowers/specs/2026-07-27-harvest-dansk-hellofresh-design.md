@@ -134,11 +134,11 @@ Tokens i `app/globals.css` udskiftes; komponenterne læser allerede fra dem, så
 
 ### Billeder
 
-nanobanana og Higgsfield er MCP-værktøjer på forfatter-siden, ikke API'er appen kan kalde. Appen genererer altså aldrig selv et billede.
+**Billederne laves med Higgsfield.** Det er et MCP-værktøj på forfatter-siden, ikke et API appen kan kalde — appen genererer altså aldrig selv et billede. Det er en bevidst beslutning fra brugeren; nanobanana skal ikke bruges.
 
 Billederne lægges i et named volume monteret på `/app/public/meals`, så nye retter kan få billeder uden at containeren bygges om. Retter uden billede skal have en reserve-tilstand, der ser bevidst ud — ikke et brækket `<img>`.
 
-Higgsfield er kun relevant, hvis der senere skal video på. Til stillbilleder er nanobanana det rigtige værktøj.
+At Higgsfield kun findes som MCP og ikke som REST-API betyder intet her: billederne genereres alligevel ved forfatter-tid sammen med ugens madplan, ikke når en bruger åbner en skærm. Samme værktøj kan senere levere video, hvis det bliver aktuelt.
 
 ---
 
@@ -164,5 +164,4 @@ Arbejdet falder i fire led, der bygger på hinanden: **datamodel og skalering** 
 
 ## Kendte blokeringer
 
-1. **nanobanana afviser med `RESOURCE_EXHAUSTED`** — månedligt spend-loft er nået. Billeder kan ikke genereres, før loftet hæves i AI Studio. Alt andet kan bygges imens; billeder er sidste led.
-2. **Nettos gå-rækkefølge er et kvalificeret gæt.** Rækkefølgen er godkendt på skrivebordet, men bør efterprøves ved første indkøbstur og rettes i `lib/constants.ts`.
+1. **Nettos gå-rækkefølge er et kvalificeret gæt.** Rækkefølgen er godkendt på skrivebordet, men bør efterprøves ved første indkøbstur og rettes i `lib/constants.ts`.

@@ -881,4 +881,4 @@ Appen oversætter, testene består, og indkøbslisten regner rigtigt — men dat
 
 1. **Indhold** — `data/`-filerne på dansk, agent-kontrakten med mængder og trin, første rigtige uge
 2. **Udseende** — den grønne retning fra `.impeccable.md`, inklusive indkøbsskærmens design
-3. **Billeder** — nanobanana, volume på `/app/public/meals`, reserve-tilstand. Blokeret af spend-loftet
+3. **Billeder** — Higgsfield, volume på `/app/public/meals`, reserve-tilstand for retter uden billede
