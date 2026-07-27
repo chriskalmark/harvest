@@ -10,7 +10,6 @@ import {
   resolveStoreZone,
   organizeShoppingListForStoreLayout,
 } from "@/lib/shoppingListOrder";
-import { DEFAULT_STORE_ZONE } from "@/lib/constants";
 import type { ListCategory, StoredMealPlan } from "@/lib/types";
 
 async function saveShoppingList(

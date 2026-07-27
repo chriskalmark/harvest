@@ -58,9 +58,9 @@ function itemNames(list: ReturnType<typeof deriveShoppingListFromMeals>) {
     .sort();
 }
 
-assert.deepEqual(itemNames(withOrphans), ["ris", "spinat", "æg"]);
+assert.deepEqual(itemNames(withOrphans), ["Ris", "Spinat", "Æg"]);
 
-assert.deepEqual(itemNames(pruned), ["ris", "æg"]);
+assert.deepEqual(itemNames(pruned), ["Ris", "Æg"]);
 
 const householdGoods: HouseholdGoodsItem[] = [
   {
@@ -102,7 +102,7 @@ assert.ok(
 // Joe's shape (which had no numeric amount, so this couldn't be asserted).
 const eggItem = withHousehold
   .flatMap((category) => category.items)
-  .find((item) => item.n === "æg");
+  .find((item) => item.n === "Æg");
 assert.equal(eggItem?.q, "8 stk");
 
 const checkedPrevious = deriveShoppingListFromMeals(

@@ -34,41 +34,16 @@ export function deriveShoppingListFromMeals(
     const previous = previousByName.get(aggregated.name)?.item;
 
     derivedByName.set(aggregated.name, {
-      ...buildShoppingItem(aggregated.name, previous),
+      ...buildShoppingItem(aggregated.displayName, previous),
       q: formatQuantity(aggregated.amount, aggregated.unit),
       zone: aggregated.zone,
     });
   }
 
-  for (const junkCategory of junkList) {
-    for (const junkItem of junkCategory.items) {
-      const itemName = junkItem.n.trim();
-      const normalizedName = normalizeShoppingName(itemName);
-      if (!normalizedName || derivedByName.has(normalizedName)) {
-        continue;
-      }
-
-      const previous = previousByName.get(normalizedName)?.item;
-      derivedByName.set(
-        normalizedName,
-        buildShoppingItem(itemName, previous, {
-          q: junkItem.q,
-          shoppingSource: "junk",
-        }),
-      );
-    }
-  }
+  mergeJunkItems(derivedByName, junkList, previousByName);
 
   if (!options?.pruneOrphans) {
-    for (const [normalizedName, preserved] of previousByName) {
-      if (
-        !derivedByName.has(normalizedName) &&
-        preserved.item.shoppingSource !== "junk" &&
-        preserved.item.shoppingSource !== "household"
-      ) {
-        derivedByName.set(normalizedName, preserved.item);
-      }
-    }
+    preserveOrphanItems(derivedByName, previousByName);
   }
 
   const storeLayoutList = organizeShoppingListForStoreLayout(
@@ -134,6 +109,46 @@ function buildShoppingItem(
   };
 }
 
+function mergeJunkItems(
+  derivedByName: Map<string, ListItem>,
+  junkList: ListCategory[],
+  previousByName: Map<string, PreservedShoppingItem>,
+): void {
+  for (const junkCategory of junkList) {
+    for (const junkItem of junkCategory.items) {
+      const itemName = junkItem.n.trim();
+      const normalizedName = normalizeShoppingName(itemName);
+      if (!normalizedName || derivedByName.has(normalizedName)) {
+        continue;
+      }
+
+      const previous = previousByName.get(normalizedName)?.item;
+      derivedByName.set(
+        normalizedName,
+        buildShoppingItem(itemName, previous, {
+          q: junkItem.q,
+          shoppingSource: "junk",
+        }),
+      );
+    }
+  }
+}
+
+function preserveOrphanItems(
+  derivedByName: Map<string, ListItem>,
+  previousByName: Map<string, PreservedShoppingItem>,
+): void {
+  for (const [normalizedName, preserved] of previousByName) {
+    if (
+      !derivedByName.has(normalizedName) &&
+      preserved.item.shoppingSource !== "junk" &&
+      preserved.item.shoppingSource !== "household"
+    ) {
+      derivedByName.set(normalizedName, preserved.item);
+    }
+  }
+}
+
 function getPreviousItemsByName(shoppingList: ListCategory[]) {
   const itemsByName = new Map<string, PreservedShoppingItem>();
 
@@ -148,7 +163,12 @@ function getPreviousItemsByName(shoppingList: ListCategory[]) {
         continue;
       }
 
-      itemsByName.set(normalizedName, { item });
+      // The zone lived only in which category the item was filed under.
+      // Stamp it onto the item so a later recalculation doesn't relocate
+      // it to the fallback zone.
+      itemsByName.set(normalizedName, {
+        item: item.zone ? item : { ...item, zone: category.category },
+      });
     }
   }
 

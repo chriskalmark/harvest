@@ -87,12 +87,14 @@ function ing(
   assert.equal(result.length, 2);
   assert.deepEqual(result[0], {
     name: "hvidløg",
+    displayName: "hvidløg",
     amount: 10,
     unit: "g",
     zone: "Kolonial",
   });
   assert.deepEqual(result[1], {
     name: "hvidløg",
+    displayName: "hvidløg",
     amount: 2,
     unit: "stk",
     zone: "Kolonial",
@@ -198,6 +200,33 @@ function ing(
     true,
     "afkrydsning skal overleve genberegning",
   );
+}
+
+// Brugeren skal læse navnet som forfatteren skrev det, ikke nøglen.
+{
+  const result = aggregateShoppingQuantities([
+    {
+      servings: 2,
+      ingredients: [ing("Kyllingelår", 150, "g", "Kød & fjerkræ")],
+    },
+    {
+      servings: 2,
+      ingredients: [ing("kyllingelår", 50, "g", "Kød & fjerkræ")],
+    },
+  ]);
+  assert.equal(result.length, 1, "de skal stadig lægges sammen");
+  assert.equal(result[0].name, "kyllingelår");
+  assert.equal(result[0].displayName, "Kyllingelår");
+}
+
+// En håndtilføjet vare skal blive i sin zone, ikke hoppe i reservezonen.
+{
+  const previous = [
+    { category: "Non-food", items: [{ n: "Stearinlys", checked: false }] },
+  ];
+  const result = deriveShoppingListFromMeals([], previous);
+  const section = result.find((s) => s.items.some((i) => i.n === "Stearinlys"));
+  assert.equal(section?.category, "Non-food");
 }
 
 console.log("shopping aggregation: OK");

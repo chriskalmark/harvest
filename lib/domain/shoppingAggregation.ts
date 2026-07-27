@@ -8,7 +8,10 @@ export interface AggregatableMeal {
 }
 
 export interface AggregatedIngredient {
+  /** Normaliseret nøgle — bruges til at lægge ens varer sammen. */
   name: string;
+  /** Navnet som forfatteren skrev det. Det er dette, brugeren læser. */
+  displayName: string;
   amount: number;
   unit: MealIngredientUnit;
   zone: StoreZone;
@@ -53,6 +56,8 @@ export function aggregateShoppingQuantities(
 
       byKey.set(key, {
         name,
+        // Første forekomst vinder — samme princip som zonen nedenfor.
+        displayName: ingredient.name.trim(),
         amount: scaled,
         unit: ingredient.unit,
         // Ved modstridende zoner for samme vare vinder den først sete.
