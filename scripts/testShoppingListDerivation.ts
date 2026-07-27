@@ -1,13 +1,9 @@
 import assert from "node:assert/strict";
-import { HOUSEHOLD_GOODS_SECTION } from "@/lib/constants";
+import { HOUSEHOLD_GOODS_SECTION, STORE_CATEGORY_ORDER } from "@/lib/constants";
 import { deriveShoppingListFromMeals } from "@/lib/domain/shoppingListDerivation";
-import { TRADER_JOES_STORE_ORDER } from "@/lib/shoppingListOrder";
 import type { HouseholdGoodsItem, MealInput } from "@/lib/types";
 
-function meal(
-  name: string,
-  ingredients: string[]
-): MealInput {
+function meal(name: string, ingredients: string[]): MealInput {
   return {
     type: "Dinner",
     name,
@@ -32,7 +28,9 @@ const pruned = deriveShoppingListFromMeals([mealB], previousList, [], [], {
 });
 
 function itemNames(list: ReturnType<typeof deriveShoppingListFromMeals>) {
-  return list.flatMap((category) => category.items.map((item) => item.n)).sort();
+  return list
+    .flatMap((category) => category.items.map((item) => item.n))
+    .sort();
 }
 
 assert.deepEqual(itemNames(withOrphans), [
@@ -50,13 +48,18 @@ const householdGoods: HouseholdGoodsItem[] = [
   },
 ];
 
-const withHousehold = deriveShoppingListFromMeals([mealB], [], [], householdGoods);
+const withHousehold = deriveShoppingListFromMeals(
+  [mealB],
+  [],
+  [],
+  householdGoods,
+);
 const householdSection = withHousehold.at(-1);
 
 assert.equal(householdSection?.category, HOUSEHOLD_GOODS_SECTION);
 assert.deepEqual(
   householdSection?.items.map((item) => item.n),
-  ["Trader Joe's Liquid Dish Soap"]
+  ["Trader Joe's Liquid Dish Soap"],
 );
 assert.equal(householdSection?.items[0]?.shoppingSource, "household");
 
@@ -68,14 +71,15 @@ assert.ok(!storeZoneNames.includes("Trader Joe's Liquid Dish Soap"));
 assert.ok(
   withHousehold
     .slice(0, -1)
-    .every((category) =>
-      TRADER_JOES_STORE_ORDER.includes(
-        category.category as (typeof TRADER_JOES_STORE_ORDER)[number]
-      )
-    )
+    .every((category) => STORE_CATEGORY_ORDER.includes(category.category)),
 );
 
-const checkedPrevious = deriveShoppingListFromMeals([mealB], withHousehold, [], householdGoods);
+const checkedPrevious = deriveShoppingListFromMeals(
+  [mealB],
+  withHousehold,
+  [],
+  householdGoods,
+);
 const checkedHouseholdSection = checkedPrevious.at(-1);
 
 assert.equal(checkedHouseholdSection?.items[0]?.checked, undefined);
@@ -95,7 +99,7 @@ const checkedList = deriveShoppingListFromMeals(
     },
   ],
   [],
-  householdGoods
+  householdGoods,
 );
 
 assert.equal(checkedList.at(-1)?.items[0]?.checked, true);
