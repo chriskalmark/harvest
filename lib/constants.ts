@@ -56,36 +56,36 @@ export const HOUSEHOLD_GOODS_SECTION = "Household Goods" as const;
 
 export const HOUSEHOLD_GOODS_CATALOG = [
   {
-    category: "Dishwasher Pods",
-    n: "Trader Joe's Automatic Dishwasher Detergent Packs",
+    category: "Opvasketabs",
+    n: "Neutral Opvasketabs",
   },
   {
-    category: "Dish Soap",
-    n: "Trader Joe's Liquid Dish Soap",
+    category: "Opvaskemiddel",
+    n: "Neutral Opvaskemiddel",
   },
   {
-    category: "Laundry Detergent",
-    n: "Trader Joe's Liquid Laundry Detergent",
+    category: "Vaskemiddel",
+    n: "Neutral Vaskemiddel",
   },
   {
-    category: "3-in-1 Shampoo",
-    n: 'Trader Joe\'s Formula No. 3 "All For One, One For All" Shampoo, Conditioner & Body Wash',
+    category: "2-i-1 Shampoo",
+    n: "Neutral 2-i-1 Shampoo & Balsam",
   },
   {
-    category: "Face Sunscreen",
-    n: "Trader Joe's Daily Facial Sunscreen SPF 40",
+    category: "Ansigtssolcreme",
+    n: "Nivea Sun Ansigt SPF 50",
   },
   {
-    category: "Tissues",
-    n: "Trader Joe's Unscented White Tissue Paper",
+    category: "Lommetørklæder",
+    n: "Nettorama Papirlommetørklæder",
   },
   {
-    category: "Toilet Paper",
-    n: "Trader Joe's Super Soft Bath Tissue",
+    category: "Toiletpapir",
+    n: "Nettorama Toiletpapir",
   },
   {
-    category: "Paper Towels",
-    n: "Trader Joe's Slim Size Paper Towels",
+    category: "Køkkenrulle",
+    n: "Nettorama Køkkenrulle",
   },
 ] as const;
 

@@ -3,9 +3,7 @@ import path from "node:path";
 import { validateMealPlanFile } from "./mealPlanValidation";
 
 // Re-add published meal-plan fixtures here once they match EXPECTED_MEAL_COUNTS in lib/constants.ts.
-const fixturePaths: string[] = [
-  // "data/mealplans/mealplan-week-YYYY-MM-DD.md",
-];
+const fixturePaths: string[] = ["data/mealplans/mealplan-week-2026-07-27.md"];
 
 for (const fixturePath of fixturePaths) {
   const result = validateMealPlanFile(path.join(process.cwd(), fixturePath));
@@ -17,8 +15,10 @@ for (const fixturePath of fixturePaths) {
       `${fixturePath} should pass meal-plan validation.`,
       ...result.errors.map((error) => `ERROR: ${error}`),
       ...result.warnings.map((warning) => `WARN: ${warning}`),
-    ].join("\n")
+    ].join("\n"),
   );
 }
 
-console.log(`Meal plan fixture tests passed (${fixturePaths.length} fixtures).`);
+console.log(
+  `Meal plan fixture tests passed (${fixturePaths.length} fixtures).`,
+);

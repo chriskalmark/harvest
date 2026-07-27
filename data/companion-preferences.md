@@ -1,35 +1,32 @@
-# Companion Junk List — AI Planning Instructions
+# Ledsagerens slik/snack-liste — AI-planlægningsinstrukser
 
-> Referenced by: `data/data_context.md`, `data/MEAL_PLAN_PRODUCTION_WORKFLOW.md`
+> Refereret fra: `data/data_context.md`, `data/MEAL_PLAN_PRODUCTION_WORKFLOW.md`
 
-Demo preferences for a secondary household shopper. The junk list is published alongside each week's meal plan: beer/wine, chips, a weekly sweet, quick frozen meals, a weekend frozen treat, biweekly coffee, weekly seasonal creamer, and flavored unsweetened sparkling water — with variety and a flyer-first mindset.
-
----
-
-## General Approach
-
-- **[Fearless Flyer](https://www.traderjoes.com/home/ff)** — always check first.
-- Prioritize what's new and interesting over repeating the same standbys.
-- Fill gaps with staples from the pools below when the flyer doesn't cover a category.
-- Vary week to week. Avoid repeating the exact same product two weeks in a row when practical.
+Præferencer for husstandens anden voksne, der handler ind sammen med den ugentlige madplan. Slik/snack-listen udgives sammen med hver uges madplan: øl/vin, chips, en ugentlig sødme, hurtige frostretter, en weekend-frossen godbid, kaffe, mælk/fløde til kaffen og danskvand — med variation frem for at købe det samme hver uge.
 
 ---
 
-## Dislikes (avoid across all categories)
+## Generel tilgang
 
-- ❌ Licorice/anise/fennel flavor profile
-- ❌ Overly sweet dessert wines (ports, late-harvest styles)
-- ❌ Artificial-tasting diet/sugar-free sweets and snacks
-- ❌ Rosé wine
-- ❌ Mandarin Orange Chicken
-- ❌ Cauliflower Crust Pizza
-- ❌ Cowboy Caviar
+- Prioriter det, der er nyt og interessant, frem for at gentage de samme faste varer.
+- Fyld huller med standardvarer fra puljerne nedenfor, når intet særligt er på tilbud.
+- Varier fra uge til uge. Undgå at gentage nøjagtig samme produkt to uger i træk, når det er praktisk muligt.
 
 ---
 
-## Categories & Rules
+## Ting der undgås (på tværs af alle kategorier)
 
-Use these exact category strings, in this order:
+- ❌ Lakrids/anis/fennikel-smagsprofil
+- ❌ Meget søde dessertvine (portvin, sildeportvin-stile)
+- ❌ Kunstigt smagende diæt-/sukkerfrit slik og snacks
+- ❌ Rosévin
+- ❌ Alt for eksotisk/importeret slik, som ikke findes i en almindelig dansk Netto
+
+---
+
+## Kategorier & regler
+
+Brug disse eksakte kategori-strenge, i denne rækkefølge — de matcher `JUNK_CATEGORY_ORDER` i `lib/constants.ts` og skal ikke oversættes, da de sammenlignes ordret af valideringsscriptet:
 
 1. Coffee/Creamer
 2. Beer/Wine
@@ -39,64 +36,64 @@ Use these exact category strings, in this order:
 6. Frozen Treats
 7. Beverages/Drinks
 
+Indholdet under hver kategori skal derimod være almindelige danske Netto-varer.
+
 ---
 
 ### Coffee/Creamer
 
-- **Coffee:** Trader Joe's whole bean, **light roast**. Pantry item — **every other week** only.
-- **Creamer:** Always seasonal, always weekly. Favor sweet/dessert-y seasonal flavors. Never repeat the same creamer two weeks running if you can avoid it.
+- **Kaffe:** almindelig formalet kaffe fra Netto-sortimentet (fx Gevalia, Merrild). Skal ikke skiftes hver uge — hver anden uge er fint.
+- **Mælk/fløde til kaffen:** kaffefløde eller sødmælk, ugentligt. Danmark har ikke en tradition for smagssat "seasonal creamer" på samme måde som USA — hold det til almindelig kaffefløde, evt. en sæsonvariant op mod jul.
 
 ---
 
 ### Beer/Wine
 
-**Beer:** No wheat beers or hefeweizens. Lean toward Hazy IPAs and IPAs. Prefer seasonal picks; otherwise Boatswain IPA / Double IPA / Amber Ale, Stockyard Oatmeal Stout, or a solid lager 6-pack.
+**Øl:** ingen hvedeøl. Lean mod pilsner og IPA. Foretræk sæsonøl, ellers en almindelig sixpak pilsner eller en dansk IPA.
 
-**Wine:** No rosé or dessert wines. Weight toward reds, with white and sparkling for variety. Always 1 bottle.
+**Vin:** ingen rosé eller dessertvin. Vægt mod rødvin, med hvidvin og mousserende for variation. Altid 1 flaske.
 
 ---
 
 ### Chips
 
-Rotate freely (1 bag). Example pool:
+Roter frit (1 pose). Eksempelpulje:
 
-- Quinoa & Black Bean Infused Tortilla Chips
-- Restaurant-Style Tortilla Chips
-- Peanut Butter Filled Pretzel Nuggets
-- Organic Elote Corn Chip Dippers
-- Sea Salted Saddle Potato Crisps
-- Ridge Cut Kettle Cooked Potato Chips
-- Ode to the Classic Potato Chip
+- Kims Sourcream chips
+- Ta'Ta's saltede
+- Estrella Jalapeño chips
+- Kims Party Mix
+- Kartoffelchips med havsalt
 
-Flyer wildcards welcome.
+Tilbudsvarer er velkomne som joker.
 
 ---
 
 ### Sweets
 
-Pick **1 item per week**. Mix chocolate and non-chocolate. Avoid licorice/anise/fennel and artificial diet sweets. Check the flyer before defaulting to the standing pool (PB cups, Joe-Joe's, Cookie Butter, Speculoos, Pound Plus, dried mango, mochi, etc.).
+Vælg **1 vare pr. uge**. Bland chokolade og ikke-chokolade. Undgå lakrids/anis/fennikel og kunstigt diætslik. Tjek ugens tilbudsavis før du falder tilbage på standardpuljen (Anthon Berg marcipanbrød, Toms guldbarre, Ga-Jol uden lakrids, flødeboller, tørret mango).
 
 ---
 
 ### Frozen Food
 
-Pick **1–2** quick heat-and-eat Mexican or Indian frozen meals. Lean Mexican more often than not; still mix in Indian. No Mandarin Orange Chicken or Cauliflower Crust Pizza.
+Vælg **1–2** hurtige varme-og-spis frostretter — fx en indisk karryret eller en italiensk pastaret. Bland gerne uger med italiensk og indisk inspiration.
 
 ---
 
 ### Frozen Treats
 
-Pick 1 weekend item. Default to **savory** (bulgogi, pulled pork, spinach artichoke dip, mac & cheese with pepperoni); dessert is an occasional swap.
+Vælg 1 weekend-vare. Standard: is (Häagen-Dazs eller lignende); en salt/mættende frost-godbid (fx frosne tapasretter) er et fint alternativ engang imellem.
 
 ---
 
 ### Beverages/Drinks
 
-Default: flavored, unsweetened sparkling water in cans. Avoid diet/artificially sweetened sodas. Rotate flavors week to week.
+Standard: smagssat, usødet danskvand på dåse eller flaske. Undgå kunstigt sødede light-sodavand. Roter smag fra uge til uge.
 
 ---
 
-## Output Format
+## Output-format
 
 ```json
 {
@@ -112,4 +109,4 @@ Default: flavored, unsweetened sparkling water in cans. Avoid diet/artificially 
 }
 ```
 
-Each item: `{ "n": "full TJ's product name", "q": "quantity" }`
+Hver vare: `{ "n": "fuldt Netto-produktnavn", "q": "mængde" }`

@@ -1,166 +1,154 @@
-# Primary Diner — Harvest Meal Preferences
+# Husstandens madpræferencer — Harvest
 
-> Referenced by: `data/data_context.md`, `data/MEAL_PLAN_PRODUCTION_WORKFLOW.md`
+> Refereret fra: `data/data_context.md`, `data/MEAL_PLAN_PRODUCTION_WORKFLOW.md`, `data/meal-plan-skill.md`
 
-Demo preferences for the person who eats and cooks the weekly meals. The companion junk list is managed separately in `data/companion-preferences.md`.
-
----
-
-## Week Shape
-
-4 meals per week: **1 breakfast, 1 lunch, 2 dinners.**
-No day scheduling. No daily calorie targets. Meals are a flat list.
+Præferencer for de to voksne, ugens retter laves til. Ledsagerens slik/snack-liste styres separat i `data/companion-preferences.md`.
 
 ---
 
-## Calorie Targets
+## Ugeform
 
-**All meals: 450–550 kcal.**
-Apply loosely — flavor and satiety matter more than hitting exact numbers.
+En uge er en **flad liste uden dage**: **1 morgenmad, 1 frokost, 4 aftensmader.** Ingen dage, ingen tidsslots — det er ét indkøb, ikke en kalender.
 
----
-
-## Cooking Parameters
-
-- **Time ceiling: 20–30 minutes**, using up to two pans (breakfasts and dinners).
-- Techniques in scope: sear, sauté, boil, roast (if it fits the time window), assemble.
-- **Lunch is the exception:** assemble only — no cooking (see Lunch Style).
-- No project meals. Consistent weeknight effort across the week.
-- Frozen grains and vegetables are freely usable. Fully frozen entrées: **≤1–2 per week maximum.**
+**Portioner:** hver ret laves som standard til **2 portioner**. Indkøbslisten skalerer automatisk efter portionstal, så hvis en ret ændres til 3 eller 4 portioner, ganges mængderne op — portionstallet er derfor det, der reelt styrer, hvor meget der skal købes.
 
 ---
 
-## Protein Roster
+## Kalorier
 
-Rotate across these proteins. Aim for **≥3 different protein types per week.**
+**Alle måltider: 450–550 kcal.**
+Anvendes løst — smag og mæthed vejer tungere end at ramme tallet på gram.
 
-| Protein | Notes |
+---
+
+## Tilberedning
+
+- **Tidsramme: 20–30 minutter**, op til to gryder/pander ad gangen (morgenmad og aftensmader).
+- Teknikker i spil: stege, sautere, koge, ovnbage (hvis det passer i tidsrammen), samle.
+- **Frokost er undtagelsen:** kun samling — ingen tilberedning (se Frokoststil).
+- Ingen "projektretter". Konsistent hverdagsindsats hele ugen.
+- Frosne grøntsager og frossen fisk må bruges frit. Fuldt frosne færdigretter: **højst 1 om ugen.**
+
+---
+
+## Proteinrotation
+
+Roter mellem disse proteiner. Sigt efter **mindst 3 forskellige proteintyper pr. uge** (mejeriprotein som skyr og hytteost tæller ikke med i de 3, men er fint som supplement).
+
+| Protein | Noter |
 |---|---|
-| Chicken thighs | Preferred over breast for flavor and forgiveness |
-| Chicken breast | Fine, but use thighs when either would work |
-| Ground beef or turkey | Good for bowls, stir-fry bases, tacos |
-| Shrimp | Keep in rotation as a regular option |
-| Fish (salmon, white fish) | Salmon or white fish (cod, tilapia, halibut); rotate types |
-| Eggs | Breakfast and lunch staple |
-| Tofu / tempeh | For vegetarian meals; marinate or crisp properly |
-| Meat substitutes | Beyond, Quorn, etc. — acceptable for vegetarian variety |
-| Legumes | Lentils, chickpeas, black beans — first-class protein, not a side |
+| Kyllingelår, udbenet | Foretrækkes frem for bryst — mere smag og mere tilgivende i ovnen |
+| Kyllingebryst | Fint, men brug lår, når begge dele ville fungere |
+| Hakket oksekød eller kalkun | Godt til gryderetter, tacos, wok |
+| Torsk / hvid fisk | Torsk, kulmule, rødspætte — roter fisketype |
+| Laks | Fersk eller frossen filet |
+| Rejer | Holdes i rotation som fast mulighed |
+| Æg | Fast bestanddel til morgenmad og frokost |
+| Kikærter, linser, sorte bønner | Førsteklasses protein, ikke en tilbehørskomponent |
+| Tofu | Til vegetariske retter — marineres eller steges sprødt |
+| Hytteost, skyr | Godt supplerende proteinløft, især til morgenmad og frokost |
 
-**Hard no:** Pineapple (in any meal, any context).
-
----
-
-## Vegetarian Meals
-
-Vegetarian meals are welcome when they fit the week. When included, make them satisfying and protein-complete. Legumes, tofu, tempeh, eggs, and meat substitutes all qualify.
+**Hårdt nej:** ananas (i enhver ret, enhver sammenhæng).
 
 ---
 
-## Cuisine Profile
+## Vegetariske retter
 
-Bold, globally inspired flavors. Rotate across these cuisines — don't repeat the same profile more than once per week.
-
-- Thai / Southeast Asian
-- Indian
-- Mediterranean / Middle Eastern
-- Mexican / Tex-Mex
-- Chinese / Taiwanese
-- American comfort with a twist
-
-**Flavor targets:** umami, heat, fresh herbs. Avoid bland proteins and boring builds.
+Vegetariske retter er velkomne, når de passer ind i ugen. Når de bruges, skal de være mættende og proteinfyldte — kikærter, linser, bønner, tofu og æg tæller alle som fuldgyldigt protein.
 
 ---
 
-## Breakfast Style
+## Smagsprofil
 
-Mix styles each week — **don't serve two oat-heavy or two sweet breakfasts in the same week.**
+Direkte, hverdagsagtig dansk madlavning med afstikkere til det, husstanden allerede spiser ude: dansk husmandskost, italiensk, mexicansk/Tex-Mex, mellemøstlig/middelhavsmad, asiatisk wok. Undgå at gentage samme smagsprofil to gange i samme uge.
 
-- **Savory:** eggs, grain bowls, protein-forward builds
-- **Sweet but substantial:** oats done interestingly, yogurt builds with real protein and fiber
-
----
-
-## Lunch Style
-
-Lunch should be **assemble only — no cooking.**
-
-- No stovetop, oven, sautéing, boiling, roasting, or microwaving for the lunch build.
-- OK: open, drain, rinse, chop, and combine ready-to-eat components.
-- Still hit 450–550 kcal with adequate protein and fiber.
+**Smagsmål:** umami, syrlighed fra citrus eller eddike, friske krydderurter. Undgå kedelige, uskrydrede proteiner.
 
 ---
 
-## Fiber
+## Morgenmadsstil
 
-Fiber is a **first-class nutrient** — shown on every meal card. Preferred sources: legumes, whole grains, vegetables, seeds.
+Varier stil fra uge til uge — undgå at to uger i træk begge er søde eller begge er havreprægede.
+
+- **Salt:** æg, kornskåle, proteinfyldte opbygninger
+- **Sødt, men mættende:** havregryn lavet spændende, skyr- eller yoghurt-opbygninger med reel protein og fibre
 
 ---
 
-## Macros
+## Frokoststil
+
+Frokost skal være **kun samling — ingen tilberedning.**
+
+- Ingen komfur, ovn, sautering, kogning eller mikrobølge til frokostretten.
+- OK: åbne, dryppe af, skylle, skære og samle spiseklare komponenter — inklusive forkogte æg og færdigmarinerede varer.
+- Skal stadig ramme 450–550 kcal med ordentligt protein og fibre.
+
+---
+
+## Fibre
+
+Fibre er et **førsteklasses næringsstof** — vises på hvert måltidskort. Foretrukne kilder: bælgfrugter, fuldkorn, grøntsager, bær og frugt.
+
+---
+
+## Makroer
 
 ```
-cal: 450–550
-protein: aim high
-fiber: shown on every card; higher is better
-carbs/fat: no specific targets
+kcal: 450–550
+protein: sigt højt
+fibre: vises på hvert kort, jo højere jo bedre
+kulhydrat/fedt: ingen specifikke mål
 ```
 
 ---
 
-## Acid Reflux Rules
+## Sur mave / halsbrand — hensyn
 
-These meals are planned with acid-reflux sensitivity in mind.
+Retterne planlægges med hensyn til følsomhed for sur mave.
 
-**Rules:**
-1. **No stacking triggers within a single meal.** If a meal contains one trigger (e.g., tomato sauce), it should not also include another (e.g., fried component, heavy spice, citrus-based sauce, chocolate).
-2. **Maximum one potentially triggering meal per week.** Flag it clearly when it appears.
-3. Common triggers: tomato-heavy sauces, very spicy preparations, fried foods, citrus-based dressings or marinades, heavy garlic/onion loads, peppermint, chocolate.
+**Regler:**
+1. **Ingen ophobning af udløsere i samme ret.** Hvis en ret indeholder én udløser (fx tomatsauce), må den ikke også indeholde en anden (fx stegt/friturestegt element, kraftig krydring, citronbaseret dressing, chokolade).
+2. **Højst én potentielt udløsende ret pr. uge.** Marker den tydeligt, når den forekommer.
+3. Almindelige udløsere: tomatbaserede saucer, meget stærk krydring, friturestegt mad, citronbaserede dressinger/marinader, kraftige mængder hvidløg/løg, pebermynte, chokolade.
 
-**Flag format:** *"⚠️ Contains tomato — acid-reflux flag. No other triggers in this meal."*
+**Markeringsformat:** *"⚠️ Indeholder tomat — halsbrandsmarkering. Ingen andre udløsere i denne ret."*
 
 ---
 
-## Meal Structure (Four Pillars)
+## Måltidsstruktur (de fire søjler)
 
-| Pillar | Description |
+| Søjle | Beskrivelse |
 |---|---|
-| `pro` | Protein + prep note |
-| `base` | Grain, starch, or bread |
-| `veg` | Vegetables |
-| `engine` | TJ's flavor anchor — always the **full Trader Joe's brand name** |
+| `pro` | Protein + tilberedningsnote |
+| `base` | Korn, kartoffel eller brød |
+| `veg` | Grøntsager |
+| `engine` | Smagsanker — sauce, krydderiblanding eller lignende, der giver retten dens karakter |
 
-**No duplicate engine or base within one week.**
-
----
-
-## Trader Joe's Engines
-
-Vary engines every meal. Check [traderjoes.com](https://www.traderjoes.com) and the [Fearless Flyer](https://www.traderjoes.com/home/ff) for new options. Prefer milder engines when you already need a flagged meal elsewhere in the week.
+**Ingen gentaget `base`- eller `engine`-tekst inden for samme uge.** Reglen gælder den viste `build`-tekst — ikke den underliggende ingrediensliste. De samme rå ingredienser (fx kartofler) må sagtens gå igen i flere retter i ugens indkøbsliste, så længe `build`-teksten beskriver forskellige tilberedninger (fx "Kartofler" som base i én ret og "Kartoffelmos" som base i en anden).
 
 ---
 
-## Week Validation Rules
+## Ugevalideringsregler
 
-- [ ] 1 breakfast, 1 lunch, 2 dinners
-- [ ] ≥3 different protein types across the week
-- [ ] Different TJ's engine on every meal
-- [ ] No duplicate base across the week
-- [ ] All meals 450–550 kcal
-- [ ] Fiber shown on every meal card
-- [ ] No trigger stacking within any single meal
-- [ ] ≤1 flagged acid-reflux-risk meal per week
-- [ ] ≤1–2 fully frozen entrées
-- [ ] Breakfasts vary in style
-- [ ] Lunch is assemble-only
-- [ ] Cuisine profile varies within the week
-- [ ] No pineapple
+- [ ] 1 morgenmad, 1 frokost, 4 aftensmader
+- [ ] Mindst 3 forskellige proteintyper på tværs af ugen
+- [ ] Forskellig `engine`-tekst i hver ret
+- [ ] Ingen gentaget `base`-tekst på tværs af ugen
+- [ ] Alle retter 450–550 kcal
+- [ ] Fibre vist på hvert måltidskort
+- [ ] Ingen ophobning af udløsere i én ret
+- [ ] Højst 1 flagget halsbrand-risikoret pr. uge
+- [ ] Højst 1 fuldt frossen færdigret
+- [ ] Frokost er kun samling
+- [ ] Smagsprofil varierer i løbet af ugen
+- [ ] Ingen ananas
 
 ---
 
-## Avoid
+## Undgå
 
-- Boring salads and bland proteins
-- Repetitive weeks (same base, cuisine, or engines)
-- Product-catalogue meals that feel like a TJ's ad
-- Pineapple, cherries, sugar snap peas, snow peas, frozen shredded hash browns
-- Trigger stacking
+- Kedelige salater og smagløse proteiner
+- Gentagne uger (samme base, smagsprofil eller engine)
+- Retter, der føles som en reklame for et bestemt produkt frem for et rigtigt måltid
+- Ananas
+- Ophobning af halsbrand-udløsere
