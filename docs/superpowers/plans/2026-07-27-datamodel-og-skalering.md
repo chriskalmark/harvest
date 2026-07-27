@@ -661,6 +661,12 @@ git commit -m "Map servings, steps, image and structured ingredients"
 
 **Files:**
 - Modify: `lib/domain/shoppingListDerivation.ts`
+- Modify: `app/api/mealplan/shopping/route.ts`
+- Modify: `lib/shoppingListOrder.ts` (omdøbning)
+
+**Der er to kaldesteder, ikke ét.** `app/api/mealplan/shopping/route.ts:73` kalder også `getItemStoreZone` med et varenavn. Begge skal rettes, ellers er halvdelen af appen stadig usorteret.
+
+**Omdøb funktionen som en del af rettelsen.** `getItemStoreZone` lyder som "find zonen for denne vare" og inviterer dermed til netop den fejl, der lige er opstået. Den validerer nu en zone og falder tilbage. Omdøb den til `resolveStoreZone` i `lib/shoppingListOrder.ts` og ret begge kaldesteder samt `lib/domain/mealMappers.ts`, hvis den bruges der. Navnet er billigere end en type-branding og fjerner det meste af faldgruben.
 
 > **Advarsel — en tavs fejl venter her.** Task 5 ændrede `getItemStoreZone` fra at tage et vare*navn* til at tage en *zone*. Begge er `string`, så compileren siger ikke et ord, og testene består. Men kaldet i denne fil sender stadig `item.n` — et navn — og da intet navn er en gyldig zone, ryger **hver eneste vare i reservezonen "Kolonial"**. Indkøbslisten ser ud til at virke og er i praksis usorteret. Rettelsen i Step 3 er derfor ikke kosmetik, og Step 1's test skal bevise, at varer havner i den rigtige zone — ellers kan fejlen komme snigende tilbage.
 
