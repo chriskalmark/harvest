@@ -25,12 +25,19 @@ export function getShoppingUsageKey(category: string, itemName: string) {
   return `${category}::${normalizeShoppingName(itemName)}`;
 }
 
+/**
+ * Nøglen som varer lægges sammen på i indkøbslisten.
+ *
+ * Der stemmes ikke: dansk flertal (-er, -e, -r) kan ikke afkortes uden at
+ * ødelægge ord som "smør" og "peber". I stedet skal madplanens forfatter bruge
+ * konsekvent ental — det står i data/meal-plan-skill.md.
+ */
 export function normalizeShoppingName(name: string) {
   return name
     .toLowerCase()
     .normalize("NFC")
     .replace(/\([^)]*\)/g, " ")
-    .replace(/[^a-z0-9æøå]+/g, " ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim()
     .replace(/\s+/g, " ");
 }

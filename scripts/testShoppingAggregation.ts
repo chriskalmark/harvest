@@ -18,4 +18,13 @@ assert.notEqual(
   normalizeShoppingName("hvidløg"),
 );
 
+// Accenttegn overlever — müsli og crème fraiche er almindelige danske varer.
+assert.equal(normalizeShoppingName("Müsli"), "müsli");
+assert.equal(normalizeShoppingName("Filé"), "filé");
+assert.equal(normalizeShoppingName("Crème fraiche"), "crème fraiche");
+
+// Tegnsætning og symboler fjernes stadig.
+assert.equal(normalizeShoppingName("()"), "");
+assert.equal(normalizeShoppingName("Skyr 0,1 %"), "skyr 0 1");
+
 console.log("shopping aggregation: OK");
