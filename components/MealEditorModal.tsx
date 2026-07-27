@@ -8,7 +8,7 @@
 import { FormEvent, ReactNode, useState } from "react";
 import { X, Loader2, Plus, Trash2 } from "lucide-react";
 import { MealIngredient, MealType, StoredMeal } from "@/lib/types";
-import { MEAL_TYPES } from "@/lib/constants";
+import { DEFAULT_STORE_ZONE, MEAL_TYPES } from "@/lib/constants";
 import { cardClass, inputClass, sectionLabelMutedClass } from "@/lib/uiClasses";
 
 interface MealEditorModalProps {
@@ -50,10 +50,14 @@ function normalizeBuildItems(value: string[] | string): string[] {
   return Array.isArray(value) ? value : [value];
 }
 
-function createIngredientDrafts(meal: StoredMeal, category: IngredientCategory): IngredientDraft[] {
+function createIngredientDrafts(
+  meal: StoredMeal,
+  category: IngredientCategory,
+): IngredientDraft[] {
   const drafts = normalizeBuildItems(meal.build[category]).map((name) => {
     const existing = meal.ingredients?.find(
-      (ingredient) => ingredient.category === category && ingredient.name === name
+      (ingredient) =>
+        ingredient.category === category && ingredient.name === name,
     );
 
     return {
@@ -65,7 +69,10 @@ function createIngredientDrafts(meal: StoredMeal, category: IngredientCategory):
   return drafts.length > 0 ? drafts : [createEmptyIngredientDraft()];
 }
 
-function createEditorState(meal?: StoredMeal, defaultType: MealType = "Dinner"): EditorState {
+function createEditorState(
+  meal?: StoredMeal,
+  defaultType: MealType = "Dinner",
+): EditorState {
   if (!meal) {
     // Create mode defaults
     return {
@@ -99,32 +106,39 @@ function createEditorState(meal?: StoredMeal, defaultType: MealType = "Dinner"):
 
 function getIngredientsForPayload(
   meal: StoredMeal | undefined,
-  ingredientDrafts: Record<IngredientCategory, IngredientDraft[]>
+  ingredientDrafts: Record<IngredientCategory, IngredientDraft[]>,
 ): MealIngredient[] {
-  return (Object.entries(ingredientDrafts) as Array<[IngredientCategory, IngredientDraft[]]>).flatMap(
-    ([category, items]) =>
-      items.map((item) => {
-        const name = item.name.trim();
-        const quantity = item.quantity.trim();
-        const existing = meal?.ingredients?.find(
-          (ingredient) => ingredient.category === category && ingredient.name === name
-        );
+  return (
+    Object.entries(ingredientDrafts) as Array<
+      [IngredientCategory, IngredientDraft[]]
+    >
+  ).flatMap(([category, items]) =>
+    items.map((item) => {
+      const name = item.name.trim();
+      const quantity = item.quantity.trim();
+      const existing = meal?.ingredients?.find(
+        (ingredient) =>
+          ingredient.category === category && ingredient.name === name,
+      );
 
-        if (existing) {
-          return {
-            ...existing,
-            name,
-            quantity,
-          };
-        }
-
+      if (existing) {
         return {
+          ...existing,
           name,
           quantity,
-          category,
-          macros: { cal: 0, p: 0, c: 0, f: 0, fiber: 0 },
         };
-      })
+      }
+
+      return {
+        name,
+        quantity,
+        amount: 0,
+        unit: "stk",
+        zone: DEFAULT_STORE_ZONE,
+        category,
+        macros: { cal: 0, p: 0, c: 0, f: 0, fiber: 0 },
+      };
+    }),
   );
 }
 
@@ -138,7 +152,7 @@ export default function MealEditorModal({
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [editorState, setEditorState] = useState<EditorState>(() =>
-    createEditorState(meal, defaultType)
+    createEditorState(meal, defaultType),
   );
 
   const isCreateMode = !meal;
@@ -149,7 +163,7 @@ export default function MealEditorModal({
     field: IngredientCategory,
     index: number,
     key: keyof IngredientDraft,
-    value: string
+    value: string,
   ) {
     setEditorState((current) => {
       const arr = [...current[field]];
@@ -202,16 +216,28 @@ export default function MealEditorModal({
     const ingredientDrafts: Record<IngredientCategory, IngredientDraft[]> = {
       pro: editorState.pro
         .filter((item) => item.name.trim() !== "")
-        .map((item) => ({ name: item.name.trim(), quantity: item.quantity.trim() })),
+        .map((item) => ({
+          name: item.name.trim(),
+          quantity: item.quantity.trim(),
+        })),
       base: editorState.base
         .filter((item) => item.name.trim() !== "")
-        .map((item) => ({ name: item.name.trim(), quantity: item.quantity.trim() })),
+        .map((item) => ({
+          name: item.name.trim(),
+          quantity: item.quantity.trim(),
+        })),
       veg: editorState.veg
         .filter((item) => item.name.trim() !== "")
-        .map((item) => ({ name: item.name.trim(), quantity: item.quantity.trim() })),
+        .map((item) => ({
+          name: item.name.trim(),
+          quantity: item.quantity.trim(),
+        })),
       engine: editorState.engine
         .filter((item) => item.name.trim() !== "")
-        .map((item) => ({ name: item.name.trim(), quantity: item.quantity.trim() })),
+        .map((item) => ({
+          name: item.name.trim(),
+          quantity: item.quantity.trim(),
+        })),
     };
 
     const build = {
@@ -222,8 +248,15 @@ export default function MealEditorModal({
     };
 
     // Validate at least one item in each build field
-    if (build.pro.length === 0 || build.base.length === 0 || build.veg.length === 0 || build.engine.length === 0) {
-      setMessage("Each build field (Protein, Base, Veg, Engine) requires at least one item.");
+    if (
+      build.pro.length === 0 ||
+      build.base.length === 0 ||
+      build.veg.length === 0 ||
+      build.engine.length === 0
+    ) {
+      setMessage(
+        "Each build field (Protein, Base, Veg, Engine) requires at least one item.",
+      );
       return;
     }
 
@@ -266,13 +299,21 @@ export default function MealEditorModal({
       }
 
       if (!response.ok) {
-        throw new Error(isCreateMode ? "Unable to create new meal." : "Unable to save meal changes right now.");
+        throw new Error(
+          isCreateMode
+            ? "Unable to create new meal."
+            : "Unable to save meal changes right now.",
+        );
       }
 
       await onSaved();
       resetAndClose();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to save meal changes right now.");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to save meal changes right now.",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -310,7 +351,9 @@ export default function MealEditorModal({
                 {meal.heartCount} hearts
               </span>
               <span className="rounded-full bg-[var(--tint-stone)] px-3 py-1 text-[var(--text-muted)]">
-                {meal.lastServedAt ? `Last served ${formatDate(meal.lastServedAt)}` : "First week in rotation"}
+                {meal.lastServedAt
+                  ? `Last served ${formatDate(meal.lastServedAt)}`
+                  : "First week in rotation"}
               </span>
             </div>
           </div>
@@ -330,7 +373,9 @@ export default function MealEditorModal({
           <EditorField label="Meal type">
             <select
               value={editorState.type}
-              onChange={(event) => updateField("type", event.target.value as MealType)}
+              onChange={(event) =>
+                updateField("type", event.target.value as MealType)
+              }
               className={inputClassName}
             >
               {MEAL_TYPES.map((mealType) => (
@@ -344,7 +389,9 @@ export default function MealEditorModal({
           <ArrayEditorField
             label="Protein"
             items={editorState.pro}
-            onChange={(index, key, value) => updateIngredientDraft("pro", index, key, value)}
+            onChange={(index, key, value) =>
+              updateIngredientDraft("pro", index, key, value)
+            }
             onAdd={() => addArrayItem("pro")}
             onRemove={(index) => removeArrayItem("pro", index)}
             namePlaceholder="e.g., Just Chicken"
@@ -354,7 +401,9 @@ export default function MealEditorModal({
           <ArrayEditorField
             label="Base"
             items={editorState.base}
-            onChange={(index, key, value) => updateIngredientDraft("base", index, key, value)}
+            onChange={(index, key, value) =>
+              updateIngredientDraft("base", index, key, value)
+            }
             onAdd={() => addArrayItem("base")}
             onRemove={(index) => removeArrayItem("base", index)}
             namePlaceholder="e.g., Brown Rice"
@@ -364,7 +413,9 @@ export default function MealEditorModal({
           <ArrayEditorField
             label="Veg"
             items={editorState.veg}
-            onChange={(index, key, value) => updateIngredientDraft("veg", index, key, value)}
+            onChange={(index, key, value) =>
+              updateIngredientDraft("veg", index, key, value)
+            }
             onAdd={() => addArrayItem("veg")}
             onRemove={(index) => removeArrayItem("veg", index)}
             namePlaceholder="e.g., Cruciferous Crunch"
@@ -374,7 +425,9 @@ export default function MealEditorModal({
           <ArrayEditorField
             label="Engine"
             items={editorState.engine}
-            onChange={(index, key, value) => updateIngredientDraft("engine", index, key, value)}
+            onChange={(index, key, value) =>
+              updateIngredientDraft("engine", index, key, value)
+            }
             onAdd={() => addArrayItem("engine")}
             onRemove={(index) => removeArrayItem("engine", index)}
             namePlaceholder="e.g., Chili Onion Crunch"
@@ -439,7 +492,9 @@ export default function MealEditorModal({
             </EditorField>
           </div>
 
-          {message ? <p className="text-sm text-harvest-terracotta">{message}</p> : null}
+          {message ? (
+            <p className="text-sm text-harvest-terracotta">{message}</p>
+          ) : null}
 
           <div className="sticky bottom-4 flex gap-3 rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-2)] p-3 shadow-[var(--shadow-elevated)] backdrop-blur">
             <button
@@ -459,8 +514,10 @@ export default function MealEditorModal({
                   <Loader2 size={16} className="animate-spin" />
                   {isCreateMode ? "Creating" : "Saving"}
                 </span>
+              ) : isCreateMode ? (
+                "Create meal"
               ) : (
-                isCreateMode ? "Create meal" : "Save meal"
+                "Save meal"
               )}
             </button>
           </div>
@@ -508,13 +565,17 @@ function ArrayEditorField({
             <div className="grid flex-1 grid-cols-[minmax(0,1fr)_7rem] gap-2">
               <input
                 value={item.name}
-                onChange={(event) => onChange(index, "name", event.target.value)}
+                onChange={(event) =>
+                  onChange(index, "name", event.target.value)
+                }
                 className={inputClassName}
                 placeholder={namePlaceholder}
               />
               <input
                 value={item.quantity}
-                onChange={(event) => onChange(index, "quantity", event.target.value)}
+                onChange={(event) =>
+                  onChange(index, "quantity", event.target.value)
+                }
                 className={inputClassName}
                 placeholder={amountPlaceholder}
                 aria-label={`${label} amount ${index + 1}`}

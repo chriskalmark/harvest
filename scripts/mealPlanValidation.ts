@@ -1,7 +1,7 @@
 import fs from "fs";
 import { deriveShoppingListFromMeals } from "@/lib/domain/shoppingListDerivation";
 import { extractWeekDataFromMarkdown } from "@/lib/mealPlanMarkdown";
-import { classifyShoppingItem } from "@/lib/shoppingListOrder";
+import { isStoreZone } from "@/lib/shoppingListOrder";
 import { ListCategory, Macros, MealInput, WeekData } from "@/lib/types";
 
 import { EXPECTED_MEAL_COUNTS } from "@/lib/constants";
@@ -35,7 +35,7 @@ export interface MealPlanValidationResult {
 
 export function validateMealPlanFile(
   filepath: string,
-  options: MealPlanValidationOptions = {}
+  options: MealPlanValidationOptions = {},
 ): MealPlanValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -57,9 +57,14 @@ export function validateMealPlanFile(
       weekData.meals,
       [],
       weekData.junkList,
-      weekData.householdGoods ?? []
+      weekData.householdGoods ?? [],
     );
-    validateShoppingClassifications(shoppingList, errors, warnings, Boolean(options.allowShoppingFallbacks));
+    validateIngredientZones(
+      weekData,
+      errors,
+      warnings,
+      Boolean(options.allowShoppingFallbacks),
+    );
 
     if (options.printShoppingOrder) {
       printShoppingOrder(shoppingList);
@@ -84,7 +89,9 @@ export function validateMealPlanFile(
   }
 }
 
-export function printMealPlanValidationResult(result: MealPlanValidationResult) {
+export function printMealPlanValidationResult(
+  result: MealPlanValidationResult,
+) {
   for (const warning of result.warnings) {
     console.log(`⚠️  ${warning}`);
   }
@@ -121,32 +128,45 @@ function validateMealCounts(weekData: WeekData, errors: string[]) {
     }
   }
 
-  const totalExpected = Object.values(EXPECTED_MEAL_COUNTS).reduce((sum, count) => sum + count, 0);
+  const totalExpected = Object.values(EXPECTED_MEAL_COUNTS).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
   if (weekData.meals.length !== totalExpected) {
-    errors.push(`Expected ${totalExpected} total meals, found ${weekData.meals.length}.`);
+    errors.push(
+      `Expected ${totalExpected} total meals, found ${weekData.meals.length}.`,
+    );
   }
 }
 
 function validateFiberPresence(weekData: WeekData, errors: string[]) {
   weekData.meals.forEach((meal, mealIndex) => {
     if (!hasNumericMacro(meal.macros, "fiber")) {
-      errors.push(`meals[${mealIndex}] "${meal.name}" is missing numeric macros.fiber.`);
+      errors.push(
+        `meals[${mealIndex}] "${meal.name}" is missing numeric macros.fiber.`,
+      );
     }
 
     meal.ingredients?.forEach((ingredient, ingredientIndex) => {
       if (!hasNumericMacro(ingredient.macros, "fiber")) {
         errors.push(
-          `meals[${mealIndex}].ingredients[${ingredientIndex}] "${ingredient.name}" is missing numeric macros.fiber.`
+          `meals[${mealIndex}].ingredients[${ingredientIndex}] "${ingredient.name}" is missing numeric macros.fiber.`,
         );
       }
     });
   });
 }
 
-function validateIngredientMacroTotals(weekData: WeekData, tolerance: number, errors: string[]) {
+function validateIngredientMacroTotals(
+  weekData: WeekData,
+  tolerance: number,
+  errors: string[],
+) {
   weekData.meals.forEach((meal, mealIndex) => {
     if (!meal.ingredients?.length) {
-      errors.push(`meals[${mealIndex}] "${meal.name}" must include ingredients for macro validation.`);
+      errors.push(
+        `meals[${mealIndex}] "${meal.name}" must include ingredients for macro validation.`,
+      );
       return;
     }
 
@@ -155,7 +175,7 @@ function validateIngredientMacroTotals(weekData: WeekData, tolerance: number, er
       const diff = Math.abs(ingredientTotals[macroKey] - meal.macros[macroKey]);
       if (diff > tolerance) {
         errors.push(
-          `meals[${mealIndex}] "${meal.name}" ${macroKey} total mismatch: ingredients=${round(ingredientTotals[macroKey])}, meal=${meal.macros[macroKey]}.`
+          `meals[${mealIndex}] "${meal.name}" ${macroKey} total mismatch: ingredients=${round(ingredientTotals[macroKey])}, meal=${meal.macros[macroKey]}.`,
         );
       }
     }
@@ -165,7 +185,7 @@ function validateIngredientMacroTotals(weekData: WeekData, tolerance: number, er
 function validateUniqueBuildValues(
   weekData: WeekData,
   buildKey: "base" | "engine",
-  errors: string[]
+  errors: string[],
 ) {
   const seen = new Map<string, string>();
 
@@ -175,7 +195,9 @@ function validateUniqueBuildValues(
       const previousMeal = seen.get(normalized);
 
       if (previousMeal) {
-        errors.push(`Duplicate ${buildKey} "${value}" in "${previousMeal}" and "${meal.name}".`);
+        errors.push(
+          `Duplicate ${buildKey} "${value}" in "${previousMeal}" and "${meal.name}".`,
+        );
       } else {
         seen.set(normalized, meal.name);
       }
@@ -188,41 +210,40 @@ function validateJunkCategories(weekData: WeekData, errors: string[]) {
 
   if (actual.length !== REQUIRED_JUNK_CATEGORIES.length) {
     errors.push(
-      `Junk list must have ${REQUIRED_JUNK_CATEGORIES.length} categories, found ${actual.length}.`
+      `Junk list must have ${REQUIRED_JUNK_CATEGORIES.length} categories, found ${actual.length}.`,
     );
   }
 
   REQUIRED_JUNK_CATEGORIES.forEach((category, index) => {
     if (actual[index] !== category) {
       errors.push(
-        `Junk list category ${index + 1} must be "${category}", found "${actual[index] ?? "(missing)"}".`
+        `Junk list category ${index + 1} must be "${category}", found "${actual[index] ?? "(missing)"}".`,
       );
     }
   });
 }
 
-function validateShoppingClassifications(
-  shoppingList: ListCategory[],
+function validateIngredientZones(
+  weekData: WeekData,
   errors: string[],
   warnings: string[],
-  allowShoppingFallbacks: boolean
+  allowShoppingFallbacks: boolean,
 ) {
-  const fallbackItems = shoppingList.flatMap((category) =>
-    category.items
-      .map((item) => ({
-        category: category.category,
-        itemName: item.n,
-        classification: classifyShoppingItem(item.n),
-      }))
-      .filter(({ classification }) => classification.confidence === "fallback")
+  const invalidZoneItems = weekData.meals.flatMap((meal) =>
+    (meal.ingredients ?? [])
+      .filter((ingredient) => !isStoreZone(ingredient.zone))
+      .map((ingredient) => ({
+        mealName: meal.name,
+        ingredientName: ingredient.name,
+      })),
   );
 
-  if (!fallbackItems.length) {
+  if (!invalidZoneItems.length) {
     return;
   }
 
-  const message = `Shopping classification fallback for: ${fallbackItems
-    .map((item) => `"${item.itemName}" -> ${item.category}`)
+  const message = `Ingredients missing a valid store zone: ${invalidZoneItems
+    .map((item) => `"${item.ingredientName}" in "${item.mealName}"`)
     .join(", ")}.`;
 
   if (allowShoppingFallbacks) {
@@ -235,7 +256,9 @@ function validateShoppingClassifications(
 function printShoppingOrder(shoppingList: ListCategory[]) {
   console.log("🛒 Derived Trader Joe's shopping order:");
   for (const category of shoppingList) {
-    console.log(`  ${category.category}: ${category.items.map((item) => item.n).join(", ")}`);
+    console.log(
+      `  ${category.category}: ${category.items.map((item) => item.n).join(", ")}`,
+    );
   }
 }
 
@@ -248,11 +271,14 @@ function sumIngredientMacros(meal: MealInput): Macros {
       f: acc.f + ingredient.macros.f,
       fiber: acc.fiber + ingredient.macros.fiber,
     }),
-    { cal: 0, p: 0, c: 0, f: 0, fiber: 0 }
+    { cal: 0, p: 0, c: 0, f: 0, fiber: 0 },
   );
 }
 
-function hasNumericMacro(macros: Partial<Macros> | undefined, macroKey: keyof Macros) {
+function hasNumericMacro(
+  macros: Partial<Macros> | undefined,
+  macroKey: keyof Macros,
+) {
   const value = macros?.[macroKey];
   return typeof value === "number" && Number.isFinite(value);
 }

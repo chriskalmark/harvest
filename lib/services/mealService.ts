@@ -1,9 +1,17 @@
 import { pool, withTransaction } from "@/lib/db";
 import * as mealRepository from "@/lib/db/mealRepository";
 import { mapMeal, mealInputToRow } from "@/lib/domain/mealMappers";
-import { MealIngredient, MealInput, MealRow, MealType, StoredMeal, UpdateMealInput } from "@/lib/types";
+import {
+  MealIngredient,
+  MealInput,
+  MealRow,
+  MealType,
+  StoredMeal,
+  UpdateMealInput,
+} from "@/lib/types";
 import { ApiError } from "@/lib/apiUtils";
 import { requireNumber, requireString } from "@/lib/routeValidation";
+import { DEFAULT_STORE_ZONE } from "@/lib/constants";
 
 function parseMealInput(value: unknown): MealInput {
   if (!value || typeof value !== "object") {
@@ -27,7 +35,10 @@ function parseMealInput(value: unknown): MealInput {
       return [t];
     }
     if (Array.isArray(v)) {
-      const arr = v.filter((x): x is string => typeof x === "string").map((x) => x.trim()).filter(Boolean);
+      const arr = v
+        .filter((x): x is string => typeof x === "string")
+        .map((x) => x.trim())
+        .filter(Boolean);
       if (!arr.length) throw new ApiError(`${field} must be non-empty.`, 400);
       return arr;
     }
@@ -64,8 +75,21 @@ function parseMealInput(value: unknown): MealInput {
 
       return {
         name: requireString(ingredientObj.name, `ingredients[${index}].name`),
-        quantity: typeof ingredientObj.quantity === "string" ? ingredientObj.quantity.trim() : "",
-        category: requireString(ingredientObj.category, `ingredients[${index}].category`) as MealIngredient["category"],
+        quantity:
+          typeof ingredientObj.quantity === "string"
+            ? ingredientObj.quantity.trim()
+            : "",
+        amount: optionalNumber(ingredientObj.amount, 0),
+        unit: (typeof ingredientObj.unit === "string"
+          ? ingredientObj.unit
+          : "stk") as MealIngredient["unit"],
+        zone: (typeof ingredientObj.zone === "string"
+          ? ingredientObj.zone
+          : DEFAULT_STORE_ZONE) as MealIngredient["zone"],
+        category: requireString(
+          ingredientObj.category,
+          `ingredients[${index}].category`,
+        ) as MealIngredient["category"],
         macros: {
           cal: requireNumber(macrosObj.cal, `ingredients[${index}].macros.cal`),
           p: requireNumber(macrosObj.p, `ingredients[${index}].macros.p`),
@@ -95,6 +119,11 @@ function parseMealInput(value: unknown): MealInput {
       f: requireNumber(macrosObj.f, "macros.f"),
       fiber: optionalNumber(macrosObj.fiber, 0),
     },
+    servings: optionalNumber(obj.servings, 2),
+    steps: Array.isArray(obj.steps)
+      ? obj.steps.filter((step): step is string => typeof step === "string")
+      : [],
+    imageUrl: typeof obj.imageUrl === "string" ? obj.imageUrl : null,
   };
 }
 
@@ -102,7 +131,8 @@ function optionalNumber(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
-export type MealSortField = "name" | "cal" | "p" | "heartCount" | "appearanceCount" | "lastServedAt";
+export type MealSortField =
+  "name" | "cal" | "p" | "heartCount" | "appearanceCount" | "lastServedAt";
 export type MealSortDirection = "asc" | "desc";
 
 export interface MealFilters {
@@ -120,7 +150,7 @@ export async function listMeals(
   sortBy: MealSortField = "lastServedAt",
   sortDirection: MealSortDirection = "desc",
   limit = 50,
-  offset = 0
+  offset = 0,
 ): Promise<{ meals: StoredMeal[]; total: number }> {
   const client = await pool.connect();
   try {
@@ -133,7 +163,10 @@ export async function listMeals(
       params.push(filters.type);
     }
 
-    if (typeof filters.minProtein === "number" && Number.isFinite(filters.minProtein)) {
+    if (
+      typeof filters.minProtein === "number" &&
+      Number.isFinite(filters.minProtein)
+    ) {
       whereClauses.push(`protein_grams >= $${paramIndex++}`);
       params.push(filters.minProtein);
     }
@@ -145,28 +178,28 @@ export async function listMeals(
 
     if (filters.protein) {
       whereClauses.push(
-        `EXISTS (SELECT 1 FROM unnest(protein) AS v WHERE v ILIKE $${paramIndex++})`
+        `EXISTS (SELECT 1 FROM unnest(protein) AS v WHERE v ILIKE $${paramIndex++})`,
       );
       params.push(`%${filters.protein}%`);
     }
 
     if (filters.base) {
       whereClauses.push(
-        `EXISTS (SELECT 1 FROM unnest(base) AS v WHERE v ILIKE $${paramIndex++})`
+        `EXISTS (SELECT 1 FROM unnest(base) AS v WHERE v ILIKE $${paramIndex++})`,
       );
       params.push(`%${filters.base}%`);
     }
 
     if (filters.veg) {
       whereClauses.push(
-        `EXISTS (SELECT 1 FROM unnest(veg) AS v WHERE v ILIKE $${paramIndex++})`
+        `EXISTS (SELECT 1 FROM unnest(veg) AS v WHERE v ILIKE $${paramIndex++})`,
       );
       params.push(`%${filters.veg}%`);
     }
 
     if (filters.engine) {
       whereClauses.push(
-        `EXISTS (SELECT 1 FROM unnest(engine) AS v WHERE v ILIKE $${paramIndex++})`
+        `EXISTS (SELECT 1 FROM unnest(engine) AS v WHERE v ILIKE $${paramIndex++})`,
       );
       params.push(`%${filters.engine}%`);
     }
@@ -180,17 +213,21 @@ export async function listMeals(
       lastServedAt: "last_served_at",
     };
 
-    const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
+    const whereClause =
+      whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
     const orderClause = `ORDER BY ${sortMap[sortBy]} ${
       sortDirection === "desc" ? "DESC NULLS LAST" : "ASC NULLS FIRST"
     }, id ASC`;
 
-    const countResult = await client.query(`SELECT COUNT(*) FROM meals ${whereClause}`, params);
+    const countResult = await client.query(
+      `SELECT COUNT(*) FROM meals ${whereClause}`,
+      params,
+    );
     const total = Number(countResult.rows[0].count);
 
     const result = await client.query<MealRow>(
       `SELECT * FROM meals ${whereClause} ${orderClause} LIMIT $${paramIndex++} OFFSET $${paramIndex++}`,
-      [...params, limit, offset]
+      [...params, limit, offset],
     );
 
     return {
@@ -205,12 +242,18 @@ export async function listMeals(
 export async function createMeal(input: unknown): Promise<{ mealId: number }> {
   const parsed = parseMealInput(input);
   return withTransaction(async (client) => {
-    const inserted = await mealRepository.insertMeal(client, mealInputToRow(parsed));
+    const inserted = await mealRepository.insertMeal(
+      client,
+      mealInputToRow(parsed),
+    );
     return { mealId: Number(inserted.id) };
   });
 }
 
-export async function updateMealById(mealId: number, input: unknown): Promise<void> {
+export async function updateMealById(
+  mealId: number,
+  input: unknown,
+): Promise<void> {
   const parsed = parseMealInput(input);
   await withTransaction(async (client) => {
     const updated = await mealRepository.updateMeal(client, {
@@ -242,14 +285,18 @@ export async function updateMeal(input: UpdateMealInput): Promise<StoredMeal> {
   }
 }
 
-export async function insertMeal(input: Omit<UpdateMealInput, "id">): Promise<StoredMeal> {
+export async function insertMeal(
+  input: Omit<UpdateMealInput, "id">,
+): Promise<StoredMeal> {
   const client = await pool.connect();
 
   try {
-    const row = await mealRepository.insertMealReturningRow(client, mealInputToRow(input));
+    const row = await mealRepository.insertMealReturningRow(
+      client,
+      mealInputToRow(input),
+    );
     return mapMeal(row);
   } finally {
     client.release();
   }
 }
-
