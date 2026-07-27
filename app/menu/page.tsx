@@ -19,6 +19,7 @@ import {
   HouseholdGoodsItem,
 } from "@/lib/types";
 import { buildHref } from "@/lib/urlState";
+import { formatWeekRangeDanish } from "@/lib/weekRange";
 
 const MENU_GROUPS: { type: MealType; label: string }[] = [
   { type: "Breakfast", label: "Morgenmad" },
@@ -152,7 +153,7 @@ function MenuContent({
                   ? "bg-harvest-purple text-white"
                   : tab.type === "Household"
                     ? "bg-[var(--text-muted)] text-white"
-                    : "bg-harvest-green-deep text-white"
+                    : "bg-[var(--harvest-green-deep)] text-white"
                 : "bg-[var(--tint-stone)] text-[var(--muted-text)]"
             }`}
             aria-label={tab.iconOnly ? "Husholdning" : undefined}
@@ -310,7 +311,7 @@ export default function MenuPage() {
           <main className="pb-8">
             <div className="rounded-b-[34px] bg-harvest-green px-5 pb-8 pt-2 text-white">
               <div className="text-[0.8rem] font-semibold uppercase tracking-[0.1em] opacity-[0.72]">
-                {readyPlan.weekRange}
+                {formatWeekRangeDanish(readyPlan.weekRange)}
               </div>
               <h2 className="mt-2 font-serif text-[2rem] font-extrabold leading-[1.05] tracking-[-0.02em]">
                 Ingen tvivl,

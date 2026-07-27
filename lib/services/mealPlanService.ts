@@ -27,6 +27,7 @@ import {
 } from "@/lib/types";
 import {
   deriveWeekStartDateOnlyFromWeekRange,
+  formatWeekRangeDanish,
   getWeekStartDateOnly,
   toSortValueFromDateOnly,
 } from "@/lib/weekRange";
@@ -45,7 +46,7 @@ export async function readSeedWeekData(): Promise<WeekData> {
       weekData.meals,
       weekData.shoppingList ?? [],
       weekData.junkList,
-      weekData.householdGoods ?? []
+      weekData.householdGoods ?? [],
     ),
   };
 }
@@ -53,14 +54,14 @@ export async function readSeedWeekData(): Promise<WeekData> {
 async function enrichJunkList(
   client: PoolClient,
   mealPlanId: number,
-  junkList: ListCategory[]
+  junkList: ListCategory[],
 ): Promise<ListCategory[]> {
   const names = Array.from(
     new Set(
       junkList.flatMap((category) =>
-        category.items.map((item) => item.n).filter(Boolean)
-      )
-    )
+        category.items.map((item) => item.n).filter(Boolean),
+      ),
+    ),
   );
 
   if (names.length === 0) {
@@ -85,7 +86,7 @@ async function enrichJunkList(
        AND jf.meal_plan_id = $1
       WHERE ji.name = ANY($2::text[])
     `,
-    [mealPlanId, names]
+    [mealPlanId, names],
   );
 
   const byName = new Map(
@@ -96,7 +97,7 @@ async function enrichJunkList(
         heartCount: row.heart_count,
         likedForCurrentWeek: Boolean(row.liked),
       },
-    ])
+    ]),
   );
 
   return junkList.map((category) => ({
@@ -121,7 +122,7 @@ async function enrichJunkList(
 
 async function getMealFeedbackForPlan(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<MealFeedback[]> {
   const rows = await mealRepo.getMealFeedbackForPlan(client, mealPlanId);
   return rows.map(mapMealFeedback);
@@ -129,7 +130,7 @@ async function getMealFeedbackForPlan(
 
 async function getMealPlanMeals(
   client: PoolClient,
-  mealPlanId: number
+  mealPlanId: number,
 ): Promise<StoredMeal[]> {
   const rows = await mealRepo.getMealsForMealPlan(client, mealPlanId);
   return mapPlanMealsFromRows(rows);
@@ -137,17 +138,22 @@ async function getMealPlanMeals(
 
 async function buildStoredMealPlan(
   client: PoolClient,
-  row: MealPlanRow
+  row: MealPlanRow,
 ): Promise<StoredMealPlan> {
   const mealPlanId = toNumber(row.id);
   const meals = await getMealPlanMeals(client, mealPlanId);
-  const junkList = await enrichJunkList(client, mealPlanId, row.plan_data.junkList ?? []);
-  const householdGoods: HouseholdGoodsItem[] = row.plan_data.householdGoods ?? [];
+  const junkList = await enrichJunkList(
+    client,
+    mealPlanId,
+    row.plan_data.junkList ?? [],
+  );
+  const householdGoods: HouseholdGoodsItem[] =
+    row.plan_data.householdGoods ?? [];
   const shoppingList = deriveShoppingListFromMeals(
     meals,
     row.plan_data.shoppingList ?? [],
     junkList,
-    householdGoods
+    householdGoods,
   );
 
   return {
@@ -169,23 +175,34 @@ async function buildStoredMealPlan(
 function mapWeekOption(row: MealPlanRow): WeekOption {
   const weekRange = row.week_range;
   const updatedAt = row.updated_at;
-  const inferredStartDateOnly = deriveWeekStartDateOnlyFromWeekRange(weekRange, updatedAt);
-  const sortValue = inferredStartDateOnly ? toSortValueFromDateOnly(inferredStartDateOnly) : 0;
+  const inferredStartDateOnly = deriveWeekStartDateOnlyFromWeekRange(
+    weekRange,
+    updatedAt,
+  );
+  const sortValue = inferredStartDateOnly
+    ? toSortValueFromDateOnly(inferredStartDateOnly)
+    : 0;
 
   const year = updatedAt.getFullYear();
-  const weekRangeWithYear =
-    weekRange.includes(String(year)) ? weekRange : `${weekRange}, ${year}`;
+  const weekRangeWithYear = weekRange.includes(String(year))
+    ? weekRange
+    : `${weekRange}, ${year}`;
 
   return {
     id: toNumber(row.id),
     weekRange: row.week_range,
-    displayLabel: weekRangeWithYear,
+    // weekRange itself must stay in the parseable English shape (see
+    // lib/weekRange.ts); displayLabel is Danish for the UI only.
+    displayLabel: formatWeekRangeDanish(weekRangeWithYear),
     sortValue,
     updatedAt: row.updated_at.toISOString(),
   };
 }
 
-async function findOrCreateMeal(client: PoolClient, meal: MealInput): Promise<number> {
+async function findOrCreateMeal(
+  client: PoolClient,
+  meal: MealInput,
+): Promise<number> {
   const existing = await mealRepo.findMealByExactSignature(client, {
     name: meal.name,
     meal_type: meal.type,
@@ -202,7 +219,11 @@ async function findOrCreateMeal(client: PoolClient, meal: MealInput): Promise<nu
 
   if (existing && mealMatchesFn(existing, meal)) {
     const existingId = toNumber(existing.id);
-    if (meal.ingredients && JSON.stringify(existing.ingredients ?? []) !== JSON.stringify(meal.ingredients)) {
+    if (
+      meal.ingredients &&
+      JSON.stringify(existing.ingredients ?? []) !==
+        JSON.stringify(meal.ingredients)
+    ) {
       await mealRepo.updateMeal(client, {
         id: existingId,
         ...mealInputToRow(meal),
@@ -223,7 +244,10 @@ async function removeStaleFeedback(client: PoolClient, mealPlanId: number) {
   await mealRepo.removeStaleMealFeedback(client, mealPlanId);
 }
 
-async function findOrCreateJunkItem(client: PoolClient, name: string): Promise<number> {
+async function findOrCreateJunkItem(
+  client: PoolClient,
+  name: string,
+): Promise<number> {
   const id = await mealRepo.findOrCreateJunkItem(client, name);
   return toNumber(id);
 }
@@ -238,7 +262,7 @@ export async function upsertMealPlan(
     source?: string;
     status?: string;
     generationContext?: Record<string, unknown>;
-  }
+  },
 ): Promise<StoredMealPlan> {
   return withTransaction(async (client) => {
     const source = options?.source ?? "seed_json";
@@ -264,10 +288,15 @@ export async function upsertMealPlan(
     const weekStartDateOnly =
       deriveWeekStartDateOnlyFromWeekRange(weekData.weekRange, referenceDate) ??
       getWeekStartDateOnly(referenceDate);
-    const existingPlanRow = await mealRepo.getMealPlanByWeekRange(client, weekData.weekRange);
+    const existingPlanRow = await mealRepo.getMealPlanByWeekRange(
+      client,
+      weekData.weekRange,
+    );
     const normalizedWeekData = normalizeWeekDataBuildArrays(weekData);
     const previousShoppingList =
-      existingPlanRow?.plan_data.shoppingList ?? normalizedWeekData.shoppingList ?? [];
+      existingPlanRow?.plan_data.shoppingList ??
+      normalizedWeekData.shoppingList ??
+      [];
     const householdGoods =
       existingPlanRow?.plan_data.householdGoods ??
       normalizedWeekData.householdGoods ??
@@ -279,7 +308,7 @@ export async function upsertMealPlan(
         normalizedWeekData.meals,
         previousShoppingList,
         normalizedWeekData.junkList,
-        householdGoods
+        householdGoods,
       ),
     };
 
@@ -293,11 +322,14 @@ export async function upsertMealPlan(
     });
 
     const mealPlanId = toNumber(planRow.id);
-    const previousMealIds = await mealRepo.getDistinctMealIdsForPlan(client, mealPlanId);
+    const previousMealIds = await mealRepo.getDistinctMealIdsForPlan(
+      client,
+      mealPlanId,
+    );
     await mealRepo.deleteMealPlanMeals(client, mealPlanId);
 
     const touchedMealIds = new Set<number>(
-      previousMealIds.map((row) => toNumber(row.meal_id))
+      previousMealIds.map((row) => toNumber(row.meal_id)),
     );
 
     for (const [slotOrder, meal] of weekDataToStore.meals.entries()) {
@@ -325,7 +357,7 @@ export async function getLatestMealPlan(): Promise<StoredMealPlan | null> {
     const currentWeekStartDateOnly = getWeekStartDateOnly();
     const currentWeekRow = await mealRepo.getMealPlanByWeekStartDate(
       client,
-      currentWeekStartDateOnly
+      currentWeekStartDateOnly,
     );
 
     if (currentWeekRow) {
@@ -340,7 +372,7 @@ export async function getLatestMealPlan(): Promise<StoredMealPlan | null> {
 }
 
 export async function getMealPlanByWeekRange(
-  weekRange: string
+  weekRange: string,
 ): Promise<StoredMealPlan | null> {
   const client = await pool.connect();
 
@@ -383,7 +415,7 @@ export async function updateMealPlanLists(
     householdGoods: HouseholdGoodsItem[];
     source?: string;
     generationContext?: Record<string, unknown>;
-  }
+  },
 ): Promise<StoredMealPlan> {
   return withTransaction(async (client) => {
     const row = await mealRepo.updateMealPlanLists(client, {
@@ -400,10 +432,13 @@ export async function updateMealPlanLists(
 }
 
 export async function mutateMealPlanComposition(
-  input: MutateMealPlanCompositionInput
+  input: MutateMealPlanCompositionInput,
 ): Promise<StoredMealPlan> {
   return withTransaction(async (client) => {
-    const planRow = await mealRepo.getMealPlanByWeekRange(client, input.weekRange);
+    const planRow = await mealRepo.getMealPlanByWeekRange(
+      client,
+      input.weekRange,
+    );
     if (!planRow) {
       throw new Error("Meal plan not found.");
     }
@@ -411,7 +446,8 @@ export async function mutateMealPlanComposition(
     const mealPlanId = toNumber(planRow.id);
     const previousShoppingList = planRow.plan_data.shoppingList ?? [];
     const junkList = planRow.plan_data.junkList ?? [];
-    const householdGoods: HouseholdGoodsItem[] = planRow.plan_data.householdGoods ?? [];
+    const householdGoods: HouseholdGoodsItem[] =
+      planRow.plan_data.householdGoods ?? [];
     const touchedMealIds = new Set<number>();
 
     if (input.action === "add") {
@@ -433,7 +469,8 @@ export async function mutateMealPlanComposition(
         throw new Error("Meal is already on this week's menu.");
       }
 
-      const nextSlot = (await mealRepo.getMaxSlotOrderForPlan(client, mealPlanId)) + 1;
+      const nextSlot =
+        (await mealRepo.getMaxSlotOrderForPlan(client, mealPlanId)) + 1;
       await mealRepo.insertMealPlanMeal(client, {
         mealPlanId,
         slotOrder: nextSlot,
@@ -448,7 +485,7 @@ export async function mutateMealPlanComposition(
       const slotMeal = await mealRepo.getMealPlanMealAtSlot(
         client,
         mealPlanId,
-        input.slotOrder
+        input.slotOrder,
       );
       if (!slotMeal) {
         throw new Error("Meal slot not found.");
@@ -461,7 +498,7 @@ export async function mutateMealPlanComposition(
         const removedMealId = await mealRepo.deleteMealPlanMealAtSlot(
           client,
           mealPlanId,
-          input.slotOrder
+          input.slotOrder,
         );
         if (removedMealId !== null) {
           touchedMealIds.add(removedMealId);
@@ -482,12 +519,17 @@ export async function mutateMealPlanComposition(
           throw new Error("Meal not found.");
         }
 
-        const currentMealRow = await mealRepo.getMealById(client, currentMealId);
+        const currentMealRow = await mealRepo.getMealById(
+          client,
+          currentMealId,
+        );
         if (!currentMealRow) {
           throw new Error("Current meal not found.");
         }
         if (mealRow.meal_type !== currentMealRow.meal_type) {
-          throw new Error(`Replacement meal must be ${currentMealRow.meal_type}.`);
+          throw new Error(
+            `Replacement meal must be ${currentMealRow.meal_type}.`,
+          );
         }
 
         await mealRepo.updateMealPlanMealAtSlot(client, {
@@ -508,7 +550,7 @@ export async function mutateMealPlanComposition(
       previousShoppingList,
       junkList,
       householdGoods,
-      { pruneOrphans }
+      { pruneOrphans },
     );
 
     await mealRepo.updateMealPlanLists(client, {
@@ -534,7 +576,9 @@ export async function mutateMealPlanComposition(
   });
 }
 
-export async function saveMealHeart(input: SaveMealHeartInput): Promise<MealFeedback> {
+export async function saveMealHeart(
+  input: SaveMealHeartInput,
+): Promise<MealFeedback> {
   return withTransaction(async (client) => {
     const mealRow = await mealRepo.getMealById(client, input.mealId);
     if (!mealRow) {

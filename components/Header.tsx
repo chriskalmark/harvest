@@ -2,6 +2,7 @@
 
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { useTheme } from "@/lib/useTheme";
+import { formatWeekRangeDanish } from "@/lib/weekRange";
 
 export default function Header() {
   const { plan } = useMealPlan();
@@ -47,7 +48,9 @@ export default function Header() {
             Harvest
           </h1>
           <p className="mt-1 truncate text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-            {plan?.weekRange ?? "Venter på første menu"}
+            {plan?.weekRange
+              ? formatWeekRangeDanish(plan.weekRange)
+              : "Venter på første menu"}
           </p>
         </div>
       </div>

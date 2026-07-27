@@ -363,8 +363,10 @@ export default function ListSection({
                           >
                             {displayName}
                           </span>
-                          {item.q && type !== "shopping" ? (
-                            <span className="mt-0.5 block text-xs font-medium text-[var(--text-muted)]">
+                          {item.q ? (
+                            <span
+                              className={`mt-0.5 block font-serif text-base font-bold ${checked ? "text-[var(--muted-text)] line-through" : "text-[var(--harvest-green-deep)]"}`}
+                            >
                               {item.q}
                             </span>
                           ) : null}
