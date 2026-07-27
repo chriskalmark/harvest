@@ -9,6 +9,13 @@ import { cardClass, inputClass } from "@/lib/uiClasses";
 
 type PickerMode = "swap" | "add";
 
+const mealTypeLabel: Record<MealType, string> = {
+  Breakfast: "morgenmad",
+  Lunch: "frokost",
+  Dinner: "aftensmad",
+  Snack: "mellemmåltid",
+};
+
 export default function MealSwapPickerModal({
   isOpen,
   mode,
@@ -42,7 +49,7 @@ export default function MealSwapPickerModal({
       sortBy: "lastServedAt" as const,
       sortDirection: "desc" as const,
     }),
-    [search, slotType]
+    [search, slotType],
   );
 
   const {
@@ -66,7 +73,7 @@ export default function MealSwapPickerModal({
 
   const visibleMeals = useMemo(
     () => meals.filter((meal) => !excludedIds.has(meal.mealId)),
-    [excludedIds, meals]
+    [excludedIds, meals],
   );
 
   useEffect(() => {
@@ -88,14 +95,18 @@ export default function MealSwapPickerModal({
     return null;
   }
 
-  const title = mode === "swap" ? `Swap ${slotType}` : `Add ${slotType}`;
+  const typeLabel = mealTypeLabel[slotType];
+  const title =
+    mode === "swap"
+      ? `Byt ${typeLabel.toLowerCase()}`
+      : `Tilføj ${typeLabel.toLowerCase()}`;
 
   async function handleConfirm() {
     if (selectedMealId === null) return;
     setConfirmError(null);
     const success = await onConfirm(selectedMealId);
     if (!success) {
-      setConfirmError("Unable to update menu. Try again.");
+      setConfirmError("Kunne ikke opdatere menuen. Prøv igen.");
     }
   }
 
@@ -113,14 +124,14 @@ export default function MealSwapPickerModal({
               {title}
             </p>
             <p className="mt-1 text-sm text-[var(--muted-text)]">
-              {total} meals available
+              {total} retter at vælge mellem
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--tint-stone)] text-[var(--muted-text)]"
-            aria-label="Close picker"
+            aria-label="Luk"
           >
             <X size={18} />
           </button>
@@ -135,7 +146,7 @@ export default function MealSwapPickerModal({
             <input
               value={searchDraft}
               onChange={(event) => setSearchDraft(event.target.value)}
-              placeholder={`Search ${slotType.toLowerCase()} meals`}
+              placeholder={`Søg efter ${mealTypeLabel[slotType]}`}
               className={`${inputClass} pl-11`}
             />
           </div>
@@ -144,7 +155,7 @@ export default function MealSwapPickerModal({
             onClick={() => setIsEditorOpen(true)}
             className="mt-3 text-sm font-semibold text-harvest-green"
           >
-            Create new meal
+            Opret ny ret
           </button>
         </div>
 
@@ -163,7 +174,7 @@ export default function MealSwapPickerModal({
             <div className={`overflow-hidden ${cardClass}`}>
               {visibleMeals.length === 0 ? (
                 <p className="px-4 py-6 text-sm text-[var(--muted-text)]">
-                  No matching meals found.
+                  Ingen retter matcher.
                 </p>
               ) : (
                 visibleMeals.map((meal) => (
@@ -185,13 +196,17 @@ export default function MealSwapPickerModal({
             </div>
           ) : null}
           {!loading && !hasMore && visibleMeals.length > 0 ? (
-            <p className="py-3 text-center text-xs text-[var(--muted-text)]">End of list</p>
+            <p className="py-3 text-center text-xs text-[var(--muted-text)]">
+              Det var alle
+            </p>
           ) : null}
         </div>
 
         <div className="border-t border-[var(--border-subtle)] bg-[var(--surface-0)] px-4 py-4">
           {confirmError ? (
-            <p className="mb-3 text-sm font-medium text-harvest-terracotta">{confirmError}</p>
+            <p className="mb-3 text-sm font-medium text-harvest-terracotta">
+              {confirmError}
+            </p>
           ) : null}
           <button
             type="button"
@@ -202,12 +217,12 @@ export default function MealSwapPickerModal({
             {isSaving ? (
               <span className="inline-flex items-center gap-2">
                 <Loader2 size={16} className="animate-spin" />
-                Saving
+                Gemmer
               </span>
             ) : mode === "swap" ? (
-              "Confirm swap"
+              "Bekræft bytning"
             ) : (
-              "Add to menu"
+              "Læg på menuen"
             )}
           </button>
         </div>
@@ -251,15 +266,15 @@ function PickerRow({
 function PickerMacroInline({ macros }: { macros: Macros }) {
   return (
     <span className="text-xs font-semibold leading-relaxed tracking-[-0.01em] text-[var(--muted-text)]">
-      <span className="text-[var(--c-cal)]">{macros.cal} cal</span>
+      <span className="text-[var(--c-cal)]">{macros.cal} kcal</span>
       {" · "}
-      <span className="text-[var(--c-pro)]">{macros.p}g pro</span>
+      <span className="text-[var(--c-pro)]">{macros.p}g protein</span>
       {" · "}
-      <span className="text-[var(--c-carb)]">{macros.c}g carb</span>
+      <span className="text-[var(--c-carb)]">{macros.c}g kulhydrat</span>
       {" · "}
-      <span className="text-[var(--c-fat)]">{macros.f}g fat</span>
+      <span className="text-[var(--c-fat)]">{macros.f}g fedt</span>
       {" · "}
-      <span className="text-[var(--c-pro)]">{macros.fiber}g fiber</span>
+      <span className="text-[var(--c-pro)]">{macros.fiber}g fibre</span>
     </span>
   );
 }

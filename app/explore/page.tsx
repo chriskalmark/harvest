@@ -4,29 +4,41 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, ChevronDown, Loader2 } from "lucide-react";
 import MealEditorModal from "@/components/MealEditorModal";
 import MealCardView from "@/components/MealCardView";
-import { StoredMeal } from "@/lib/types";
+import { MealType, StoredMeal } from "@/lib/types";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { buildHref } from "@/lib/urlState";
 import { MEAL_TYPES } from "@/lib/constants";
-import { useExploreFilters, useMealsInfiniteQuery } from "@/lib/hooks/useExploreMeals";
+import {
+  useExploreFilters,
+  useMealsInfiniteQuery,
+} from "@/lib/hooks/useExploreMeals";
 import { sectionLabelColorClass } from "@/lib/uiClasses";
 
+const mealTypeTabLabel: Record<MealType, string> = {
+  Breakfast: "Morgenmad",
+  Lunch: "Frokost",
+  Dinner: "Aftensmad",
+  Snack: "Mellemmåltid",
+};
+
 const sortOptions = [
-  { value: "lastServedAt", label: "Recently Served" },
-  { value: "heartCount", label: "Most Loved" },
-  { value: "appearanceCount", label: "Most Served" },
-  { value: "p", label: "Highest Protein" },
-  { value: "cal", label: "Calories" },
-  { value: "name", label: "Name A-Z" },
+  { value: "lastServedAt", label: "Senest serveret" },
+  { value: "heartCount", label: "Flest hjerter" },
+  { value: "appearanceCount", label: "Oftest serveret" },
+  { value: "p", label: "Mest protein" },
+  { value: "cal", label: "Kalorier" },
+  { value: "name", label: "Navn A-Å" },
 ];
 
 export default function ExplorePage() {
   const { refresh } = useMealPlan();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [activeMeal, setActiveMeal] = useState<StoredMeal | undefined>(undefined);
-  
+  const [activeMeal, setActiveMeal] = useState<StoredMeal | undefined>(
+    undefined,
+  );
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,7 +60,7 @@ export default function ExplorePage() {
 
   const mealQueryFilters = useMemo(
     () => ({ selectedType, minProtein, search, sortBy, sortDirection }),
-    [selectedType, minProtein, search, sortBy, sortDirection]
+    [selectedType, minProtein, search, sortBy, sortDirection],
   );
   const {
     meals,
@@ -104,14 +116,12 @@ export default function ExplorePage() {
   return (
     <div className="max-w-md mx-auto px-4 pb-[120px] pt-6">
       <div className="mb-6">
-        <p className={sectionLabelColorClass.terracotta}>
-          Meal Library
-        </p>
+        <p className={sectionLabelColorClass.terracotta}>Retbiblioteket</p>
         <h1 className="mt-2 font-serif text-3xl leading-tight text-harvest-green">
-          Explore Meals
+          Udforsk retter
         </h1>
         <p className="mt-1 text-sm text-[var(--muted-text)]">
-          {total} meals in database
+          {total} retter i databasen
         </p>
         <div className="mt-4">
           <button
@@ -119,20 +129,23 @@ export default function ExplorePage() {
             onClick={openCreateMeal}
             className="w-full rounded-[22px] border border-[var(--card-border)] bg-harvest-green px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(45,90,39,0.10)] transition active:scale-[0.99]"
           >
-            Add meal
+            Tilføj ret
           </button>
         </div>
       </div>
 
       {/* Search Input */}
       <div className="relative mb-4">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-text)]" />
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-text)]"
+        />
         <input
           type="text"
-          placeholder="Search meals..."
+          placeholder="Søg efter retter..."
           value={searchDraft}
           onChange={(e) => updateSearchDraft(e.target.value)}
-           className="w-full rounded-[22px] border border-[var(--card-border)] bg-[var(--card-bg)] py-3 pl-12 pr-4 text-base shadow-[0_10px_30px_rgba(45,90,39,0.05)] outline-none transition focus:border-harvest-green"
+          className="w-full rounded-[22px] border border-[var(--card-border)] bg-[var(--card-bg)] py-3 pl-12 pr-4 text-base shadow-[0_10px_30px_rgba(45,90,39,0.05)] outline-none transition focus:border-harvest-green"
         />
       </div>
 
@@ -142,11 +155,11 @@ export default function ExplorePage() {
           onClick={() => setSelectedType(null)}
           className={`rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
             selectedType === null
-               ? "bg-harvest-green text-white shadow"
-               : "bg-[var(--card-border)] text-[var(--muted-text)]"
+              ? "bg-harvest-green text-white shadow"
+              : "bg-[var(--card-border)] text-[var(--muted-text)]"
           }`}
         >
-          All
+          Alle
         </button>
         {MEAL_TYPES.map((type) => (
           <button
@@ -158,7 +171,7 @@ export default function ExplorePage() {
                 : "bg-[var(--card-border)] text-[var(--muted-text)]"
             }`}
           >
-            {type}
+            {mealTypeTabLabel[type]}
           </button>
         ))}
       </div>
@@ -180,8 +193,10 @@ export default function ExplorePage() {
         </div>
 
         <button
-          onClick={() => setSortDirection(sortDirection === "desc" ? "asc" : "desc")}
-           className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition active:scale-95"
+          onClick={() =>
+            setSortDirection(sortDirection === "desc" ? "asc" : "desc")
+          }
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition active:scale-95"
         >
           <ChevronDown
             size={18}
@@ -189,9 +204,9 @@ export default function ExplorePage() {
           />
         </button>
 
-         <div className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2">
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2">
           <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted-text)]">
-            Min Protein
+            Min. protein
           </span>
           <input
             type="number"
@@ -211,7 +226,9 @@ export default function ExplorePage() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader2 size={32} className="animate-spin text-harvest-green" />
-          <p className="mt-3 text-sm text-[var(--muted-text)]">Loading meals...</p>
+          <p className="mt-3 text-sm text-[var(--muted-text)]">
+            Henter retter...
+          </p>
         </div>
       ) : error ? (
         <div className="text-center py-12">
@@ -219,7 +236,9 @@ export default function ExplorePage() {
         </div>
       ) : meals.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-[var(--muted-text)]">No meals found matching your filters</p>
+          <p className="text-[var(--muted-text)]">
+            Ingen retter matcher dine filtre
+          </p>
         </div>
       ) : (
         <>
@@ -230,14 +249,14 @@ export default function ExplorePage() {
               onOpenEditor={() => openEditMeal(meal)}
             />
           ))}
-          
+
           {hasMore && (
-            <div
-              ref={loaderRef}
-              className="py-8 text-center"
-            >
+            <div ref={loaderRef} className="py-8 text-center">
               {loadingMore && (
-                <Loader2 size={24} className="animate-spin mx-auto text-harvest-green" />
+                <Loader2
+                  size={24}
+                  className="animate-spin mx-auto text-harvest-green"
+                />
               )}
             </div>
           )}
@@ -251,7 +270,9 @@ export default function ExplorePage() {
         onClose={() => {
           setIsEditorOpen(false);
           setActiveMeal(undefined);
-          const currentHref = queryString ? `${pathname}?${queryString}` : pathname;
+          const currentHref = queryString
+            ? `${pathname}?${queryString}`
+            : pathname;
           const nextHref = buildHref(pathname, queryString, { mealId: null });
           if (nextHref !== currentHref) {
             router.replace(nextHref);

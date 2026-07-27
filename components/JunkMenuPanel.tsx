@@ -149,7 +149,9 @@ export default function JunkMenuPanel({
                         : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)] hover:text-harvest-terracotta"
                     } ${!mealPlanId || heartSavingItem ? "pointer-events-none opacity-50" : ""}`}
                     aria-label={
-                      liked ? `Unheart ${displayName}` : `Heart ${displayName}`
+                      liked
+                        ? `Fjern hjerte fra ${displayName}`
+                        : `Sæt hjerte på ${displayName}`
                     }
                   >
                     {heartSavingItem === item.n ? (
@@ -166,7 +168,7 @@ export default function JunkMenuPanel({
                     }
                     disabled={isSaving}
                     className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50"
-                    aria-label={`Delete ${displayName}`}
+                    aria-label={`Slet ${displayName}`}
                   >
                     <X size={15} />
                   </button>
@@ -176,7 +178,7 @@ export default function JunkMenuPanel({
 
             {category.items.length === 0 ? (
               <p className="py-2 text-sm text-[var(--text-muted)]">
-                Nothing here yet.
+                Ikke noget her endnu.
               </p>
             ) : null}
           </div>
@@ -185,7 +187,7 @@ export default function JunkMenuPanel({
             <div className="mt-3 space-y-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--tint-stone)] p-3">
               <input
                 type="text"
-                placeholder="Item name..."
+                placeholder="Varens navn..."
                 value={newItemName}
                 onChange={(event) => setNewItemName(event.target.value)}
                 className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
@@ -193,7 +195,7 @@ export default function JunkMenuPanel({
               />
               <input
                 type="text"
-                placeholder="Quantity..."
+                placeholder="Mængde..."
                 value={newItemQty}
                 onChange={(event) => setNewItemQty(event.target.value)}
                 className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
@@ -205,7 +207,7 @@ export default function JunkMenuPanel({
                   disabled={isSaving}
                   className="flex-1 rounded-xl bg-harvest-purple py-2 text-sm font-bold text-white disabled:opacity-50"
                 >
-                  {isSaving ? "Saving..." : "Add"}
+                  {isSaving ? "Gemmer..." : "Tilføj"}
                 </button>
                 <button
                   type="button"
@@ -216,7 +218,7 @@ export default function JunkMenuPanel({
                   }}
                   className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 text-sm font-semibold text-[var(--text-muted)]"
                 >
-                  Cancel
+                  Annuller
                 </button>
               </div>
             </div>
@@ -227,7 +229,7 @@ export default function JunkMenuPanel({
               className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-[var(--border-subtle)] py-2.5 text-sm font-semibold text-[var(--text-muted)] transition-colors hover:bg-[var(--tint-stone)]"
             >
               <Plus size={15} />
-              Add item
+              Tilføj vare
             </button>
           )}
         </section>
@@ -237,7 +239,7 @@ export default function JunkMenuPanel({
         <div className="fixed inset-x-0 bottom-[150px] z-40 mx-auto flex max-w-md items-center justify-between gap-3 px-4">
           <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-2)] px-4 py-3 shadow-[var(--shadow-elevated)] backdrop-blur">
             <span className="min-w-0 truncate text-sm text-[var(--foreground)]">
-              Removed{" "}
+              Fjernede{" "}
               <strong className="font-semibold">{recentlyDeleted.name}</strong>
             </span>
             <button
@@ -247,7 +249,7 @@ export default function JunkMenuPanel({
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-harvest-purple px-3 py-1.5 text-xs font-bold uppercase tracking-[0.1em] text-white disabled:opacity-60"
             >
               <Undo2 size={13} />
-              Undo
+              Fortryd
             </button>
           </div>
         </div>

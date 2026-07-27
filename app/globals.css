@@ -1,123 +1,128 @@
 @import "tailwindcss";
 
 :root {
-  /* Sage & cream foundation */
-  --background: #f4f1e7;
-  --foreground: #283029;
-  --harvest-green: #42584a;       /* primary sage */
-  --harvest-green-deep: #36473c;
-  --harvest-gold: #e5a06f;        /* apricot accent (legacy "gold" token) */
-  --harvest-terracotta: #d98a53;  /* apricot-deep (hearts / warm labels) */
-  --harvest-purple: #8e7ba0;      /* soft plum (junk) */
-  --harvest-sky: #e3eae0;         /* sage tint */
-  --harvest-glass: rgba(252, 251, 246, 0.94);
-  --card-bg: #fcfbf6;
-  --card-border: rgba(46, 58, 49, 0.10);
-  --muted-text: #74807a;
-  --font-jakarta: "Plus Jakarta Sans", "Avenir Next", "Segoe UI", sans-serif;
-  --font-fraunces: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  /* Grøn flade + hvid plade — se .impeccable.md for retningen */
+  --background: oklch(0.945 0.028 149);
+  --foreground: oklch(0.245 0.028 152);
+  --harvest-green: oklch(0.615 0.152 149); /* mættet grøn, flade-farven */
+  --harvest-green-deep: oklch(0.485 0.128 150);
+  --harvest-green-bright: oklch(0.735 0.175 148);
+  --harvest-gold: oklch(
+    0.705 0.152 52
+  ); /* varm apricot — kun hjerter/favoritter */
+  --harvest-terracotta: oklch(0.615 0.16 35);
+  --harvest-purple: oklch(0.585 0.06 316); /* dæmpet plum, snacks-fanen */
+  --harvest-sky: oklch(0.925 0.045 150);
+  --harvest-glass: oklch(0.985 0.006 150 / 0.94);
+  --card-bg: oklch(0.985 0.006 150);
+  --card-border: oklch(0.895 0.014 150);
+  --muted-text: oklch(0.505 0.022 152);
+  --font-display: "Gabarito", system-ui, sans-serif;
+  --font-body: "Schibsted Grotesk", system-ui, sans-serif;
 
-  /* Semantic UI tokens (source of truth for components) */
+  /* Semantiske UI-tokens (kilden komponenterne læser fra) */
   --surface-0: var(--background);
   --surface-1: var(--card-bg);
   --surface-2: var(--harvest-glass);
   --border-subtle: var(--card-border);
   --text-muted: var(--muted-text);
-  --text-subtle: rgba(40, 48, 41, 0.62);
-  --tint-green: #e3eae0;
-  --tint-gold: #f4d9c2;
-  --tint-stone: #ede9dd;
-  --surface-3: #ffffff;
-  --text-faint: #9aa39c;
-  --line-2: rgba(46, 58, 49, 0.06);
-  --apricot-soft: #f4d9c2;
-  --shadow-card: 0 6px 20px rgba(46, 58, 49, 0.08);
-  --shadow-elevated: 0 14px 40px rgba(46, 58, 49, 0.14);
-  --focus-ring: rgba(229, 160, 111, 0.55);
+  --text-subtle: oklch(0.505 0.022 152 / 0.7);
+  --tint-green: oklch(0.925 0.045 150);
+  --tint-gold: oklch(0.9 0.05 60);
+  --tint-stone: oklch(0.962 0.011 150);
+  --surface-3: oklch(1 0 0);
+  --text-faint: oklch(0.635 0.018 152);
+  --line-2: oklch(0.895 0.014 150 / 0.6);
+  --apricot-soft: oklch(0.9 0.05 60);
+  --shadow-card: 0 6px 20px oklch(0.42 0.06 152 / 0.1);
+  --shadow-elevated: 0 14px 40px oklch(0.42 0.06 152 / 0.18);
+  --focus-ring: oklch(0.705 0.152 52 / 0.5);
 
-  /* Macro / build indicator colors */
-  --c-cal: #c7a24e;
-  --c-cal-tint: #f0e6cb;
-  --c-pro: #6e8b76;
-  --c-pro-tint: #dce7dd;
-  --c-carb: #7b97a6;
-  --c-carb-tint: #dde8ec;
-  --c-fat: #9b8aa6;
-  --c-fat-tint: #e6dfec;
+  /* Makro- / opbygningsindikatorer, tonet mod den grønne hue */
+  --c-cal: oklch(0.62 0.1 70);
+  --c-cal-tint: oklch(0.93 0.045 75);
+  --c-pro: oklch(0.55 0.1 152);
+  --c-pro-tint: oklch(0.93 0.04 150);
+  --c-carb: oklch(0.58 0.06 220);
+  --c-carb-tint: oklch(0.93 0.025 220);
+  --c-fat: oklch(0.58 0.06 310);
+  --c-fat-tint: oklch(0.93 0.03 310);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --background: #0f1310;
-    --foreground: #e8ece5;
-    --harvest-green: #a9c2af;
-    --harvest-green-deep: #8aa493;
-    --harvest-gold: #e5a06f;
-    --harvest-terracotta: #efb184;
-    --harvest-purple: #b0a0bc;
-    --harvest-sky: rgba(138, 164, 147, 0.14);
-    --harvest-glass: rgba(23, 28, 24, 0.85);
-    --card-bg: #171c18;
-    --card-border: rgba(255, 255, 255, 0.09);
-    --muted-text: #9ba89f;
+    --background: oklch(0.22 0.02 152);
+    --foreground: oklch(0.93 0.015 150);
+    --harvest-green: oklch(0.72 0.13 148);
+    --harvest-green-deep: oklch(0.6 0.11 149);
+    --harvest-green-bright: oklch(0.8 0.15 148);
+    --harvest-gold: oklch(0.705 0.152 52);
+    --harvest-terracotta: oklch(0.68 0.15 40);
+    --harvest-purple: oklch(0.72 0.05 316);
+    --harvest-sky: oklch(0.72 0.13 148 / 0.14);
+    --harvest-glass: oklch(0.19 0.018 152 / 0.85);
+    --card-bg: oklch(0.26 0.02 152);
+    --card-border: oklch(1 0 0 / 0.09);
+    --muted-text: oklch(0.72 0.018 150);
 
-    --text-subtle: rgba(232, 236, 229, 0.62);
-    --tint-green: rgba(138, 164, 147, 0.16);
-    --tint-gold: rgba(229, 160, 111, 0.16);
-    --tint-stone: rgba(255, 255, 255, 0.05);
-    --surface-3: #1e241f;
-    --text-faint: #6e7a72;
-    --line-2: rgba(255, 255, 255, 0.05);
-    --apricot-soft: rgba(229, 160, 111, 0.22);
-    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --shadow-elevated: 0 14px 40px rgba(0, 0, 0, 0.5);
-    --focus-ring: rgba(229, 160, 111, 0.45);
+    --text-subtle: oklch(0.93 0.015 150 / 0.62);
+    --tint-green: oklch(0.72 0.13 148 / 0.16);
+    --tint-gold: oklch(0.705 0.152 52 / 0.16);
+    --tint-stone: oklch(1 0 0 / 0.05);
+    --surface-3: oklch(0.3 0.02 152);
+    --text-faint: oklch(0.55 0.02 150);
+    --line-2: oklch(1 0 0 / 0.05);
+    --apricot-soft: oklch(0.705 0.152 52 / 0.22);
+    --shadow-card: 0 8px 24px oklch(0 0 0 / 0.4);
+    --shadow-elevated: 0 14px 40px oklch(0 0 0 / 0.5);
+    --focus-ring: oklch(0.705 0.152 52 / 0.45);
 
-    --c-cal: #d6b569;
-    --c-cal-tint: rgba(214, 181, 105, 0.16);
-    --c-pro: #8aa493;
-    --c-pro-tint: rgba(138, 164, 147, 0.16);
-    --c-carb: #8faebe;
-    --c-carb-tint: rgba(143, 174, 190, 0.16);
-    --c-fat: #b0a0bc;
-    --c-fat-tint: rgba(176, 160, 188, 0.16);
+    --c-cal: oklch(0.75 0.1 75);
+    --c-cal-tint: oklch(0.75 0.1 75 / 0.16);
+    --c-pro: oklch(0.72 0.13 148);
+    --c-pro-tint: oklch(0.72 0.13 148 / 0.16);
+    --c-carb: oklch(0.72 0.05 220);
+    --c-carb-tint: oklch(0.72 0.05 220 / 0.16);
+    --c-fat: oklch(0.72 0.05 310);
+    --c-fat-tint: oklch(0.72 0.05 310 / 0.16);
   }
 }
 
 :root.dark {
-  --background: #0f1310;
-  --foreground: #e8ece5;
-  --harvest-green: #a9c2af;
-  --harvest-green-deep: #8aa493;
-  --harvest-gold: #e5a06f;
-  --harvest-terracotta: #efb184;
-  --harvest-purple: #b0a0bc;
-  --harvest-sky: rgba(138, 164, 147, 0.14);
-  --harvest-glass: rgba(23, 28, 24, 0.85);
-  --card-bg: #171c18;
-  --card-border: rgba(255, 255, 255, 0.09);
-  --muted-text: #9ba89f;
+  --background: oklch(0.22 0.02 152);
+  --foreground: oklch(0.93 0.015 150);
+  --harvest-green: oklch(0.72 0.13 148);
+  --harvest-green-deep: oklch(0.6 0.11 149);
+  --harvest-green-bright: oklch(0.8 0.15 148);
+  --harvest-gold: oklch(0.705 0.152 52);
+  --harvest-terracotta: oklch(0.68 0.15 40);
+  --harvest-purple: oklch(0.72 0.05 316);
+  --harvest-sky: oklch(0.72 0.13 148 / 0.14);
+  --harvest-glass: oklch(0.19 0.018 152 / 0.85);
+  --card-bg: oklch(0.26 0.02 152);
+  --card-border: oklch(1 0 0 / 0.09);
+  --muted-text: oklch(0.72 0.018 150);
 
-  --text-subtle: rgba(232, 236, 229, 0.62);
-  --tint-green: rgba(138, 164, 147, 0.16);
-  --tint-gold: rgba(229, 160, 111, 0.16);
-  --tint-stone: rgba(255, 255, 255, 0.05);
-  --surface-3: #1e241f;
-  --text-faint: #6e7a72;
-  --line-2: rgba(255, 255, 255, 0.05);
-  --apricot-soft: rgba(229, 160, 111, 0.22);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-elevated: 0 14px 40px rgba(0, 0, 0, 0.5);
-  --focus-ring: rgba(229, 160, 111, 0.45);
+  --text-subtle: oklch(0.93 0.015 150 / 0.62);
+  --tint-green: oklch(0.72 0.13 148 / 0.16);
+  --tint-gold: oklch(0.705 0.152 52 / 0.16);
+  --tint-stone: oklch(1 0 0 / 0.05);
+  --surface-3: oklch(0.3 0.02 152);
+  --text-faint: oklch(0.55 0.02 150);
+  --line-2: oklch(1 0 0 / 0.05);
+  --apricot-soft: oklch(0.705 0.152 52 / 0.22);
+  --shadow-card: 0 8px 24px oklch(0 0 0 / 0.4);
+  --shadow-elevated: 0 14px 40px oklch(0 0 0 / 0.5);
+  --focus-ring: oklch(0.705 0.152 52 / 0.45);
 
-  --c-cal: #d6b569;
-  --c-cal-tint: rgba(214, 181, 105, 0.16);
-  --c-pro: #8aa493;
-  --c-pro-tint: rgba(138, 164, 147, 0.16);
-  --c-carb: #8faebe;
-  --c-carb-tint: rgba(143, 174, 190, 0.16);
-  --c-fat: #b0a0bc;
-  --c-fat-tint: rgba(176, 160, 188, 0.16);
+  --c-cal: oklch(0.75 0.1 75);
+  --c-cal-tint: oklch(0.75 0.1 75 / 0.16);
+  --c-pro: oklch(0.72 0.13 148);
+  --c-pro-tint: oklch(0.72 0.13 148 / 0.16);
+  --c-carb: oklch(0.72 0.05 220);
+  --c-carb-tint: oklch(0.72 0.05 220 / 0.16);
+  --c-fat: oklch(0.72 0.05 310);
+  --c-fat-tint: oklch(0.72 0.05 310 / 0.16);
 }
 
 @theme inline {
@@ -127,8 +132,8 @@
   --color-harvest-gold: var(--harvest-gold);
   --color-harvest-terracotta: var(--harvest-terracotta);
   --color-harvest-purple: var(--harvest-purple);
-  --font-sans: var(--font-jakarta);
-  --font-serif: var(--font-fraunces);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-display);
 }
 
 *,
@@ -145,12 +150,39 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(1100px 520px at 12% -6%, rgba(110, 139, 118, 0.12), transparent 58%),
-    radial-gradient(820px 460px at 100% 0%, rgba(229, 160, 111, 0.08), transparent 55%),
-    var(--background);
-  background-attachment: fixed;
+  background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-jakarta), sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
+  font-family: var(--font-body), sans-serif;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Foto-pladsholder — bevidst udtryk, aldrig et ødelagt billede-ikon */
+.photo-placeholder {
+  border-radius: 9999px;
+  background:
+    radial-gradient(
+      circle at 34% 30%,
+      oklch(0.93 0.03 120) 0 26%,
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 66% 62%,
+      oklch(0.9 0.05 60) 0 20%,
+      transparent 21%
+    ),
+    radial-gradient(
+      circle at 42% 70%,
+      oklch(0.88 0.04 30) 0 16%,
+      transparent 17%
+    ),
+    var(--tint-stone);
+  border: 1px dashed var(--card-border);
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.3;
+  flex: none;
 }

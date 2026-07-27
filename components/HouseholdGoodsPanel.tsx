@@ -16,21 +16,17 @@ export default function HouseholdGoodsPanel({
   onUpdate?: () => void | Promise<void>;
 }) {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [recentlyDeleted, setRecentlyDeleted] = useState<HouseholdGoodsItem | null>(null);
-  const {
-    isSaving,
-    mutationError,
-    resetMutationState,
-    deleteItem,
-    addItem,
-  } = useListMutations({ type: "household", weekRange, onUpdate });
+  const [recentlyDeleted, setRecentlyDeleted] =
+    useState<HouseholdGoodsItem | null>(null);
+  const { isSaving, mutationError, resetMutationState, deleteItem, addItem } =
+    useListMutations({ type: "household", weekRange, onUpdate });
 
   const availableOptions = useMemo(
     () =>
       HOUSEHOLD_GOODS_CATALOG.filter(
-        (entry) => !data.some((item) => item.category === entry.category)
+        (entry) => !data.some((item) => item.category === entry.category),
       ),
-    [data]
+    [data],
   );
 
   useEffect(() => {
@@ -87,7 +83,7 @@ export default function HouseholdGoodsPanel({
                 onClick={() => void removeItem(item)}
                 disabled={isSaving}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50"
-                aria-label={`Remove ${item.category}`}
+                aria-label={`Fjern ${item.category}`}
               >
                 <X size={15} />
               </button>
@@ -95,7 +91,9 @@ export default function HouseholdGoodsPanel({
           ))}
 
           {data.length === 0 ? (
-            <p className="py-2 text-sm text-[var(--text-muted)]">Nothing here yet.</p>
+            <p className="py-2 text-sm text-[var(--text-muted)]">
+              Ikke noget her endnu.
+            </p>
           ) : null}
         </div>
 
@@ -106,7 +104,7 @@ export default function HouseholdGoodsPanel({
               onChange={(event) => setSelectedCategory(event.target.value)}
               className="min-w-0 flex-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             >
-              <option value="">Add item...</option>
+              <option value="">Tilføj vare...</option>
               {availableOptions.map((entry) => (
                 <option key={entry.category} value={entry.category}>
                   {entry.category}
@@ -124,11 +122,13 @@ export default function HouseholdGoodsPanel({
               ) : (
                 <Plus size={15} />
               )}
-              Add
+              Tilføj
             </button>
           </div>
         ) : data.length > 0 ? (
-          <p className="mt-3 text-sm text-[var(--text-muted)]">All catalog items are on this week&apos;s list.</p>
+          <p className="mt-3 text-sm text-[var(--text-muted)]">
+            Alle varer fra kataloget er på ugens liste.
+          </p>
         ) : null}
       </section>
 
@@ -136,7 +136,10 @@ export default function HouseholdGoodsPanel({
         <div className="fixed inset-x-0 bottom-[150px] z-40 mx-auto flex max-w-md items-center justify-between gap-3 px-4">
           <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-2)] px-4 py-3 shadow-[var(--shadow-elevated)] backdrop-blur">
             <span className="min-w-0 truncate text-sm text-[var(--foreground)]">
-              Removed <strong className="font-semibold">{recentlyDeleted.category}</strong>
+              Fjernede{" "}
+              <strong className="font-semibold">
+                {recentlyDeleted.category}
+              </strong>
             </span>
             <button
               type="button"
@@ -145,7 +148,7 @@ export default function HouseholdGoodsPanel({
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[var(--text-muted)] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.1em] text-white disabled:opacity-60"
             >
               <Undo2 size={13} />
-              Undo
+              Fortryd
             </button>
           </div>
         </div>

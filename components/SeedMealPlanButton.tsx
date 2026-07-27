@@ -22,14 +22,16 @@ export default function SeedMealPlanButton({
       });
 
       if (!response.ok) {
-        throw new Error("Unable to seed from current-week.json.");
+        throw new Error("Kunne ikke hente ugen fra current-week.json.");
       }
 
-      setMessage("Seeded from current-week.json.");
+      setMessage("Ugen er sat op fra current-week.json.");
       await onSeeded();
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Unable to seed from current-week.json."
+        error instanceof Error
+          ? error.message
+          : "Kunne ikke hente ugen fra current-week.json.",
       );
     } finally {
       setIsSeeding(false);
@@ -43,20 +45,25 @@ export default function SeedMealPlanButton({
           <Sprout size={20} />
         </div>
         <div className="flex-1">
-          <h3 className="font-serif text-lg text-harvest-green">Seed the current week</h3>
+          <h3 className="font-serif text-lg text-harvest-green">Sæt ugen op</h3>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
-            Pull the latest Harvest week from <code>data/current-week.json</code> into Postgres.
+            Hent den nyeste Harvest-uge fra <code>data/current-week.json</code>{" "}
+            ind i databasen.
           </p>
           <div className="mt-4 flex items-center justify-between gap-3">
-            <span className="text-xs text-[var(--text-muted)] min-h-5">{message}</span>
+            <span className="text-xs text-[var(--text-muted)] min-h-5">
+              {message}
+            </span>
             <button
               type="button"
               onClick={handleSeed}
               disabled={isSeeding}
               className="inline-flex items-center gap-2 rounded-xl bg-harvest-green px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
             >
-              {isSeeding ? <Loader2 size={16} className="animate-spin" /> : null}
-              Seed plan
+              {isSeeding ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : null}
+              Sæt uge op
             </button>
           </div>
         </div>

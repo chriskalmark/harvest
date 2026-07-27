@@ -242,11 +242,11 @@ export default function ListSection({
                 </span>
               </span>
               <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                {checkedVisibleCount >= totalItemCount ? "All set" : "in cart"}
+                {checkedVisibleCount >= totalItemCount ? "Klar!" : "i kurven"}
               </span>
               {pantryCount > 0 ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-harvest-gold/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-harvest-gold">
-                  {pantryCount} pantry
+                  {pantryCount} i skabet
                 </span>
               ) : null}
             </div>
@@ -256,12 +256,12 @@ export default function ListSection({
                   className="inline-flex items-center gap-1 rounded-full bg-harvest-gold/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]"
                   title={
                     isOnline
-                      ? `${pendingSyncCount} change${pendingSyncCount === 1 ? "" : "s"} syncing`
-                      : "Offline — changes saved on this device and will sync later"
+                      ? `${pendingSyncCount} ændring${pendingSyncCount === 1 ? "" : "er"} synkroniserer`
+                      : "Offline — ændringer gemmes på enheden og synkroniserer senere"
                   }
                 >
                   <WifiOff size={11} />
-                  {isOnline ? "Syncing" : "Offline"}
+                  {isOnline ? "Synkroniserer" : "Offline"}
                 </span>
               ) : null}
               {checkedVisibleCount > 0 ? (
@@ -271,14 +271,14 @@ export default function ListSection({
                     onClick={() => setHideChecked((prev) => !prev)}
                     className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-harvest-green hover:bg-harvest-green/10"
                   >
-                    {hideChecked ? "Show all" : "Hide done"}
+                    {hideChecked ? "Vis alle" : "Skjul klaret"}
                   </button>
                   <button
                     type="button"
                     onClick={clearChecked}
                     className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
                   >
-                    Reset
+                    Nulstil
                   </button>
                 </>
               ) : null}
@@ -335,7 +335,7 @@ export default function ListSection({
                     key={key}
                     className={`flex w-full items-center gap-3 rounded-2xl border p-4 transition-all group ${
                       checked
-                        ? "border-[var(--border-subtle)] bg-[var(--border-subtle)] opacity-50"
+                        ? "border-transparent bg-harvest-green/8 opacity-70"
                         : isPantry
                           ? "border-harvest-gold/60 bg-[var(--tint-gold)] shadow-[0_6px_18px_rgba(240,192,90,0.1)]"
                           : "border-[var(--border-subtle)] bg-[var(--surface-1)] shadow-[0_6px_18px_rgba(45,90,39,0.05)]"
@@ -345,21 +345,21 @@ export default function ListSection({
                       type="button"
                       onClick={() => toggle(category.category, item.n)}
                       aria-pressed={checked}
-                      className="flex min-w-0 flex-1 items-center gap-3"
+                      className="flex min-w-0 flex-1 items-center gap-3 py-1"
                     >
                       <div
-                        className={`flex h-7 w-7 items-center justify-center rounded-lg border-2 transition-colors shrink-0 ${
+                        className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition-colors shrink-0 ${
                           checked
                             ? `${colorClass} border-transparent text-white`
-                            : "border-[var(--border-subtle)]"
+                            : "border-[var(--card-border)]"
                         }`}
                       >
-                        {checked ? <Check size={16} strokeWidth={3} /> : null}
+                        {checked ? <Check size={20} strokeWidth={3} /> : null}
                       </div>
                       <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
                         <span className="min-w-0 text-left">
                           <span
-                            className={`block text-sm font-medium text-[var(--foreground)] ${checked ? "line-through" : ""}`}
+                            className={`block text-[1.05rem] font-medium text-[var(--foreground)] ${checked ? "text-[var(--muted-text)] line-through" : ""}`}
                           >
                             {displayName}
                           </span>
@@ -393,8 +393,8 @@ export default function ListSection({
                               ? "bg-harvest-terracotta/10 text-harvest-terracotta"
                               : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)] hover:text-harvest-terracotta"
                           } ${!mealPlanId || heartSavingItem ? "opacity-50 pointer-events-none" : ""}`}
-                          title={liked ? "Unheart" : "Heart"}
-                          aria-label={liked ? "Unheart" : "Heart"}
+                          title={liked ? "Fjern hjerte" : "Sæt hjerte"}
+                          aria-label={liked ? "Fjern hjerte" : "Sæt hjerte"}
                         >
                           {heartSavingItem === item.n ? (
                             <Loader2 size={12} className="animate-spin" />
@@ -414,14 +414,14 @@ export default function ListSection({
                           e.stopPropagation();
                           togglePantry(category.category, item.n);
                         }}
-                        className={`h-9 px-2.5 flex items-center justify-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                        className={`h-10 px-3 flex items-center justify-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
                           isPantry
                             ? "bg-harvest-gold/20 text-harvest-gold"
                             : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
                         } ${isPantrySaving ? "opacity-50 pointer-events-none" : ""}`}
-                        title="Mark to check pantry"
+                        title="Tjek om den findes i skabet"
                       >
-                        Pantry
+                        Skabet
                       </button>
                       {type !== "shopping" &&
                       item.shoppingSource !== "household" ? (
@@ -432,9 +432,9 @@ export default function ListSection({
                             deleteItem(category.category, item.n, item.q);
                           }}
                           disabled={isSaving}
-                          className="h-9 w-9 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-500 transition-colors disabled:opacity-50"
-                          title="Delete item"
-                          aria-label={`Delete ${displayName}`}
+                          className="h-10 w-10 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-500 transition-colors disabled:opacity-50"
+                          title="Slet vare"
+                          aria-label={`Slet ${displayName}`}
                         >
                           <X size={16} />
                         </button>
@@ -451,7 +451,7 @@ export default function ListSection({
                   <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-1)] p-4 space-y-3 shadow-[var(--shadow-card)]">
                     <input
                       type="text"
-                      placeholder="Item name..."
+                      placeholder="Varens navn..."
                       value={newItemName}
                       onChange={(e) => setNewItemName(e.target.value)}
                       className="w-full text-sm px-3 py-2 border border-[var(--border-subtle)] rounded-lg bg-[var(--tint-stone)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
@@ -464,7 +464,7 @@ export default function ListSection({
                         disabled={isSaving}
                         className={`flex-1 text-sm font-medium rounded-lg ${colorClass} text-white py-2 disabled:opacity-50`}
                       >
-                        {isSaving ? "Saving..." : "Add Item"}
+                        {isSaving ? "Gemmer..." : "Tilføj vare"}
                       </button>
                       <button
                         type="button"
@@ -474,7 +474,7 @@ export default function ListSection({
                         }}
                         className="px-4 text-sm text-[var(--text-muted)] border border-[var(--border-subtle)] rounded-lg bg-[var(--surface-1)]"
                       >
-                        Cancel
+                        Annuller
                       </button>
                     </div>
                   </div>
@@ -485,7 +485,7 @@ export default function ListSection({
                     className="flex w-full items-center justify-center gap-1.5 py-3 text-sm font-medium text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] rounded-2xl hover:bg-[var(--tint-stone)] transition-colors"
                   >
                     <Plus size={15} />
-                    Add item to {category.category}
+                    Tilføj vare til {category.category}
                   </button>
                 )}
               </div>
@@ -496,7 +496,7 @@ export default function ListSection({
 
       {displayData.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--border-subtle)] bg-[var(--surface-1)] p-5 text-sm text-[var(--text-muted)]">
-          No items yet.
+          Ingen varer endnu.
         </div>
       ) : null}
 
@@ -504,7 +504,7 @@ export default function ListSection({
         <div className="fixed inset-x-0 bottom-[150px] z-40 mx-auto flex max-w-md items-center justify-between gap-3 px-4">
           <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-2)] px-4 py-3 shadow-[var(--shadow-elevated)] backdrop-blur">
             <span className="min-w-0 truncate text-sm text-[var(--foreground)]">
-              Removed{" "}
+              Fjernede{" "}
               <strong className="font-semibold">{recentlyDeleted.name}</strong>
             </span>
             <button
@@ -514,7 +514,7 @@ export default function ListSection({
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-harvest-green px-3 py-1.5 text-xs font-bold uppercase tracking-[0.1em] text-white disabled:opacity-60"
             >
               <Undo2 size={13} />
-              Undo
+              Fortryd
             </button>
           </div>
         </div>
@@ -528,25 +528,25 @@ const mealTypeUsageDisplay: Record<
   { label: string; shortLabel: string; chipClass: string }
 > = {
   Breakfast: {
-    label: "Breakfast",
-    shortLabel: "B",
+    label: "Morgenmad",
+    shortLabel: "M",
     chipClass:
       "bg-[var(--tint-gold)] text-[#a06a3a] dark:bg-[#e5a06f]/16 dark:text-[#e5a06f]",
   },
   Lunch: {
-    label: "Lunch",
-    shortLabel: "L",
+    label: "Frokost",
+    shortLabel: "F",
     chipClass:
       "bg-[var(--tint-green)] text-[#4f6b58] dark:bg-[#6e8b76]/18 dark:text-[#8aa493]",
   },
   Dinner: {
-    label: "Dinner",
-    shortLabel: "D",
+    label: "Aftensmad",
+    shortLabel: "A",
     chipClass:
       "bg-[#dde8ec] text-[#5b7382] dark:bg-[#7b97a6]/18 dark:text-[#9fb9c6]",
   },
   Snack: {
-    label: "Snack",
+    label: "Mellemmåltid",
     shortLabel: "S",
     chipClass:
       "bg-[#e6dfec] text-[#7d6f8c] dark:bg-[#9b8aa6]/18 dark:text-[#b9a9c6]",
@@ -580,12 +580,12 @@ function ShoppingSourcePills({
       {isJunk ? (
         <span
           className="inline-flex items-center gap-1 rounded-full bg-[#e6dfec] px-2 py-0.5 text-[10px] font-semibold text-[#7d6f8c] dark:bg-[#9b8aa6]/18 dark:text-[#b9a9c6]"
-          title="Junk"
+          title="Snacks"
         >
           <span aria-hidden="true" className="font-black">
-            J
+            S
           </span>
-          <span className="font-medium">Junk</span>
+          <span className="font-medium">Snacks</span>
         </span>
       ) : null}
       {uniqueMeals.map((meal) => {

@@ -1,32 +1,31 @@
 import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Gabarito, Schibsted_Grotesk } from "next/font/google";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { MealPlanProvider } from "@/lib/MealPlanProvider";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+const schibsted = Schibsted_Grotesk({
   subsets: ["latin"],
-  variable: "--font-jakarta",
-  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const fraunces = Fraunces({
+const gabarito = Gabarito({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  variable: "--font-display",
+  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Harvest Meal Plan",
+  title: "Harvest — Ugens menu",
   description:
-    "Plan the week's Trader Joe's meals and shop the list in-store, even with no signal.",
+    "Planlæg ugens aftensmad og handl listen i butikken, selv uden signal.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -41,17 +40,25 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f1e7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f1310" },
+    { media: "(prefers-color-scheme: light)", color: "#e9f0e4" },
+    { media: "(prefers-color-scheme: dark)", color: "#1f2b22" },
   ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${jakarta.variable} ${fraunces.variable}`}>
+    <html
+      lang="da"
+      suppressHydrationWarning
+      className={`${schibsted.variable} ${gabarito.variable}`}
+    >
       <head>
         <Script
           id="harvest-theme-init"

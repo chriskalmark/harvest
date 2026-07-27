@@ -1,15 +1,14 @@
 "use client";
 
-import { ReactNode } from "react";
-import { ArrowLeftRight, Heart, Loader2, Repeat2, Trash2 } from "lucide-react";
-import { MealCardBody } from "@/components/MealCardView";
+import { ArrowLeftRight, Heart, Loader2, Trash2 } from "lucide-react";
+import PhotoPlaceholder from "@/components/PhotoPlaceholder";
 import { useMealHeart } from "@/lib/hooks/useMealHeart";
 import { StoredMeal } from "@/lib/types";
-import { cardInteractiveClass } from "@/lib/uiClasses";
 
 export default function MenuMealCard({
   meal,
   mealPlanId,
+  isLead = false,
   isActionSaving = false,
   onOpenMeal,
   onSwap,
@@ -18,18 +17,62 @@ export default function MenuMealCard({
 }: {
   meal: StoredMeal;
   mealPlanId: number;
+  isLead?: boolean;
   isActionSaving?: boolean;
   onOpenMeal: () => void;
   onSwap: () => void;
   onRemove: () => void;
   onChanged: () => Promise<void>;
 }) {
-  const { liked, isSaving: isHeartSaving, toggleHeart } = useMealHeart({
+  const {
+    liked,
+    isSaving: isHeartSaving,
+    toggleHeart,
+  } = useMealHeart({
     mealId: meal.mealId,
     mealPlanId,
     currentLiked: meal.likedForCurrentWeek,
     onChanged,
   });
+
+  const photoSize = isLead ? 104 : 60;
+
+  if (isLead) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onOpenMeal}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpenMeal();
+          }
+        }}
+        className="flex w-full items-center gap-4 border-b border-[var(--border-subtle)] pb-5 pt-1 text-left"
+      >
+        <PhotoPlaceholder imageUrl={meal.imageUrl} size={photoSize} />
+        <div className="min-w-0 flex-1">
+          <h3 className="font-serif text-[1.3rem] font-bold leading-[1.15] tracking-[-0.015em] text-[var(--foreground)]">
+            {meal.name}
+          </h3>
+          <p className="mt-1.5 text-[0.86rem] leading-[1.45] text-[var(--muted-text)]">
+            {meal.macros.cal} kcal · {meal.macros.p} g protein
+          </p>
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+            <RemoveButton onClick={onRemove} disabled={isActionSaving} />
+            <SwapButton onClick={onSwap} disabled={isActionSaving} />
+            <HeartButton
+              liked={liked}
+              count={meal.heartCount}
+              saving={isHeartSaving || isActionSaving}
+              onToggle={() => void toggleHeart()}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -42,84 +85,84 @@ export default function MenuMealCard({
           onOpenMeal();
         }
       }}
-      className={`mb-2.5 w-full p-4 text-left ${cardInteractiveClass}`}
+      className="flex w-full items-center gap-4 border-b border-[var(--border-subtle)] py-4 text-left last:border-b-0"
     >
-      <div className="relative">
-        <div className="pr-11">
-          <h3 className="font-serif text-[1.2rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--foreground)]">
-            {meal.name}
-          </h3>
-          <MealCardBody meal={meal} compact />
-        </div>
-
-        <div className="absolute top-0 right-0 flex w-9 flex-col items-center gap-1.5">
-          <button
-            type="button"
-            disabled={isHeartSaving || isActionSaving}
-            onClick={(event) => {
-              event.stopPropagation();
-              void toggleHeart();
-            }}
-            className={`flex h-9 w-9 flex-col items-center justify-center rounded-xl border transition-all duration-200 ease-out active:scale-95 disabled:opacity-50 ${
-              liked
-                ? "border-harvest-terracotta/20 bg-harvest-terracotta/10 text-harvest-terracotta"
-                : "border-[var(--card-border)] bg-[var(--tint-stone)] text-[var(--muted-text)] dark:bg-[var(--card-bg)]"
-            }`}
-            aria-label={liked ? "Remove heart" : "Heart this meal"}
-          >
-            {isHeartSaving ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <>
-                <Heart size={14} fill="currentColor" />
-                <span className="text-[9px] font-black leading-none">{meal.heartCount}</span>
-              </>
-            )}
-          </button>
-
-          <MenuIconButton
-            disabled={isActionSaving}
-            onClick={onSwap}
-            label="Swap meal"
-            className="text-harvest-green"
-          >
-            <ArrowLeftRight size={16} />
-          </MenuIconButton>
-
-          <MenuIconButton
-            disabled={isActionSaving}
-            onClick={onRemove}
-            label="Remove meal"
-            className="text-harvest-terracotta"
-          >
-            <Trash2 size={16} />
-          </MenuIconButton>
-
-          <div
-            className="flex h-9 w-9 flex-col items-center justify-center rounded-xl border border-harvest-green/20 bg-harvest-green/10 text-harvest-green"
-            aria-label={`${meal.appearanceCount} times planned`}
-          >
-            <Repeat2 size={14} />
-            <span className="text-[9px] font-black leading-none">{meal.appearanceCount}</span>
-          </div>
-        </div>
+      <PhotoPlaceholder
+        imageUrl={meal.imageUrl}
+        size={photoSize}
+        label="Foto"
+      />
+      <div className="min-w-0 flex-1">
+        <h4 className="font-serif text-[1.02rem] font-semibold leading-[1.2] text-[var(--foreground)]">
+          {meal.name}
+        </h4>
+        <p className="mt-0.5 text-[0.8rem] text-[var(--muted-text)]">
+          {meal.macros.cal} kcal · {meal.macros.p} g protein
+        </p>
+      </div>
+      <div className="flex shrink-0 items-center gap-1">
+        <SwapButton onClick={onSwap} disabled={isActionSaving} compact />
+        <RemoveButton onClick={onRemove} disabled={isActionSaving} compact />
+        <HeartButton
+          liked={liked}
+          count={meal.heartCount}
+          saving={isHeartSaving || isActionSaving}
+          onToggle={() => void toggleHeart()}
+          compact
+        />
       </div>
     </div>
   );
 }
 
-function MenuIconButton({
-  children,
-  disabled,
-  onClick,
-  label,
-  className = "",
+function HeartButton({
+  liked,
+  count,
+  saving,
+  onToggle,
+  compact = false,
 }: {
-  children: ReactNode;
-  disabled?: boolean;
+  liked: boolean;
+  count: number;
+  saving: boolean;
+  onToggle: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={saving}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+      className={`flex items-center gap-1 rounded-full text-[1.05rem] transition-transform active:scale-95 disabled:opacity-50 ${
+        liked ? "text-harvest-gold" : "text-[var(--card-border)]"
+      } ${compact ? "px-1" : "px-1.5 py-1"}`}
+      aria-label={liked ? "Fjern hjerte" : "Sæt hjerte på retten"}
+    >
+      {saving ? (
+        <Loader2 size={16} className="animate-spin" />
+      ) : (
+        <Heart size={compact ? 16 : 18} fill="currentColor" />
+      )}
+      {!compact ? (
+        <span className="text-xs font-bold text-[var(--muted-text)]">
+          {count}
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
+function SwapButton({
+  onClick,
+  disabled,
+  compact = false,
+}: {
   onClick: () => void;
-  label: string;
-  className?: string;
+  disabled?: boolean;
+  compact?: boolean;
 }) {
   return (
     <button
@@ -129,10 +172,41 @@ function MenuIconButton({
         event.stopPropagation();
         onClick();
       }}
-      className={`flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-1)] transition active:scale-95 disabled:opacity-50 ${className}`}
-      aria-label={label}
+      className={`flex items-center justify-center rounded-full text-harvest-green transition active:scale-95 disabled:opacity-50 ${
+        compact ? "h-8 w-8" : "h-8 w-8 bg-[var(--tint-green)]"
+      }`}
+      aria-label="Byt retten ud"
+      title="Byt ret"
     >
-      {children}
+      <ArrowLeftRight size={15} />
+    </button>
+  );
+}
+
+function RemoveButton({
+  onClick,
+  disabled,
+  compact = false,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClick();
+      }}
+      className={`flex items-center justify-center rounded-full text-harvest-terracotta transition active:scale-95 disabled:opacity-50 ${
+        compact ? "h-8 w-8" : "h-8 w-8"
+      }`}
+      aria-label="Fjern retten fra menuen"
+      title="Fjern ret"
+    >
+      <Trash2 size={15} />
     </button>
   );
 }

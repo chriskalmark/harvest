@@ -5,13 +5,12 @@ import ListSection from "@/components/ListSection";
 import MealPlanGate from "@/components/MealPlanGate";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { getShoppingItemUsage } from "@/lib/domain/shoppingUsage";
-import { sectionLabelColorClass } from "@/lib/uiClasses";
 
 export default function ShopPage() {
   const { plan, isLoading, error, refresh } = useMealPlan();
   const shoppingItemUsage = useMemo(
     () => (plan ? getShoppingItemUsage(plan) : {}),
-    [plan]
+    [plan],
   );
 
   return (
@@ -19,14 +18,17 @@ export default function ShopPage() {
       plan={plan}
       isLoading={isLoading}
       error={error}
-      loadingMessage="Loading Trader Joe's provisions..."
+      loadingMessage="Henter indkøbslisten..."
       onSeeded={refresh}
     >
       {(readyPlan) => (
         <main className="px-4 pb-12">
-          <p className={`mb-6 ${sectionLabelColorClass.green}`}>
-            Trader Joe&apos;s Run
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-harvest-green">
+            Indkøb
           </p>
+          <h1 className="mb-6 font-serif text-2xl font-bold leading-tight text-[var(--foreground)]">
+            Turen rundt i butikken
+          </h1>
 
           <ListSection
             data={readyPlan.shoppingList}

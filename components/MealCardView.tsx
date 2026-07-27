@@ -1,7 +1,14 @@
 "use client";
 
-import { MealIngredient, StoredMeal } from "@/lib/types";
+import { MealIngredient, MealType, StoredMeal } from "@/lib/types";
 import { cardInteractiveClass } from "@/lib/uiClasses";
+
+export const mealTypeDisplayLabel: Record<MealType, string> = {
+  Breakfast: "Morgenmad",
+  Lunch: "Frokost",
+  Dinner: "Aftensmad",
+  Snack: "Mellemmåltid",
+};
 
 export default function MealCardView({
   meal,
@@ -25,7 +32,7 @@ export default function MealCardView({
     >
       <div className="min-w-0">
         <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-harvest-green">
-          {meal.type}
+          {mealTypeDisplayLabel[meal.type]}
         </span>
         <h3 className="mt-1.5 font-serif text-[1.2rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--foreground)]">
           {meal.name}
@@ -88,15 +95,15 @@ const macroToneClasses: Record<MacroTone, string> = {
 export function MacroInline({ meal }: { meal: StoredMeal }) {
   return (
     <span className="shrink-0 text-[10px] font-semibold tracking-[-0.01em] text-[var(--muted-text)]">
-      <span className="text-[var(--c-cal)]">{meal.macros.cal} cal</span>
+      <span className="text-[var(--c-cal)]">{meal.macros.cal} kcal</span>
       {" · "}
-      <span className="text-[var(--c-pro)]">{meal.macros.p}g pro</span>
+      <span className="text-[var(--c-pro)]">{meal.macros.p}g protein</span>
       {" · "}
-      <span className="text-[var(--c-carb)]">{meal.macros.c}g carb</span>
+      <span className="text-[var(--c-carb)]">{meal.macros.c}g kulhydrat</span>
       {" · "}
-      <span className="text-[var(--c-fat)]">{meal.macros.f}g fat</span>
+      <span className="text-[var(--c-fat)]">{meal.macros.f}g fedt</span>
       {" · "}
-      <span className="text-[var(--c-pro)]">{meal.macros.fiber}g fiber</span>
+      <span className="text-[var(--c-pro)]">{meal.macros.fiber}g fibre</span>
     </span>
   );
 }
@@ -104,13 +111,13 @@ export function MacroInline({ meal }: { meal: StoredMeal }) {
 export function MacroRow({ meal }: { meal: StoredMeal }) {
   return (
     <div className="mt-4 grid grid-cols-5 gap-2 border-t border-[var(--border-subtle)] pt-3 text-center">
-      <MacroStat tone="cal" label="Cal" value={meal.macros.cal} />
-      <MacroStat tone="protein" label="Pro" value={`${meal.macros.p}g`} />
-      <MacroStat tone="carb" label="Carb" value={`${meal.macros.c}g`} />
-      <MacroStat tone="fat" label="Fat" value={`${meal.macros.f}g`} />
+      <MacroStat tone="cal" label="Kcal" value={meal.macros.cal} />
+      <MacroStat tone="protein" label="Protein" value={`${meal.macros.p}g`} />
+      <MacroStat tone="carb" label="Kulhyd." value={`${meal.macros.c}g`} />
+      <MacroStat tone="fat" label="Fedt" value={`${meal.macros.f}g`} />
       <MacroStat
         tone="fiber"
-        label="Fiber"
+        label="Fibre"
         value={`${meal.macros.fiber}g`}
         highlight
       />
@@ -153,8 +160,8 @@ type BuildLabel = {
 const ingredientCategoryLabel: Record<MealIngredient["category"], string> = {
   pro: "Protein",
   base: "Base",
-  veg: "Veg",
-  engine: "Engine",
+  veg: "Grønt",
+  engine: "Smag",
 };
 
 const mealCardBuildPillClassByLabel: Record<string, string> = {

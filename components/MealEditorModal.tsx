@@ -42,6 +42,13 @@ type EditorState = {
 
 type ScalarEditorField = Exclude<keyof EditorState, IngredientCategory>;
 
+const mealTypeSelectLabel: Record<MealType, string> = {
+  Breakfast: "Morgenmad",
+  Lunch: "Frokost",
+  Dinner: "Aftensmad",
+  Snack: "Mellemmåltid",
+};
+
 function createEmptyIngredientDraft(): IngredientDraft {
   return { name: "", quantity: "" };
 }
@@ -255,7 +262,7 @@ export default function MealEditorModal({
       build.engine.length === 0
     ) {
       setMessage(
-        "Each build field (Protein, Base, Veg, Engine) requires at least one item.",
+        "Protein, base, grønt og energi skal hver have mindst én vare.",
       );
       return;
     }
@@ -301,8 +308,8 @@ export default function MealEditorModal({
       if (!response.ok) {
         throw new Error(
           isCreateMode
-            ? "Unable to create new meal."
-            : "Unable to save meal changes right now.",
+            ? "Kunne ikke oprette ny ret."
+            : "Kunne ikke gemme ændringerne lige nu.",
         );
       }
 
@@ -312,7 +319,7 @@ export default function MealEditorModal({
       setMessage(
         error instanceof Error
           ? error.message
-          : "Unable to save meal changes right now.",
+          : "Kunne ikke gemme ændringerne lige nu.",
       );
     } finally {
       setIsSaving(false);
@@ -325,17 +332,17 @@ export default function MealEditorModal({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className={`text-harvest-terracotta ${sectionLabelMutedClass}`}>
-              {isCreateMode ? "Create New Meal" : "Meal Editor"}
+              {isCreateMode ? "Ny ret" : "Ret retten til"}
             </p>
             <h2 className="mt-2 font-serif text-3xl leading-tight text-harvest-green text-[var(--foreground)]">
-              {isCreateMode ? "New Meal" : meal.name}
+              {isCreateMode ? "Ny ret" : meal.name}
             </h2>
           </div>
           <button
             type="button"
             onClick={resetAndClose}
             className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--text-muted)] shadow-[var(--shadow-card)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
-            aria-label="Close meal editor"
+            aria-label="Luk"
           >
             <X size={18} />
           </button>
@@ -345,32 +352,32 @@ export default function MealEditorModal({
           <div className={`mt-5 p-4 ${cardClass}`}>
             <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.18em]">
               <span className="rounded-full bg-harvest-green/10 px-3 py-1 text-harvest-green">
-                {meal.appearanceCount} appearances
+                {meal.appearanceCount} gange på menuen
               </span>
               <span className="rounded-full bg-harvest-terracotta/10 px-3 py-1 text-harvest-terracotta">
-                {meal.heartCount} hearts
+                {meal.heartCount} hjerter
               </span>
               <span className="rounded-full bg-[var(--tint-stone)] px-3 py-1 text-[var(--text-muted)]">
                 {meal.lastServedAt
-                  ? `Last served ${formatDate(meal.lastServedAt)}`
-                  : "First week in rotation"}
+                  ? `Sidst serveret ${formatDate(meal.lastServedAt)}`
+                  : "Første uge i rotation"}
               </span>
             </div>
           </div>
         )}
 
         <form onSubmit={handleSaveMeal} className="mt-5 space-y-4">
-          <EditorField label="Meal name">
+          <EditorField label="Navn på retten">
             <input
               value={editorState.name}
               onChange={(event) => updateField("name", event.target.value)}
               className={inputClassName}
-              placeholder="e.g., Salmon Bowl"
+              placeholder="fx. Laksebowl"
               required
             />
           </EditorField>
 
-          <EditorField label="Meal type">
+          <EditorField label="Type">
             <select
               value={editorState.type}
               onChange={(event) =>
@@ -380,7 +387,7 @@ export default function MealEditorModal({
             >
               {MEAL_TYPES.map((mealType) => (
                 <option key={mealType} value={mealType}>
-                  {mealType}
+                  {mealTypeSelectLabel[mealType]}
                 </option>
               ))}
             </select>
@@ -394,8 +401,8 @@ export default function MealEditorModal({
             }
             onAdd={() => addArrayItem("pro")}
             onRemove={(index) => removeArrayItem("pro", index)}
-            namePlaceholder="e.g., Just Chicken"
-            amountPlaceholder="e.g., 1 pack"
+            namePlaceholder="fx. Kylling"
+            amountPlaceholder="fx. 1 pakke"
           />
 
           <ArrayEditorField
@@ -406,36 +413,36 @@ export default function MealEditorModal({
             }
             onAdd={() => addArrayItem("base")}
             onRemove={(index) => removeArrayItem("base", index)}
-            namePlaceholder="e.g., Brown Rice"
-            amountPlaceholder="e.g., 1/2 cup"
+            namePlaceholder="fx. Fuldkornsris"
+            amountPlaceholder="fx. 1 dl"
           />
 
           <ArrayEditorField
-            label="Veg"
+            label="Grønt"
             items={editorState.veg}
             onChange={(index, key, value) =>
               updateIngredientDraft("veg", index, key, value)
             }
             onAdd={() => addArrayItem("veg")}
             onRemove={(index) => removeArrayItem("veg", index)}
-            namePlaceholder="e.g., Cruciferous Crunch"
-            amountPlaceholder="e.g., 1 cup"
+            namePlaceholder="fx. Broccoli"
+            amountPlaceholder="fx. 1 dl"
           />
 
           <ArrayEditorField
-            label="Engine"
+            label="Energi"
             items={editorState.engine}
             onChange={(index, key, value) =>
               updateIngredientDraft("engine", index, key, value)
             }
             onAdd={() => addArrayItem("engine")}
             onRemove={(index) => removeArrayItem("engine", index)}
-            namePlaceholder="e.g., Chili Onion Crunch"
-            amountPlaceholder="e.g., 2 tbsp"
+            namePlaceholder="fx. Chilicrunch"
+            amountPlaceholder="fx. 2 spsk"
           />
 
           <div className="grid grid-cols-2 gap-3">
-            <EditorField label="Calories">
+            <EditorField label="Kalorier">
               <input
                 type="number"
                 inputMode="numeric"
@@ -457,7 +464,7 @@ export default function MealEditorModal({
                 required
               />
             </EditorField>
-            <EditorField label="Carbs (g)">
+            <EditorField label="Kulhydrat (g)">
               <input
                 type="number"
                 inputMode="numeric"
@@ -468,7 +475,7 @@ export default function MealEditorModal({
                 required
               />
             </EditorField>
-            <EditorField label="Fat (g)">
+            <EditorField label="Fedt (g)">
               <input
                 type="number"
                 inputMode="numeric"
@@ -479,7 +486,7 @@ export default function MealEditorModal({
                 required
               />
             </EditorField>
-            <EditorField label="Fiber (g)">
+            <EditorField label="Fibre (g)">
               <input
                 type="number"
                 inputMode="numeric"
@@ -502,7 +509,7 @@ export default function MealEditorModal({
               onClick={resetAndClose}
               className="flex-1 rounded-2xl bg-[var(--tint-stone)] px-4 py-3 text-sm font-semibold text-[var(--foreground)]"
             >
-              Cancel
+              Annuller
             </button>
             <button
               type="submit"
@@ -512,12 +519,12 @@ export default function MealEditorModal({
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
                   <Loader2 size={16} className="animate-spin" />
-                  {isCreateMode ? "Creating" : "Saving"}
+                  {isCreateMode ? "Opretter" : "Gemmer"}
                 </span>
               ) : isCreateMode ? (
-                "Create meal"
+                "Opret ret"
               ) : (
-                "Save meal"
+                "Gem ret"
               )}
             </button>
           </div>
@@ -556,7 +563,7 @@ function ArrayEditorField({
           className="inline-flex items-center gap-1 rounded-full bg-harvest-green/10 px-3 py-1 text-[10px] font-semibold text-harvest-green transition hover:bg-harvest-green/20"
         >
           <Plus size={12} />
-          Add
+          Tilføj
         </button>
       </div>
       <div className="space-y-2">
@@ -578,7 +585,7 @@ function ArrayEditorField({
                 }
                 className={inputClassName}
                 placeholder={amountPlaceholder}
-                aria-label={`${label} amount ${index + 1}`}
+                aria-label={`${label}, mængde ${index + 1}`}
               />
             </div>
             {items.length > 1 && (
@@ -586,7 +593,7 @@ function ArrayEditorField({
                 type="button"
                 onClick={() => onRemove(index)}
                 className="flex h-12 w-12 items-center justify-center rounded-2xl bg-harvest-terracotta/10 text-harvest-terracotta transition hover:bg-harvest-terracotta/20"
-                aria-label={`Remove ${label.toLowerCase()} item ${index + 1}`}
+                aria-label={`Fjern ${label.toLowerCase()} nr. ${index + 1}`}
               >
                 <Trash2 size={16} />
               </button>
@@ -616,7 +623,7 @@ function EditorField({
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("da-DK", {
     month: "short",
     day: "numeric",
     year: "numeric",

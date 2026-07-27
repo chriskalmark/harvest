@@ -12,15 +12,26 @@ import MealSwapPickerModal from "@/components/MealSwapPickerModal";
 import { MEAL_TYPES } from "@/lib/constants";
 import { useMealPlanMutations } from "@/lib/hooks/useMealPlanMutations";
 import { useMealPlan } from "@/lib/MealPlanProvider";
-import { ListCategory, MealType, StoredMeal, HouseholdGoodsItem } from "@/lib/types";
-import { sectionLabelColorClass } from "@/lib/uiClasses";
+import {
+  ListCategory,
+  MealType,
+  StoredMeal,
+  HouseholdGoodsItem,
+} from "@/lib/types";
 import { buildHref } from "@/lib/urlState";
 
 const MENU_GROUPS: { type: MealType; label: string }[] = [
-  { type: "Breakfast", label: "Breakfasts" },
-  { type: "Lunch", label: "Lunches" },
-  { type: "Dinner", label: "Dinners" },
+  { type: "Breakfast", label: "Morgenmad" },
+  { type: "Lunch", label: "Frokost" },
+  { type: "Dinner", label: "Aftensmad" },
 ];
+
+const menuTypeLabel: Record<MealType, string> = {
+  Breakfast: "Morgenmad",
+  Lunch: "Frokost",
+  Dinner: "Aftensmad",
+  Snack: "Mellemmåltid",
+};
 
 type MenuTab = MealType | "Junk" | "Household";
 type MenuGroup = { type: MealType; label: string; meals: StoredMeal[] };
@@ -72,11 +83,11 @@ function MenuContent({
   const tabFromUrl = parseMenuTab(searchParams.get("type"));
   const tabs: MenuTabOption[] = useMemo(
     () => [
-      ...MENU_GROUPS.map((group) => ({ type: group.type, label: group.type })),
-      { type: "Junk", label: "Junk" },
-      { type: "Household", label: "Household", iconOnly: true },
+      ...MENU_GROUPS.map((group) => ({ type: group.type, label: group.label })),
+      { type: "Junk" as const, label: "Snacks" },
+      { type: "Household" as const, label: "Husholdning", iconOnly: true },
     ],
-    []
+    [],
   );
 
   const activeTab =
@@ -112,7 +123,7 @@ function MenuContent({
     if (nextIndex !== currentIndex) {
       router.push(
         buildHref("/menu", queryString, { type: tabs[nextIndex].type }),
-        { scroll: false }
+        { scroll: false },
       );
     }
   }
@@ -129,7 +140,7 @@ function MenuContent({
         </div>
       ) : null}
 
-      <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="mb-1 flex gap-2 overflow-x-auto pb-1">
         {tabs.map((tab) => (
           <Link
             key={tab.type}
@@ -138,13 +149,13 @@ function MenuContent({
             className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
               activeTab === tab.type
                 ? tab.type === "Junk"
-                  ? "bg-harvest-purple text-white shadow dark:bg-[var(--surface-3)] dark:text-harvest-purple dark:shadow-none"
+                  ? "bg-harvest-purple text-white"
                   : tab.type === "Household"
-                    ? "bg-[var(--text-muted)] text-white shadow dark:bg-[var(--surface-3)] dark:text-[var(--foreground)] dark:shadow-none"
-                    : "bg-harvest-green text-white shadow dark:bg-[var(--surface-3)] dark:text-harvest-green dark:shadow-none"
-                : "bg-[var(--card-border)] text-[var(--muted-text)]"
+                    ? "bg-[var(--text-muted)] text-white"
+                    : "bg-harvest-green-deep text-white"
+                : "bg-[var(--tint-stone)] text-[var(--muted-text)]"
             }`}
-            aria-label={tab.iconOnly ? "Household goods" : undefined}
+            aria-label={tab.iconOnly ? "Husholdning" : undefined}
           >
             {tab.iconOnly ? <Home size={14} strokeWidth={2.5} /> : tab.label}
           </Link>
@@ -168,11 +179,12 @@ function MenuContent({
         ) : (
           <section>
             {mealPlanId
-              ? activeGroup?.meals.map((meal) => (
+              ? activeGroup?.meals.map((meal, index) => (
                   <MenuMealCard
                     key={`${meal.mealId}-${meal.slotOrder}`}
                     meal={meal}
                     mealPlanId={mealPlanId}
+                    isLead={index === 0}
                     isActionSaving={isSaving}
                     onOpenMeal={() => onOpenMeal(meal)}
                     onSwap={() => onSwapMeal(meal)}
@@ -188,14 +200,14 @@ function MenuContent({
               type="button"
               disabled={isSaving}
               onClick={() => onAddMeal(activeTab as MealType)}
-              className="mb-2.5 flex w-full items-center justify-center gap-2 rounded-[18px] border border-dashed border-[var(--card-border)] bg-[var(--surface-1)] px-4 py-4 text-sm font-semibold text-harvest-green transition active:scale-[0.99] disabled:opacity-50"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-[18px] border border-dashed border-[var(--card-border)] px-4 py-4 text-sm font-semibold text-harvest-green transition active:scale-[0.99] disabled:opacity-50"
             >
               {isSaving ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
                 <Plus size={16} />
               )}
-              Add {activeTab}
+              Tilføj {menuTypeLabel[activeTab as MealType].toLowerCase()}
             </button>
           </section>
         )}
@@ -243,7 +255,9 @@ export default function MenuPage() {
   }
 
   async function handleRemoveMeal(meal: StoredMeal) {
-    const confirmed = window.confirm(`Remove "${meal.name}" from this week's menu?`);
+    const confirmed = window.confirm(
+      `Fjern "${meal.name}" fra denne uges menu?`,
+    );
     if (!confirmed) return;
     resetMutationState();
     await removeMeal(meal.slotOrder);
@@ -272,7 +286,7 @@ export default function MenuPage() {
       plan={plan}
       isLoading={isLoading}
       error={error}
-      loadingMessage="Plating this week's menu..."
+      loadingMessage="Sætter denne uges menu op..."
       onSeeded={refresh}
     >
       {(readyPlan) => {
@@ -284,26 +298,48 @@ export default function MenuPage() {
         }));
 
         const weekMealIds = readyPlan.meals.map((meal) => meal.mealId);
+        const dinnerCount =
+          groups.find((g) => g.type === "Dinner")?.meals.length ?? 0;
+        const itemCount =
+          (readyPlan.shoppingList ?? []).reduce(
+            (sum, cat) => sum + cat.items.length,
+            0,
+          ) || undefined;
 
         return (
-          <main className="px-4 pb-8">
-            <p className={`mb-5 ${sectionLabelColorClass.green}`}>The Menu</p>
+          <main className="pb-8">
+            <div className="rounded-b-[34px] bg-harvest-green px-5 pb-8 pt-2 text-white">
+              <div className="text-[0.8rem] font-semibold uppercase tracking-[0.1em] opacity-[0.72]">
+                {readyPlan.weekRange}
+              </div>
+              <h2 className="mt-2 font-serif text-[2rem] font-extrabold leading-[1.05] tracking-[-0.02em]">
+                Ingen tvivl,
+                <br />
+                bare mad.
+              </h2>
+              <div className="mt-3 text-[0.9rem] font-medium opacity-[0.82]">
+                {readyPlan.meals.length} retter · {dinnerCount} aftener
+                {itemCount ? ` · ${itemCount} varer` : ""}
+              </div>
+            </div>
 
-            <MenuContent
-              groups={groups}
-              junkList={readyPlan.junkList}
-              householdGoods={readyPlan.householdGoods}
-              weekRange={readyPlan.weekRange}
-              mealPlanId={readyPlan.id}
-              queryString={queryString}
-              onOpenMeal={openMeal}
-              onUpdate={refresh}
-              onSwapMeal={openSwapPicker}
-              onRemoveMeal={handleRemoveMeal}
-              onAddMeal={openAddPicker}
-              isSaving={isSaving}
-              mutationError={mutationError}
-            />
+            <div className="relative -mt-5 rounded-t-[34px] bg-[var(--surface-0)] px-4 pt-5">
+              <MenuContent
+                groups={groups}
+                junkList={readyPlan.junkList}
+                householdGoods={readyPlan.householdGoods}
+                weekRange={readyPlan.weekRange}
+                mealPlanId={readyPlan.id}
+                queryString={queryString}
+                onOpenMeal={openMeal}
+                onUpdate={refresh}
+                onSwapMeal={openSwapPicker}
+                onRemoveMeal={handleRemoveMeal}
+                onAddMeal={openAddPicker}
+                isSaving={isSaving}
+                mutationError={mutationError}
+              />
+            </div>
 
             {pickerTarget ? (
               <MealSwapPickerModal

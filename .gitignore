@@ -43,3 +43,4 @@ data/backup-week-*.md
 *.tsbuildinfo
 next-env.d.ts
 .superpowers/
+.claude/

@@ -9,8 +9,8 @@ import { buildHref } from "@/lib/urlState";
 
 const navItems = [
   { name: "Menu", href: "/menu", icon: LayoutDashboard },
-  { name: "Shop", href: "/shop", icon: ShoppingBag },
-  { name: "Explore", href: "/explore", icon: Search },
+  { name: "Indkøb", href: "/shop", icon: ShoppingBag },
+  { name: "Udforsk", href: "/explore", icon: Search },
 ];
 
 export default function BottomNav() {
@@ -18,7 +18,7 @@ export default function BottomNav() {
   const searchParams = useSearchParams();
   const { selectedWeekRange, selectWeek, weeks } = useMealPlan();
 
-  const showWeekSelector = pathname !== '/explore';
+  const showWeekSelector = pathname !== "/explore";
   const queryString = searchParams.toString();
   const weekRangeFromUrl = searchParams.get("weekRange");
   const effectiveWeekRange = selectedWeekRange ?? weekRangeFromUrl;
@@ -35,7 +35,7 @@ export default function BottomNav() {
           />
         </div>
       )}
-      
+
       <div className="mx-auto flex h-[75px] max-w-md items-center justify-around px-2">
         {navItems.map((item) => {
           const isActive =
@@ -49,7 +49,9 @@ export default function BottomNav() {
           const href =
             item.href === "/explore"
               ? item.href
-              : buildHref(item.href, queryString, { weekRange: effectiveWeekRange });
+              : buildHref(item.href, queryString, {
+                  weekRange: effectiveWeekRange,
+                });
 
           return (
             <Link
