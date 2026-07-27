@@ -38,15 +38,27 @@ Målgruppen er to voksne i én husstand. Appen er privat, har ingen konti og ska
 
 ### Datamodel — migration `003`
 
-Den bærende ændring. `meals.ingredients` er i dag en JSONB-liste af rene produktnavne uden mængder, og det er derfor, portionsskalering ikke kan lade sig gøre i dag.
+Den bærende ændring.
 
-Hver ingrediens bliver et objekt:
+`MealIngredient` har allerede felterne `name`, `quantity`, `category` og `macros`. Men `quantity` er en **fritekststreng** ("2 cups", "1 håndfuld"), og den kan derfor hverken ganges eller lægges sammen. Oveni dropper `deriveShoppingListFromMeals` mængden helt: `buildShoppingItem` henter kun `q` fra den *forrige* indkøbsliste, aldrig fra rettens ingrediens. Resultatet er, at mængder i praksis ikke findes på indkøbslisten i dag — men årsagen er en tekststreng, der aldrig blev regnet på, ikke et manglende felt.
 
-```json
-{ "navn": "kyllingelår", "maengde": 150, "enhed": "g", "zone": "Kød & fjerkræ" }
+`MealIngredient` udvides derfor med tre felter ved siden af de eksisterende:
+
+```ts
+interface MealIngredient {
+  name: string;
+  quantity: string;          // beholdes til visning og bagudkompatibilitet
+  amount: number;            // NY — pr. portion
+  unit: MealIngredientUnit;  // NY
+  zone: StoreZone;           // NY
+  category: "pro" | "base" | "veg" | "engine";
+  macros: Macros;
+}
 ```
 
-`maengde` er **pr. portion**. `enhed` er en fast liste: `g`, `kg`, `ml`, `l`, `stk`, `dl`, `tsk`, `spsk`, `bundt`, `dåse`, `pakke`.
+`amount` er **pr. portion**. `unit` er en fast union: `g`, `kg`, `ml`, `l`, `dl`, `stk`, `tsk`, `spsk`, `bundt`, `dåse`, `pakke`.
+
+`zone` sættes af agenten på hver ingrediens. Det betyder, at `lib/shoppingListOrder.ts` — i dag en stor klassifikator med eksakte Trader Joe's-produktnavne og nøgleordsregler — reduceres til en ren reservemekanisme for ingredienser uden zone. Det er en væsentlig forenkling og skal ikke oversættes ord for ord til dansk.
 
 Nye kolonner på `meals`:
 
@@ -67,6 +79,10 @@ Det seedede Trader Joe's-demodata smides væk i samme migration. Det har ingen v
 3. Gruppér efter `zone` og sortér zonerne efter `STORE_CATEGORY_ORDER`
 
 Ingredienser med forskellig enhed for samme navn lægges *ikke* sammen — de bliver til to linjer. Det er med vilje: 2 fed hvidløg og 10 g hvidløg skal ikke slås sammen til et gæt.
+
+**`normalizeShoppingName` skal rettes først.** Funktionen i `lib/domain/shoppingUsage.ts` fjerner alt uden for `[a-z0-9]`, så danske ord bliver ødelagt: "kikærter" bliver til `kik rter`, "rødløg" til `r dl g`. Da funktionen er nøglen, ingredienser slås sammen på, ville sammenlægningen fejle stille og tilfældigt. Dens engelske flertalsregler (`ies→y`, efterstillet `s` fjernes) er samtidig forkerte på dansk og skal væk — dansk flertal (`-er`, `-e`, `-r`) kan ikke afkortes med samme trick uden at ramme ord som "smør" og "peber".
+
+`stripTraderJoesForDisplay` i `lib/displayFormatters.ts` bliver død kode og fjernes sammen med sine kaldesteder.
 
 ### Nettos gå-rækkefølge
 
@@ -136,7 +152,9 @@ Migrationer i `db/init/` køres **ikke** automatisk, fordi Postgres-volumet alle
 
 ## Test
 
-`npm run test:meal-plan-tools` findes allerede og dækker markdown-/JSON-værktøjerne. Den skal udvides til det nye ingrediensformat.
+**Der er ingen testramme i projektet.** `npm run test:meal-plan-tools` kører to almindelige `tsx`-scripts (`scripts/testShoppingListOrder.ts`, `scripts/testMealPlanFixtures.ts`), der bruger `node:assert/strict` og fejler med exit-kode. Nye tests skrives i samme form — vi indfører ikke Vitest eller Jest for denne opgave, da det ville tilføje et byggetrin og en afhængighed for fire filers vedkommende.
+
+`scripts/testShoppingListOrder.ts` er i dag 23 påstande om Trader Joe's-produktnavne og bliver meningsløs, når zonerne kommer fra agenten. Den erstattes, ikke oversættes.
 
 Ny dækning er nødvendig for skaleringslogikken: den er ren funktion ind/ud og dermed billig at teste, og den er samtidig det sted, en fejl gør mest skade — en forkert mængde opdages først i butikken.
 
