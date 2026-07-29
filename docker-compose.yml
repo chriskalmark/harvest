@@ -27,6 +27,8 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-harvest}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-harvest_db}}
       HOSTNAME: 0.0.0.0
       PORT: "3000"
+      # Shared key for GET /api/widget. Unset → the route answers 503.
+      WIDGET_TOKEN: ${WIDGET_TOKEN:-}
     ports:
       - "3000:3000"
 

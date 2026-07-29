@@ -188,8 +188,49 @@ Host-side DB scripts expect `DATABASE_URL` (see `.env.example`). Use the **dev**
 | `*` | `/api/mealplan/household-goods` | Household list updates |
 | `GET`/`POST` | `/api/meals` | Meal library |
 | `PUT` | `/api/meals/[id]` | Update a meal |
+| `GET` | `/api/widget` | Dashboard widget feed (requires `WIDGET_TOKEN`) |
 
-**Security:** mutating routes are **unauthenticated**. That is intentional for local household use. Do not expose this stack to the public internet without auth (or network controls) in front of it.
+**Security:** mutating routes are **unauthenticated**. That is intentional for local household use. Do not expose this stack to the public internet without auth (or network controls) in front of it. `/api/widget` is the exception — it always requires a bearer token.
+
+## Dashboard widget feed
+
+`GET /api/widget` returns the next seven days of dinners as JSON for an external dashboard (Gaarden). Meal plans store a week, not per-day dates, so dinners are laid out in menu order from the week's Monday; days without a dinner are omitted.
+
+```json
+{
+  "title": "Harvest · madplan",
+  "updated": "2026-07-29T06:00:00.000Z",
+  "layout": "list",
+  "data": { "items": ["I dag · Lasagne", "Torsdag 30/7 · Fisk"] }
+}
+```
+
+### `WIDGET_TOKEN`
+
+The route is protected by a shared bearer token read from the `WIDGET_TOKEN` environment variable and compared in constant time.
+
+| `WIDGET_TOKEN` | Request | Response |
+|---|---|---|
+| unset | any | `503` — the route is never open without a key |
+| set | missing or wrong `Authorization` | `401` |
+| set | `Authorization: Bearer <token>` | `200` with the payload above |
+
+Generate a key and put it in your `.env` (never commit it):
+
+```bash
+openssl rand -hex 32
+```
+
+```bash
+# .env
+WIDGET_TOKEN=<the generated value>
+```
+
+Both Compose files pass `WIDGET_TOKEN` through to the app container. Verify with:
+
+```bash
+curl -H "Authorization: Bearer $WIDGET_TOKEN" http://localhost:3000/api/widget
+```
 
 ## Troubleshooting
 
