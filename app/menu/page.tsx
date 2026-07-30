@@ -142,26 +142,31 @@ function MenuContent({
         </div>
       ) : null}
 
-      <div className="mb-1 flex gap-2 overflow-x-auto pb-1">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.type}
-            href={buildHref("/menu", queryString, { type: tab.type })}
-            scroll={false}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
-              activeTab === tab.type
-                ? tab.type === "Junk"
-                  ? "bg-harvest-purple text-white"
-                  : tab.type === "Household"
-                    ? "bg-[var(--text-muted)] text-white"
-                    : "bg-[var(--harvest-green-deep)] text-white"
-                : "bg-[var(--tint-stone)] text-[var(--muted-text)]"
-            }`}
-            aria-label={tab.iconOnly ? "Husholdning" : undefined}
-          >
-            {tab.iconOnly ? <Home size={14} strokeWidth={2.5} /> : tab.label}
-          </Link>
-        ))}
+      <div className="relative mb-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 pr-6">
+          {tabs.map((tab) => (
+            <Link
+              key={tab.type}
+              href={buildHref("/menu", queryString, { type: tab.type })}
+              scroll={false}
+              className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
+                activeTab === tab.type
+                  ? tab.type === "Junk"
+                    ? "bg-harvest-purple text-white"
+                    : tab.type === "Household"
+                      ? "bg-[var(--text-muted)] text-white"
+                      : "bg-[var(--harvest-green-deep)] text-white"
+                  : "bg-[var(--tint-stone)] text-[var(--muted-text)]"
+              }`}
+              aria-label={tab.iconOnly ? "Husholdning" : undefined}
+            >
+              {tab.iconOnly ? <Home size={14} strokeWidth={2.5} /> : tab.label}
+            </Link>
+          ))}
+        </div>
+        {/* Fade hints that the tab strip scrolls — the last tab (Snacks)
+            used to be clipped mid-word with no sign there was more. */}
+        <div className="pointer-events-none absolute bottom-1 right-0 top-0 w-8 bg-gradient-to-l from-[var(--surface-1)] to-transparent" />
       </div>
 
       <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
