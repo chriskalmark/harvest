@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, Heart, Loader2, Plus, Undo2, WifiOff, X } from "lucide-react";
+import {
+  Archive,
+  Check,
+  Heart,
+  Loader2,
+  Plus,
+  Undo2,
+  WifiOff,
+  X,
+} from "lucide-react";
 import { ListCategory, MealType } from "@/lib/types";
 import {
   getShoppingUsageKey,
@@ -416,14 +425,24 @@ export default function ListSection({
                           e.stopPropagation();
                           togglePantry(category.category, item.n);
                         }}
-                        className={`h-10 px-3 flex items-center justify-center rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                        className={`flex h-10 items-center justify-center gap-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
                           isPantry
-                            ? "bg-harvest-gold/20 text-harvest-gold"
-                            : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
+                            ? "bg-harvest-gold/20 px-2.5 text-harvest-gold"
+                            : "w-10 text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
                         } ${isPantrySaving ? "opacity-50 pointer-events-none" : ""}`}
-                        title="Tjek om den findes i skabet"
+                        title={
+                          isPantry
+                            ? "Findes i skabet — tryk for at fjerne"
+                            : "Tjek om den findes i skabet"
+                        }
+                        aria-label={
+                          isPantry
+                            ? "Fjern fra skabet"
+                            : "Marker at varen findes i skabet"
+                        }
                       >
-                        Skabet
+                        <Archive size={16} />
+                        {isPantry ? <span>Skabet</span> : null}
                       </button>
                       {type !== "shopping" &&
                       item.shoppingSource !== "household" ? (
