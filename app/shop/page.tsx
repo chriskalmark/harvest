@@ -23,7 +23,7 @@ export default function ShopPage() {
     >
       {(readyPlan) => (
         <main className="px-4 pb-12">
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-harvest-green">
+          <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-harvest-green">
             Indkøb
           </p>
           <h1 className="mb-6 font-serif text-2xl font-bold leading-tight text-[var(--foreground)]">

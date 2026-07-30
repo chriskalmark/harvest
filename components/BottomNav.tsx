@@ -57,7 +57,7 @@ export default function BottomNav() {
             <Link
               key={item.name}
               href={href}
-              className={`flex w-1/3 flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-[0.06em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)] rounded-xl py-1 ${
+              className={`flex w-1/3 flex-col items-center gap-1 text-[10px] font-bold uppercase tracking-[0.06em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)] rounded-xl py-1 ${
                 isActive ? "text-harvest-green" : "text-[var(--text-muted)]"
               }`}
             >

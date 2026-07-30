@@ -31,7 +31,7 @@ export default function MealCardView({
       className={`mb-2.5 w-full p-4 text-left ${cardInteractiveClass}`}
     >
       <div className="min-w-0">
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-harvest-green">
+        <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-harvest-green">
           {mealTypeDisplayLabel[meal.type]}
         </span>
         <h3 className="mt-1.5 font-serif text-[1.2rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--foreground)]">
@@ -68,7 +68,7 @@ export function MealCardBody({
               <IngredientGlyph category={item.category} />
               <span>{item.value}</span>
               {item.quantity ? (
-                <span className="rounded-full bg-[var(--tint-stone)] px-1.5 py-0.5 text-[9px] font-bold tracking-[0.04em] text-[var(--text-muted)]">
+                <span className="rounded-full bg-[var(--tint-stone)] px-1.5 py-0.5 text-[10px] font-bold tracking-[0.04em] text-[var(--text-muted)]">
                   {item.quantity}
                 </span>
               ) : null}
@@ -84,7 +84,7 @@ export function MealCardBody({
 
 export function MacroInline({ meal }: { meal: StoredMeal }) {
   return (
-    <span className="shrink-0 text-[10px] font-semibold tracking-[-0.01em] text-[var(--muted-text)]">
+    <span className="shrink-0 text-[11px] font-semibold tracking-[-0.01em] text-[var(--muted-text)]">
       <span className="text-[var(--c-cal)]">{meal.macros.cal} kcal</span>
       {" · "}
       <span className="text-[var(--c-pro)]">{meal.macros.p}g protein</span>

@@ -111,7 +111,7 @@ export default function JunkMenuPanel({
         >
           <div className="mb-3 flex items-center justify-between gap-3">
             <h3 className={sectionLabelMutedClass}>{category.category}</h3>
-            <span className="rounded-full bg-[var(--tint-stone)] px-2 py-0.5 text-[10px] font-bold text-[var(--text-muted)]">
+            <span className="rounded-full bg-[var(--tint-stone)] px-2 py-0.5 text-[11px] font-bold text-[var(--text-muted)]">
               {category.items.length}
             </span>
           </div>

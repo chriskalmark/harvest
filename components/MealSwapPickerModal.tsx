@@ -121,7 +121,7 @@ export default function MealSwapPickerModal({
       <div className="fixed inset-0 z-[70] flex flex-col bg-[var(--surface-0)]">
         <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-harvest-green">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-harvest-green">
               {title}
             </p>
             <p className="mt-1 text-sm text-[var(--muted-text)]">
