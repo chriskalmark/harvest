@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
     // eksterne billeder. Tilfoej kun remotePatterns hvis billeder en dag
     // faktisk hentes fra et andet host, og navngiv da det host praecist.
     formats: ["image/webp"],
+    // Next 16 afviser enhver quality-vaerdi, der ikke staar her, med 400 —
+    // ikke med en advarsel. PhotoPlaceholder beder om 80, saa 80 skal staa
+    // her, ellers indlaeses ingen madfotos overhovedet.
+    qualities: [80],
   },
   async headers() {
     return [
