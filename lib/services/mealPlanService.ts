@@ -219,14 +219,21 @@ async function findOrCreateMeal(
 
   if (existing && mealMatchesFn(existing, meal)) {
     const existingId = toNumber(existing.id);
-    if (
-      meal.ingredients &&
-      JSON.stringify(existing.ingredients ?? []) !==
-        JSON.stringify(meal.ingredients)
-    ) {
+    const next = mealInputToRow(meal);
+    // The signature lookup only matches on name/build/macros, so the fields it
+    // ignores can still be stale on the existing row — rewrite when any of them
+    // differ, not just ingredients.
+    const isStale =
+      (meal.ingredients &&
+        JSON.stringify(existing.ingredients ?? []) !==
+          JSON.stringify(next.ingredients)) ||
+      JSON.stringify(existing.steps ?? []) !== JSON.stringify(next.steps) ||
+      existing.servings !== next.servings ||
+      (existing.image_url ?? null) !== (next.image_url ?? null);
+    if (isStale) {
       await mealRepo.updateMeal(client, {
         id: existingId,
-        ...mealInputToRow(meal),
+        ...next,
       });
     }
     return existingId;

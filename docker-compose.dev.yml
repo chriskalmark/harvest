@@ -24,6 +24,8 @@ services:
       NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
       DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-harvest}:${POSTGRES_PASSWORD:-harvest}@db:5432/${POSTGRES_DB:-harvest_db}}
+      # Shared key for GET /api/widget. Unset → the route answers 503.
+      WIDGET_TOKEN: ${WIDGET_TOKEN:-}
     ports:
       - "3000:3000"
     volumes:

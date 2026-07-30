@@ -459,7 +459,7 @@ export async function insertMeal(
         steps,
         image_url
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13, $14, $15)
+      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13, $14::jsonb, $15)
       RETURNING id
     `,
     [
@@ -476,7 +476,7 @@ export async function insertMeal(
       mealData.fat_grams,
       mealData.fiber_grams,
       mealData.servings,
-      mealData.steps,
+      JSON.stringify(mealData.steps),
       mealData.image_url,
     ],
   );
@@ -630,7 +630,7 @@ export async function updateMeal(
         fat_grams = $12,
         fiber_grams = $13,
         servings = $14,
-        steps = $15,
+        steps = $15::jsonb,
         image_url = $16,
         updated_at = NOW()
       WHERE id = $1
@@ -651,7 +651,7 @@ export async function updateMeal(
       input.fat_grams,
       input.fiber_grams,
       input.servings,
-      input.steps,
+      JSON.stringify(input.steps),
       input.image_url,
     ],
   );
@@ -689,7 +689,7 @@ export async function insertMealReturningRow(
         steps,
         image_url
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13, $14, $15)
+      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10, $11, $12, $13, $14::jsonb, $15)
       RETURNING *
     `,
     [
@@ -706,7 +706,7 @@ export async function insertMealReturningRow(
       mealData.fat_grams,
       mealData.fiber_grams,
       mealData.servings,
-      mealData.steps,
+      JSON.stringify(mealData.steps),
       mealData.image_url,
     ],
   );

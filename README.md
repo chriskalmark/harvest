@@ -188,8 +188,60 @@ Host-side DB scripts expect `DATABASE_URL` (see `.env.example`). Use the **dev**
 | `*` | `/api/mealplan/household-goods` | Household list updates |
 | `GET`/`POST` | `/api/meals` | Meal library |
 | `PUT` | `/api/meals/[id]` | Update a meal |
+| `GET` | `/api/widget` | Dashboard widget feed (requires `WIDGET_TOKEN`) |
 
-**Security:** mutating routes are **unauthenticated**. That is intentional for local household use. Do not expose this stack to the public internet without auth (or network controls) in front of it.
+**Security:** mutating routes are **unauthenticated**. That is intentional for local household use. Do not expose this stack to the public internet without auth (or network controls) in front of it. `/api/widget` is the exception — it always requires a bearer token.
+
+## Dashboard widget feed
+
+`GET /api/widget` returns the current week's dinners as JSON for an external dashboard (Gaarden).
+
+```json
+{
+  "title": "Harvest · madplan",
+  "updated": "2026-07-30T08:15:00.000Z",
+  "layout": "list",
+  "data": {
+    "items": [
+      "Ovnbagt kyllingelår med kartofler, gulerod og hvidløgsdressing",
+      "Tacos med hakket oksekød, avocado og salsa",
+      "Ovnbagt torsk med kartoffelmos og persillesovs",
+      "Kikærtegryde med spinat, tomat og feta"
+    ]
+  }
+}
+```
+
+- **No dates.** A week is a flat, ordered list of meals — `slot_order` is the position within the week, not a day (see `db/init/001_init.sql`). The widget lists dishes in menu order and does not invent days.
+- **Dinners only.** Breakfast and lunch are one fixed dish each for the whole week; the four dinners are the part that actually varies. Mixing them into one flat list would need a meal-type prefix on every line, which is noise on a kitchen tablet.
+- **Empty state.** If the current week has no plan, `items` is a single friendly line (`Ingen madplan for denne uge endnu`) rather than an error or a blank card.
+
+### `WIDGET_TOKEN`
+
+The route is protected by a shared bearer token read from the `WIDGET_TOKEN` environment variable and compared in constant time.
+
+| `WIDGET_TOKEN` | Request | Response |
+|---|---|---|
+| unset | any | `503` — the route is never open without a key |
+| set | missing or wrong `Authorization` | `401` |
+| set | `Authorization: Bearer <token>` | `200` with the payload above |
+
+Generate a key and put it in your `.env` (never commit it):
+
+```bash
+openssl rand -hex 32
+```
+
+```bash
+# .env
+WIDGET_TOKEN=<the generated value>
+```
+
+Both Compose files pass `WIDGET_TOKEN` through to the app container. Verify with:
+
+```bash
+curl -H "Authorization: Bearer $WIDGET_TOKEN" http://localhost:3000/api/widget
+```
 
 ## Troubleshooting
 
