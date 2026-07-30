@@ -16,7 +16,33 @@
   --harvest-glass: oklch(0.985 0.006 150 / 0.94);
   --card-bg: oklch(0.985 0.006 150);
   --card-border: oklch(0.895 0.014 150);
-  --muted-text: oklch(0.505 0.022 152);
+  /* Darkened from 0.505 — that L failed AA (3.78:1 on --background,
+     18 elements measured below 4.5:1). 0.40 clears every surface this
+     token sits on (background, card, tint-stone) with margin. */
+  --muted-text: oklch(0.4 0.024 152);
+  /* Accessible "ink" variants of the accent hues, for small text sitting
+     on their own light tints (badges, section labels) — the vibrant
+     --harvest-green / --harvest-gold stay untouched for icons, fills,
+     and larger surfaces where AA doesn't require this much contrast. */
+  --harvest-green-ink: oklch(0.42 0.13 149);
+  --harvest-gold-ink: oklch(0.44 0.14 52);
+  --harvest-terracotta-ink: oklch(0.46 0.16 35);
+
+  /* Meal-type chip colours (breakfast/lunch/dinner/snack) — previously
+     hard-coded hex in components/ListSection.tsx. */
+  --chip-breakfast-ink: #a06a3a;
+  --chip-breakfast-ink-dark: #e5a06f;
+  --chip-lunch-ink: #4f6b58;
+  --chip-lunch-ink-dark: #8aa493;
+  --chip-lunch-tint-dark: #6e8b76;
+  --chip-dinner-tint: #dde8ec;
+  --chip-dinner-ink: #5b7382;
+  --chip-dinner-tint-dark: #7b97a6;
+  --chip-dinner-ink-dark: #9fb9c6;
+  --chip-snack-tint: #e6dfec;
+  --chip-snack-ink: #7d6f8c;
+  --chip-snack-tint-dark: #9b8aa6;
+  --chip-snack-ink-dark: #b9a9c6;
   --font-display: "Gabarito", system-ui, sans-serif;
   --font-body: "Schibsted Grotesk", system-ui, sans-serif;
 
@@ -41,7 +67,8 @@
   /* Makro- / opbygningsindikatorer, tonet mod den grønne hue */
   --c-cal: oklch(0.62 0.1 70);
   --c-cal-tint: oklch(0.93 0.045 75);
-  --c-pro: oklch(0.55 0.1 152);
+  /* Darkened from 0.55 — fiber chip text on --c-pro-tint measured 3.35:1. */
+  --c-pro: oklch(0.4 0.1 152);
   --c-pro-tint: oklch(0.93 0.04 150);
   --c-carb: oklch(0.58 0.06 220);
   --c-carb-tint: oklch(0.93 0.025 220);

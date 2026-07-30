@@ -254,7 +254,7 @@ export default function ListSection({
                 {checkedVisibleCount >= totalItemCount ? "Klar!" : "i kurven"}
               </span>
               {pantryCount > 0 ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-harvest-gold/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-harvest-gold">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--tint-gold)] px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.1em] text-[var(--harvest-gold-ink)]">
                   {pantryCount} i skabet
                 </span>
               ) : null}
@@ -262,7 +262,7 @@ export default function ListSection({
             <div className="flex items-center gap-1.5">
               {!isOnline || pendingSyncCount > 0 ? (
                 <span
-                  className="inline-flex items-center gap-1 rounded-full bg-harvest-gold/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]"
+                  className="inline-flex items-center gap-1 rounded-full bg-harvest-gold/20 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]"
                   title={
                     isOnline
                       ? `${pendingSyncCount} ændring${pendingSyncCount === 1 ? "" : "er"} synkroniserer`
@@ -278,14 +278,14 @@ export default function ListSection({
                   <button
                     type="button"
                     onClick={() => setHideChecked((prev) => !prev)}
-                    className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-harvest-green hover:bg-harvest-green/10"
+                    className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-harvest-green hover:bg-harvest-green/10"
                   >
                     {hideChecked ? "Vis alle" : "Skjul klaret"}
                   </button>
                   <button
                     type="button"
                     onClick={clearChecked}
-                    className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
+                    className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
                   >
                     Nulstil
                   </button>
@@ -399,7 +399,7 @@ export default function ListSection({
                             void toggleJunkHeart(item.n, liked, heartCount);
                           }}
                           disabled={!mealPlanId || Boolean(heartSavingItem)}
-                          className={`h-7 px-2 flex items-center justify-center rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
+                          className={`h-7 px-2 flex items-center justify-center rounded-md text-[11px] font-black uppercase tracking-wider transition-all ${
                             liked
                               ? "bg-harvest-terracotta/10 text-harvest-terracotta"
                               : "text-[var(--text-muted)] hover:bg-[var(--border-subtle)] hover:text-harvest-terracotta"
@@ -425,9 +425,9 @@ export default function ListSection({
                           e.stopPropagation();
                           togglePantry(category.category, item.n);
                         }}
-                        className={`flex h-10 items-center justify-center gap-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                        className={`flex h-10 items-center justify-center gap-1 rounded-lg text-[11px] font-black uppercase tracking-wider transition-colors ${
                           isPantry
-                            ? "bg-harvest-gold/20 px-2.5 text-harvest-gold"
+                            ? "bg-[var(--tint-gold)] px-2.5 text-[var(--harvest-gold-ink)]"
                             : "w-10 text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
                         } ${isPantrySaving ? "opacity-50 pointer-events-none" : ""}`}
                         title={
@@ -552,25 +552,25 @@ const mealTypeUsageDisplay: Record<
     label: "Morgenmad",
     shortLabel: "M",
     chipClass:
-      "bg-[var(--tint-gold)] text-[#a06a3a] dark:bg-[#e5a06f]/16 dark:text-[#e5a06f]",
+      "bg-[var(--tint-gold)] text-[var(--chip-breakfast-ink)] dark:bg-[var(--chip-breakfast-ink-dark)]/16 dark:text-[var(--chip-breakfast-ink-dark)]",
   },
   Lunch: {
     label: "Frokost",
     shortLabel: "F",
     chipClass:
-      "bg-[var(--tint-green)] text-[#4f6b58] dark:bg-[#6e8b76]/18 dark:text-[#8aa493]",
+      "bg-[var(--tint-green)] text-[var(--chip-lunch-ink)] dark:bg-[var(--chip-lunch-tint-dark)]/18 dark:text-[var(--chip-lunch-ink-dark)]",
   },
   Dinner: {
     label: "Aftensmad",
     shortLabel: "A",
     chipClass:
-      "bg-[#dde8ec] text-[#5b7382] dark:bg-[#7b97a6]/18 dark:text-[#9fb9c6]",
+      "bg-[var(--chip-dinner-tint)] text-[var(--chip-dinner-ink)] dark:bg-[var(--chip-dinner-tint-dark)]/18 dark:text-[var(--chip-dinner-ink-dark)]",
   },
   Snack: {
     label: "Mellemmåltid",
     shortLabel: "S",
     chipClass:
-      "bg-[#e6dfec] text-[#7d6f8c] dark:bg-[#9b8aa6]/18 dark:text-[#b9a9c6]",
+      "bg-[var(--chip-snack-tint)] text-[var(--chip-snack-ink)] dark:bg-[var(--chip-snack-tint-dark)]/18 dark:text-[var(--chip-snack-ink-dark)]",
   },
 };
 
@@ -600,7 +600,7 @@ function ShoppingSourcePills({
     <span className="mt-1.5 flex flex-wrap gap-1">
       {isJunk ? (
         <span
-          className="inline-flex items-center gap-1 rounded-full bg-[#e6dfec] px-2 py-0.5 text-[10px] font-semibold text-[#7d6f8c] dark:bg-[#9b8aa6]/18 dark:text-[#b9a9c6]"
+          className="inline-flex items-center gap-1 rounded-full bg-[#e6dfec] px-2 py-0.5 text-[11px] font-semibold text-[#7d6f8c] dark:bg-[#9b8aa6]/18 dark:text-[#b9a9c6]"
           title="Snacks"
         >
           <span aria-hidden="true" className="font-black">
@@ -614,7 +614,7 @@ function ShoppingSourcePills({
         return (
           <span
             key={`${meal.type}-${meal.name}`}
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${display.chipClass}`}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${display.chipClass}`}
             title={`${display.label}: ${meal.name}`}
           >
             <span aria-hidden="true" className="font-black">

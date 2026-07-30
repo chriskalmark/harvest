@@ -351,12 +351,12 @@ export default function MealEditorModal({
 
         {!isCreateMode && meal && (
           <div className={`mt-5 p-4 ${cardClass}`}>
-            <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.18em]">
-              <span className="rounded-full bg-harvest-green/10 px-3 py-1 text-harvest-green">
+            <div className="flex flex-wrap gap-2 text-[11px] font-black uppercase tracking-[0.18em]">
+              <span className="rounded-full bg-[var(--tint-green)] px-3 py-1 text-[var(--harvest-green-ink)]">
                 {meal.appearanceCount}{" "}
                 {pluralize(meal.appearanceCount, "gang", "gange")} på menuen
               </span>
-              <span className="rounded-full bg-harvest-terracotta/10 px-3 py-1 text-harvest-terracotta">
+              <span className="rounded-full bg-harvest-terracotta/10 px-3 py-1 text-[var(--harvest-terracotta-ink)]">
                 {meal.heartCount}{" "}
                 {pluralize(meal.heartCount, "hjerte", "hjerter")}
               </span>
@@ -557,13 +557,13 @@ function ArrayEditorField({
   return (
     <div className={`p-4 ${cardClass}`}>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
+        <span className="text-[11px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
           {label}
         </span>
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex items-center gap-1 rounded-full bg-harvest-green/10 px-3 py-1 text-[10px] font-semibold text-harvest-green transition hover:bg-harvest-green/20"
+          className="inline-flex items-center gap-1 rounded-full bg-harvest-green/10 px-3 py-1 text-[11px] font-semibold text-harvest-green transition hover:bg-harvest-green/20"
         >
           <Plus size={12} />
           Tilføj
@@ -617,7 +617,7 @@ function EditorField({
 }) {
   return (
     <label className={`block p-4 ${cardClass}`}>
-      <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
+      <span className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
         {label}
       </span>
       {children}
