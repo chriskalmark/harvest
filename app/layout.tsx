@@ -39,9 +39,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Matches --background in app/globals.css for each scheme (was a stale
+  // sage/cream value that no longer matched the rendered page).
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#e9f0e4" },
-    { media: "(prefers-color-scheme: dark)", color: "#1f2b22" },
+    { media: "(prefers-color-scheme: light)", color: "#a9ddb2" },
+    { media: "(prefers-color-scheme: dark)", color: "#141d16" },
   ],
   width: "device-width",
   initialScale: 1,

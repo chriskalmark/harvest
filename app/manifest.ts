@@ -10,8 +10,10 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#f4f1e7",
-    theme_color: "#42584a",
+    // Matches the current green design system (see app/globals.css):
+    // --background and --harvest-green-deep, not the old sage/cream palette.
+    background_color: "#a9ddb2",
+    theme_color: "#0e7235",
     icons: [
       {
         src: "/icons/icon-192.png",
