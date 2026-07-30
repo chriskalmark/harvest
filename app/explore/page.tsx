@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Search, ChevronDown, Loader2 } from "lucide-react";
+import { Search, ChevronDown, Loader2, Plus } from "lucide-react";
 import MealEditorModal from "@/components/MealEditorModal";
 import MealCardView from "@/components/MealCardView";
 import { MealType, StoredMeal } from "@/lib/types";
@@ -13,7 +13,6 @@ import {
   useExploreFilters,
   useMealsInfiniteQuery,
 } from "@/lib/hooks/useExploreMeals";
-import { sectionLabelColorClass } from "@/lib/uiClasses";
 
 const mealTypeTabLabel: Record<MealType, string> = {
   Breakfast: "Morgenmad",
@@ -114,154 +113,169 @@ export default function ExplorePage() {
   }, [requestedMealId, meals, isEditorOpen, activeMeal]);
 
   return (
-    <div className="max-w-md mx-auto px-4 pb-[120px] pt-6">
-      <div className="mb-6">
-        <p className={sectionLabelColorClass.terracotta}>Retbiblioteket</p>
-        <h1 className="mt-2 font-serif text-3xl leading-tight text-harvest-green">
+    <div className="mx-auto max-w-md pb-[120px]">
+      {/* Grøn flade — samme opbygning som /menu, så Udforsk ikke føles som en anden app */}
+      <div className="rounded-b-[34px] bg-harvest-green px-4 pb-8 pt-2 text-white">
+        <p className="text-[0.8rem] font-semibold uppercase tracking-[0.1em] opacity-[0.72]">
+          Retbiblioteket
+        </p>
+        <h1 className="mt-2 font-serif text-3xl leading-tight">
           Udforsk retter
         </h1>
-        <p className="mt-1 text-sm text-[var(--muted-text)]">
-          {total} retter i databasen
-        </p>
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={openCreateMeal}
-            className="w-full rounded-[22px] border border-[var(--card-border)] bg-harvest-green px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(45,90,39,0.10)] transition active:scale-[0.99]"
-          >
-            Tilføj ret
-          </button>
+        <p className="mt-1 text-sm opacity-80">{total} retter i databasen</p>
+      </div>
+
+      {/* Hvid plade */}
+      <div className="relative -mt-5 rounded-t-[34px] bg-[var(--surface-1)] px-4 pt-5">
+        {/* Søgning leder — det er den almindelige handling. At tilføje en ret er sjældent. */}
+        <div className="relative mb-4">
+          <Search
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-text)]"
+          />
+          <input
+            type="text"
+            placeholder="Søg efter retter..."
+            value={searchDraft}
+            onChange={(e) => updateSearchDraft(e.target.value)}
+            className="w-full rounded-[22px] border border-[var(--card-border)] bg-[var(--card-bg)] py-3 pl-12 pr-4 text-base shadow-[0_10px_30px_rgba(45,90,39,0.05)] outline-none transition focus:border-harvest-green"
+          />
         </div>
-      </div>
 
-      {/* Search Input */}
-      <div className="relative mb-4">
-        <Search
-          size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-text)]"
-        />
-        <input
-          type="text"
-          placeholder="Søg efter retter..."
-          value={searchDraft}
-          onChange={(e) => updateSearchDraft(e.target.value)}
-          className="w-full rounded-[22px] border border-[var(--card-border)] bg-[var(--card-bg)] py-3 pl-12 pr-4 text-base shadow-[0_10px_30px_rgba(45,90,39,0.05)] outline-none transition focus:border-harvest-green"
-        />
-      </div>
-
-      {/* Meal Type Filters */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        <button
-          onClick={() => setSelectedType(null)}
-          className={`rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
-            selectedType === null
-              ? "bg-harvest-green text-white shadow"
-              : "bg-[var(--card-border)] text-[var(--muted-text)]"
-          }`}
-        >
-          Alle
-        </button>
-        {MEAL_TYPES.map((type) => (
+        {/* Meal Type Filters */}
+        <div className="mb-4 flex flex-wrap gap-2">
           <button
-            key={type}
-            onClick={() => setSelectedType(selectedType === type ? null : type)}
+            onClick={() => setSelectedType(null)}
             className={`rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
-              selectedType === type
+              selectedType === null
                 ? "bg-harvest-green text-white shadow"
                 : "bg-[var(--card-border)] text-[var(--muted-text)]"
             }`}
           >
-            {mealTypeTabLabel[type]}
+            Alle
           </button>
-        ))}
-      </div>
-
-      {/* Sort & Filter Bar */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="flex-1">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2 text-sm font-semibold outline-none transition focus:border-harvest-green appearance-none"
-          >
-            {sortOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          onClick={() =>
-            setSortDirection(sortDirection === "desc" ? "asc" : "desc")
-          }
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition active:scale-95"
-        >
-          <ChevronDown
-            size={18}
-            className={`transition-transform ${sortDirection === "asc" ? "rotate-180" : ""}`}
-          />
-        </button>
-
-        <div className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2">
-          <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted-text)]">
-            Min. protein
-          </span>
-          <input
-            type="number"
-            min="0"
-            max="100"
-            value={minProtein}
-            onChange={(e) => setMinProtein(parseInt(e.target.value, 10) || 0)}
-            className="w-12 bg-transparent text-center text-sm font-bold outline-none"
-          />
-          <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted-text)]">
-            g
-          </span>
-        </div>
-      </div>
-
-      {/* Meals List */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-12">
-          <Loader2 size={32} className="animate-spin text-harvest-green" />
-          <p className="mt-3 text-sm text-[var(--muted-text)]">
-            Henter retter...
-          </p>
-        </div>
-      ) : error ? (
-        <div className="text-center py-12">
-          <p className="text-harvest-terracotta">{error}</p>
-        </div>
-      ) : meals.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-[var(--muted-text)]">
-            Ingen retter matcher dine filtre
-          </p>
-        </div>
-      ) : (
-        <>
-          {meals.map((meal) => (
-            <MealCardView
-              key={meal.mealId}
-              meal={meal}
-              onOpenEditor={() => openEditMeal(meal)}
-            />
+          {MEAL_TYPES.map((type) => (
+            <button
+              key={type}
+              onClick={() =>
+                setSelectedType(selectedType === type ? null : type)
+              }
+              className={`rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
+                selectedType === type
+                  ? "bg-harvest-green text-white shadow"
+                  : "bg-[var(--card-border)] text-[var(--muted-text)]"
+              }`}
+            >
+              {mealTypeTabLabel[type]}
+            </button>
           ))}
+        </div>
 
-          {hasMore && (
-            <div ref={loaderRef} className="py-8 text-center">
-              {loadingMore && (
-                <Loader2
-                  size={24}
-                  className="animate-spin mx-auto text-harvest-green"
-                />
-              )}
-            </div>
-          )}
-        </>
-      )}
+        {/* Sort */}
+        <div className="mb-3 flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2 text-sm font-semibold outline-none transition focus:border-harvest-green appearance-none"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={() =>
+              setSortDirection(sortDirection === "desc" ? "asc" : "desc")
+            }
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition active:scale-95"
+            aria-label={
+              sortDirection === "asc"
+                ? "Stigende rækkefølge"
+                : "Faldende rækkefølge"
+            }
+          >
+            <ChevronDown
+              size={18}
+              className={`transition-transform ${sortDirection === "asc" ? "rotate-180" : ""}`}
+            />
+          </button>
+        </div>
+
+        {/* Min. protein filter — its own row, so it no longer squeezes the sort label */}
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted-text)]">
+              Min. protein
+            </span>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={minProtein}
+              onChange={(e) => setMinProtein(parseInt(e.target.value, 10) || 0)}
+              className="w-12 bg-transparent text-center text-sm font-bold outline-none"
+            />
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--muted-text)]">
+              g
+            </span>
+          </div>
+
+          {/* Demoted — adding a dish is rare, searching the library isn't */}
+          <button
+            type="button"
+            onClick={openCreateMeal}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--card-border)] bg-[var(--surface-1)] px-3 py-2 text-xs font-semibold text-harvest-green transition active:scale-95"
+          >
+            <Plus size={14} />
+            Tilføj ret
+          </button>
+        </div>
+
+        {/* Meals List */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 size={32} className="animate-spin text-harvest-green" />
+            <p className="mt-3 text-sm text-[var(--muted-text)]">
+              Henter retter...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-harvest-terracotta">{error}</p>
+          </div>
+        ) : meals.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-[var(--muted-text)]">
+              Ingen retter matcher dine filtre
+            </p>
+          </div>
+        ) : (
+          <>
+            {meals.map((meal) => (
+              <MealCardView
+                key={meal.mealId}
+                meal={meal}
+                onOpenEditor={() => openEditMeal(meal)}
+              />
+            ))}
+
+            {hasMore && (
+              <div ref={loaderRef} className="py-8 text-center">
+                {loadingMore && (
+                  <Loader2
+                    size={24}
+                    className="animate-spin mx-auto text-harvest-green"
+                  />
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       <MealEditorModal
         key={activeMeal?.mealId ?? "new"}
