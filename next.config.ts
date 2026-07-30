@@ -4,14 +4,12 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Add local tunnel host patterns here if you expose `next dev` behind a reverse proxy.
   images: {
-    // Meal photos are 800x800 WebP hosted externally (not in /public). The
-    // exact host isn't pinned in an env var anywhere in this repo, so this
-    // is intentionally broad — narrow to the real host(s) once known.
-    // The Next.js image optimizer needs `sharp` at runtime; it's already
-    // present as an optional dependency of Next itself, and `npm ci` in the
-    // Alpine build stage (Dockerfile) resolves the correct linux-musl
-    // binary, so the standalone output can run the optimizer as-is.
-    remotePatterns: [{ protocol: "https", hostname: "**" }],
+    // Madfotos ligger lokalt. De serveres fra /app/public/meals, som er et
+    // named volume, og image_url er en relativ sti ("/meals/<slug>.webp").
+    // Lokale stier kraever ingen remotePatterns — og en aaben remotePattern
+    // ville lade hvem som helst bruge optimizeren som proxy for vilkaarlige
+    // eksterne billeder. Tilfoej kun remotePatterns hvis billeder en dag
+    // faktisk hentes fra et andet host, og navngiv da det host praecist.
     formats: ["image/webp"],
   },
   async headers() {
