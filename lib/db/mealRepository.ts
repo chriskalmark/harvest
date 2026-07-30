@@ -658,6 +658,24 @@ export async function updateMeal(
   return result.rows[0] ?? null;
 }
 
+export async function updateMealServings(
+  client: PoolClient,
+  mealId: number,
+  servings: number,
+): Promise<MealRow | null> {
+  const result = await client.query<MealRow>(
+    `
+      UPDATE meals
+      SET servings = $2,
+          updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `,
+    [mealId, servings],
+  );
+  return result.rows[0] ?? null;
+}
+
 export async function insertMealReturningRow(
   client: PoolClient,
   mealData: Omit<

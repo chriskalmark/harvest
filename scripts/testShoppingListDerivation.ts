@@ -135,4 +135,54 @@ const checkedList = deriveShoppingListFromMeals(
 
 assert.equal(checkedList.at(-1)?.items[0]?.checked, true);
 
+// Servings stepper (meal/[id]) persists by updating the meal row's
+// `servings` column; the shopping list is never mutated directly for this —
+// it is re-derived from the meals on the next read. Prove that rescaling
+// meal.servings changes the derived quantity, and that a previously ticked
+// item survives the recalculation (buildShoppingItem carries `checked`
+// forward from the previous list).
+const scalingMealAtTwo = meal("Scaling Meal", [
+  { name: "Ris", amount: 1, unit: "stk", zone: "Kolonial" },
+]);
+
+const listAtTwoServings = deriveShoppingListFromMeals(
+  [scalingMealAtTwo],
+  [],
+  [],
+);
+const risAtTwo = listAtTwoServings
+  .flatMap((category) => category.items)
+  .find((item) => item.n === "Ris");
+assert.equal(risAtTwo?.q, "2 stk");
+
+const listAtTwoServingsChecked = listAtTwoServings.map((category) => ({
+  ...category,
+  items: category.items.map((item) =>
+    item.n === "Ris" ? { ...item, checked: true } : item,
+  ),
+}));
+
+const scalingMealAtFour: MealInput = {
+  ...scalingMealAtTwo,
+  servings: 4,
+};
+
+const listAtFourServings = deriveShoppingListFromMeals(
+  [scalingMealAtFour],
+  listAtTwoServingsChecked,
+  [],
+);
+const risAtFour = listAtFourServings
+  .flatMap((category) => category.items)
+  .find((item) => item.n === "Ris");
+
+assert.equal(risAtFour?.q, "4 stk");
+assert.equal(
+  risAtFour?.checked,
+  true,
+  "a ticked item must survive a servings-driven recalculation",
+);
+
+console.log("servings rescale + checked preservation test passed");
+
 console.log("shopping list derivation tests passed");

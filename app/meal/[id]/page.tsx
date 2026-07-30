@@ -7,6 +7,7 @@ import MealEditorModal from "@/components/MealEditorModal";
 import MealPlanGate from "@/components/MealPlanGate";
 import PhotoPlaceholder from "@/components/PhotoPlaceholder";
 import { useMealHeart } from "@/lib/hooks/useMealHeart";
+import { useMealServings } from "@/lib/hooks/useMealServings";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { MealIngredient, StoredMeal } from "@/lib/types";
 import { cardClass } from "@/lib/uiClasses";
@@ -48,7 +49,11 @@ export default function MealDetailPage() {
         const meal = readyPlan.meals.find((m) => m.mealId === mealId);
 
         return (
-          <main className="pb-12">
+          <main>
+            {/* No extra bottom padding here — the root layout already
+                reserves clearance for the fixed week picker + nav (see
+                app/layout.tsx). Adding more on top of that left a large
+                empty green band below short recipes. */}
             <div className="px-4 pt-1">
               <button
                 type="button"
@@ -88,7 +93,16 @@ function MealDetail({
   onChanged: () => Promise<void>;
 }) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [servings, setServings] = useState(meal.servings);
+  const {
+    servings,
+    isSaving: isSavingServings,
+    error: servingsError,
+    changeServings,
+  } = useMealServings({
+    mealId: meal.mealId,
+    initialServings: meal.servings,
+    onChanged,
+  });
   const { liked, isSaving, toggleHeart } = useMealHeart({
     mealId: meal.mealId,
     mealPlanId,
@@ -164,25 +178,37 @@ function MealDetail({
             <div className="ml-auto flex h-fit items-center gap-3 rounded-full bg-[var(--tint-stone)] px-3 py-1.5">
               <button
                 type="button"
-                onClick={() => setServings((s) => Math.max(1, s - 1))}
-                className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90"
+                onClick={() => void changeServings(servings - 1)}
+                disabled={isSavingServings || servings <= 1}
+                className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90 disabled:opacity-40"
                 aria-label="Færre portioner"
               >
                 <Minus size={15} />
               </button>
               <span className="font-serif text-[1rem] font-bold text-[var(--foreground)]">
-                {servings} pers.
+                {isSavingServings ? (
+                  <Loader2 size={14} className="inline animate-spin" />
+                ) : (
+                  `${servings} pers.`
+                )}
               </span>
               <button
                 type="button"
-                onClick={() => setServings((s) => s + 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90"
+                onClick={() => void changeServings(servings + 1)}
+                disabled={isSavingServings}
+                className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90 disabled:opacity-40"
                 aria-label="Flere portioner"
               >
                 <Plus size={15} />
               </button>
             </div>
           </div>
+
+          {servingsError ? (
+            <p className="pt-2 text-sm text-harvest-terracotta">
+              {servingsError}
+            </p>
+          ) : null}
 
           {/* Trin — læses på en meters afstand, ved komfuret */}
           {meal.steps.length > 0 ? (

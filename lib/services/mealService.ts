@@ -250,6 +250,26 @@ export async function createMeal(input: unknown): Promise<{ mealId: number }> {
   });
 }
 
+export async function updateMealServings(
+  mealId: number,
+  servings: number,
+): Promise<void> {
+  if (!Number.isFinite(servings) || servings < 1) {
+    throw new ApiError("servings must be a positive number.", 400);
+  }
+
+  await withTransaction(async (client) => {
+    const updated = await mealRepository.updateMealServings(
+      client,
+      mealId,
+      Math.round(servings),
+    );
+    if (!updated) {
+      throw new ApiError("Meal not found", 404);
+    }
+  });
+}
+
 export async function updateMealById(
   mealId: number,
   input: unknown,
