@@ -194,16 +194,27 @@ Host-side DB scripts expect `DATABASE_URL` (see `.env.example`). Use the **dev**
 
 ## Dashboard widget feed
 
-`GET /api/widget` returns the next seven days of dinners as JSON for an external dashboard (Gaarden). Meal plans store a week, not per-day dates, so dinners are laid out in menu order from the week's Monday; days without a dinner are omitted.
+`GET /api/widget` returns the current week's dinners as JSON for an external dashboard (Gaarden).
 
 ```json
 {
   "title": "Harvest · madplan",
-  "updated": "2026-07-29T06:00:00.000Z",
+  "updated": "2026-07-30T08:15:00.000Z",
   "layout": "list",
-  "data": { "items": ["I dag · Lasagne", "Torsdag 30/7 · Fisk"] }
+  "data": {
+    "items": [
+      "Ovnbagt kyllingelår med kartofler, gulerod og hvidløgsdressing",
+      "Tacos med hakket oksekød, avocado og salsa",
+      "Ovnbagt torsk med kartoffelmos og persillesovs",
+      "Kikærtegryde med spinat, tomat og feta"
+    ]
+  }
 }
 ```
+
+- **No dates.** A week is a flat, ordered list of meals — `slot_order` is the position within the week, not a day (see `db/init/001_init.sql`). The widget lists dishes in menu order and does not invent days.
+- **Dinners only.** Breakfast and lunch are one fixed dish each for the whole week; the four dinners are the part that actually varies. Mixing them into one flat list would need a meal-type prefix on every line, which is noise on a kitchen tablet.
+- **Empty state.** If the current week has no plan, `items` is a single friendly line (`Ingen madplan for denne uge endnu`) rather than an error or a blank card.
 
 ### `WIDGET_TOKEN`
 

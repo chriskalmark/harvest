@@ -4,19 +4,8 @@ import {
   getMealPlanByWeekRange,
   listMealPlanWeeks,
 } from "@/lib/services/mealPlanService";
-import {
-  buildWidgetItems,
-  WIDGET_WINDOW_DAYS,
-  WidgetWeekDinners,
-} from "@/lib/domain/mealPlanWidget";
-import { WeekOption } from "@/lib/types";
-import {
-  addDays,
-  fromDateOnlyString,
-  getWeekStartDateOnly,
-  toDateOnlyString,
-  toSortValueFromDateOnly,
-} from "@/lib/weekRange";
+import { buildWidgetItems } from "@/lib/domain/mealPlanWidget";
+import { getWeekStartDateOnly, toSortValueFromDateOnly } from "@/lib/weekRange";
 
 /**
  * Bearer-token-tjek i konstant tid. Begge sider hashes foerst, saa
@@ -35,28 +24,6 @@ function isAuthorized(request: NextRequest, expectedToken: string): boolean {
   return timingSafeEqual(provided, expected);
 }
 
-/** Henter aftensretterne for den ugeplan der starter paa den givne mandag. */
-async function readWeekDinners(
-  weeks: WeekOption[],
-  weekStartDateOnly: string,
-): Promise<WidgetWeekDinners | null> {
-  const week = weeks.find(
-    (option) => option.sortValue === toSortValueFromDateOnly(weekStartDateOnly),
-  );
-  if (!week) return null;
-
-  const mealPlan = await getMealPlanByWeekRange(week.weekRange);
-  if (!mealPlan) return null;
-
-  return {
-    weekStartDateOnly,
-    dinnerNames: mealPlan.meals
-      .filter((meal) => meal.type === "Dinner")
-      .sort((a, b) => a.slotOrder - b.slotOrder)
-      .map((meal) => meal.name),
-  };
-}
-
 export async function GET(request: NextRequest) {
   const token = process.env.WIDGET_TOKEN;
   if (!token) {
@@ -72,28 +39,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const today = fromDateOnlyString(toDateOnlyString(new Date()));
-    const lastDay = addDays(today, WIDGET_WINDOW_DAYS - 1);
-
-    // Vinduet paa syv dage kan spaende over to ugeplaner.
-    const weekStarts = Array.from(
-      new Set([getWeekStartDateOnly(today), getWeekStartDateOnly(lastDay)]),
-    );
+    // Kun indevaerende uge. Findes den ikke, svarer buildWidgetItems med en
+    // venlig linje i stedet for at fejle.
+    const weekStart = getWeekStartDateOnly();
     const weeks = await listMealPlanWeeks();
-    const dinnersPerWeek = await Promise.all(
-      weekStarts.map((weekStart) => readWeekDinners(weeks, weekStart)),
+    const week = weeks.find(
+      (option) => option.sortValue === toSortValueFromDateOnly(weekStart),
     );
+    const mealPlan = week ? await getMealPlanByWeekRange(week.weekRange) : null;
 
     const response = NextResponse.json({
       title: "Harvest · madplan",
       updated: new Date().toISOString(),
       layout: "list",
-      data: {
-        items: buildWidgetItems(
-          dinnersPerWeek.filter((week) => week !== null),
-          today,
-        ),
-      },
+      data: { items: buildWidgetItems(mealPlan?.meals ?? []) },
     });
     response.headers.set("Cache-Control", "no-store, max-age=0");
     return response;

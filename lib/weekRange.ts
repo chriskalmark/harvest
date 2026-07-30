@@ -6,19 +6,6 @@ export function toDateOnlyString(date: Date): string {
   return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
-export function fromDateOnlyString(dateOnly: string): Date {
-  // Modstykke til toDateOnlyString. Vi bygger datoen komponentvis, fordi
-  // new Date("YYYY-MM-DD") fortolkes som UTC og kan rykke doegnet en dag.
-  const [year, month, day] = dateOnly.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
-export function addDays(date: Date, days: number): Date {
-  const next = new Date(date);
-  next.setDate(next.getDate() + days);
-  return next;
-}
-
 export function toSortValueFromDateOnly(dateOnly: string): number {
   // YYYY-MM-DD -> YYYYMMDD number
   const compact = dateOnly.replaceAll("-", "");

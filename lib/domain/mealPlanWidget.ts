@@ -1,64 +1,34 @@
-import { addDays, fromDateOnlyString, toDateOnlyString } from "@/lib/weekRange";
+import type { MealType } from "@/lib/types";
 
-/** Widgetten viser dagens ret plus de seks foelgende dage. */
-export const WIDGET_WINDOW_DAYS = 7;
+/**
+ * Vises naar der ikke er lagt en madplan for indevaerende uge. En venlig
+ * linje er bedre end et tomt kort — den fortaeller at widgetten virker.
+ */
+export const NO_MEAL_PLAN_ITEM = "Ingen madplan for denne uge endnu";
 
-const DANISH_WEEKDAYS = [
-  "Søndag",
-  "Mandag",
-  "Tirsdag",
-  "Onsdag",
-  "Torsdag",
-  "Fredag",
-  "Lørdag",
-];
-
-export interface WidgetWeekDinners {
-  /** Mandagen som ugeplanen starter paa, "YYYY-MM-DD". */
-  weekStartDateOnly: string;
-  /** Aftensretternes navne i slot-raekkefoelge. */
-  dinnerNames: string[];
-}
-
-/** "I dag" / "I morgen" / "Torsdag 30/7" — dansk visningsformat. */
-export function formatWidgetDayLabel(date: Date, today: Date): string {
-  const dateOnly = toDateOnlyString(date);
-  if (dateOnly === toDateOnlyString(today)) return "I dag";
-  if (dateOnly === toDateOnlyString(addDays(today, 1))) return "I morgen";
-  return `${DANISH_WEEKDAYS[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}`;
+export interface WidgetMeal {
+  type: MealType;
+  name: string;
+  slotOrder: number;
 }
 
 /**
- * Madplanen gemmer ikke en dato pr. ret — den gemmer en uge (mandag-start) med
- * retter i slot-raekkefoelge. Aftensmaden fordeles derfor paa ugens dage i den
- * raekkefoelge, den staar paa menuen: foerste aftensret = mandag, osv.
+ * Ugens retter som en flad liste i slot-raekkefoelge.
  *
- * Resultatet er de naeste syv dages retter med dagens ret foerst. Dage uden en
- * ret udelades, saa listen aldrig indeholder tomme punkter.
+ * Madplanen har ingen datoer: slot_order er positionen i ugen, ikke en dag
+ * (se db/init/001_init.sql). Widgetten opfinder derfor ikke dage — den viser
+ * ugens retter i den raekkefoelge, de staar paa menuen.
+ *
+ * Kun aftensmad. Morgenmad og frokost er én fast ret hver, som gaelder hele
+ * ugen; aftensmaden er de fire retter, der rent faktisk skifter. I en flad
+ * liste uden maaltidstype kunne man ikke se forskel paa dem, og et
+ * typepraefiks ville fylde linjen op paa en koekkentablet.
  */
-export function buildWidgetItems(
-  weeks: WidgetWeekDinners[],
-  today: Date,
-): string[] {
-  const firstDay = fromDateOnlyString(toDateOnlyString(today));
-  const lastDay = addDays(firstDay, WIDGET_WINDOW_DAYS - 1);
+export function buildWidgetItems(meals: WidgetMeal[]): string[] {
+  const dinners = meals
+    .filter((meal) => meal.type === "Dinner")
+    .sort((a, b) => a.slotOrder - b.slotOrder)
+    .map((meal) => meal.name);
 
-  return weeks
-    .flatMap((week) => {
-      const weekStart = fromDateOnlyString(week.weekStartDateOnly);
-      return week.dinnerNames.map((name, index) => ({
-        date: addDays(weekStart, index),
-        name,
-      }));
-    })
-    .filter(
-      (entry) =>
-        entry.date.getTime() >= firstDay.getTime() &&
-        entry.date.getTime() <= lastDay.getTime(),
-    )
-    .sort((a, b) => a.date.getTime() - b.date.getTime())
-    .map(
-      (entry) =>
-        `${formatWidgetDayLabel(entry.date, firstDay)} · ${entry.name}`,
-    );
+  return dinners.length > 0 ? dinners : [NO_MEAL_PLAN_ITEM];
 }
