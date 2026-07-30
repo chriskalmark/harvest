@@ -44,10 +44,13 @@ export default function Header() {
         </div>
 
         <div className="min-w-0">
-          <h1 className="font-serif text-[1.55rem] font-bold leading-none text-harvest-green">
+          {/* Persistent app-chrome branding, not a page heading — each
+              page supplies its own <h1> for its actual content, so this
+              stays a <p> to keep exactly one h1 per page. */}
+          <p className="font-serif text-[1.55rem] font-bold leading-none text-harvest-green">
             Harvest
-          </h1>
-          <p className="mt-1 truncate text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          </p>
+          <p className="mt-1 truncate text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">
             {plan?.weekRange
               ? formatWeekRangeDanish(plan.weekRange)
               : "Venter på første menu"}
@@ -57,7 +60,7 @@ export default function Header() {
 
       <button
         onClick={toggleTheme}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-1)] border border-[var(--border-subtle)] shadow-sm transition-all duration-200 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
+        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-1)] border border-[var(--border-subtle)] shadow-sm transition-all duration-200 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] before:absolute before:inset-[-2px] before:content-['']"
         aria-label="Skift mellem lyst og mørkt tema"
       >
         {isDark === null ? null : isDark ? (

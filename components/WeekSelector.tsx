@@ -23,7 +23,7 @@ export default function WeekSelector({
     return (
       <label className={compact ? "" : "mb-4 block"}>
         {!compact && (
-          <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
+          <span className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
             Uge
           </span>
         )}
@@ -50,7 +50,7 @@ export default function WeekSelector({
   return (
     <label className={compact ? "" : "mb-4 block"}>
       {!compact && (
-        <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
+        <span className="mb-2 block text-[11px] font-black uppercase tracking-[0.18em] text-harvest-terracotta">
           Uge
         </span>
       )}
@@ -60,7 +60,7 @@ export default function WeekSelector({
         <select
           value={displayValue}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full bg-transparent text-sm font-semibold text-harvest-green outline-none"
+          className="block w-full min-h-11 bg-transparent text-sm font-semibold text-harvest-green outline-none"
         >
           {weeks.map((week) => (
             <option key={week.id} value={week.weekRange}>

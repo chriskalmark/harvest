@@ -54,11 +54,11 @@ export default function MealDetailPage() {
                 reserves clearance for the fixed week picker + nav (see
                 app/layout.tsx). Adding more on top of that left a large
                 empty green band below short recipes. */}
-            <div className="px-4 pt-1">
+            <div className="px-4 pt-1 mb-4">
               <button
                 type="button"
                 onClick={() => router.push(buildHref("/menu", queryString))}
-                className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--muted-text)] transition-colors hover:text-harvest-green"
+                className="relative -my-3 inline-flex items-center gap-1.5 py-3 text-sm font-semibold text-[var(--muted-text)] transition-colors hover:text-harvest-green before:absolute before:inset-x-[-8px] before:inset-y-0 before:content-['']"
               >
                 <ArrowLeft size={16} />
                 Menuen
@@ -115,17 +115,20 @@ function MealDetail({
 
   return (
     <>
-      {/* Grøn flade med foto i sømmen mellem flade og plade */}
-      <div className="relative rounded-b-[34px] bg-harvest-green px-4 pb-20 pt-2 text-white">
+      {/* Grøn flade med foto i sømmen mellem flade og plade.
+          Deep variant (not the brighter --harvest-green) so the white
+          label text below clears 4.5:1 — plain white on the lighter
+          green only reached ~3.5:1. */}
+      <div className="relative rounded-b-[34px] bg-[var(--harvest-green-deep)] px-4 pb-20 pt-2 text-white">
         <div className="flex items-start justify-between gap-4">
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em] opacity-80">
+          <span className="text-[11px] font-bold uppercase tracking-[0.18em] opacity-90">
             {mealTypeLabel[meal.type]}
           </span>
           <button
             type="button"
             onClick={() => void toggleHeart()}
             disabled={isSaving}
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-200 ease-out active:scale-95 ${
+            className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-200 ease-out active:scale-95 before:absolute before:inset-[-2px] before:content-[''] ${
               liked
                 ? "bg-white/25 text-harvest-gold"
                 : "bg-white/15 text-white/80"
@@ -152,6 +155,7 @@ function MealDetail({
             imageUrl={meal.imageUrl}
             size={148}
             label="Foto på vej"
+            priority
             className="border-[5px] border-[var(--surface-1)] shadow-[0_14px_34px_-8px_oklch(0.35_0.05_150_/_0.35)]"
           />
         </div>
@@ -161,12 +165,12 @@ function MealDetail({
             {meal.name}
           </h1>
 
-          <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.16em]">
-            <span className="rounded-full bg-harvest-green/10 px-3 py-1 text-harvest-green">
+          <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-black uppercase tracking-[0.16em]">
+            <span className="rounded-full bg-[var(--tint-green)] px-3 py-1 text-[var(--harvest-green-ink)]">
               {meal.appearanceCount}{" "}
               {pluralize(meal.appearanceCount, "gang", "gange")} på menuen
             </span>
-            <span className="rounded-full bg-harvest-gold/15 px-3 py-1 text-harvest-gold">
+            <span className="rounded-full bg-[var(--tint-gold)] px-3 py-1 text-[var(--harvest-gold-ink)]">
               {meal.heartCount}{" "}
               {pluralize(meal.heartCount, "hjerte", "hjerter")}
             </span>
@@ -175,12 +179,12 @@ function MealDetail({
           <div className="mt-4 flex items-center gap-5 border-b border-[var(--border-subtle)] pb-4">
             <Fact value={meal.macros.cal} label="kcal" />
             <Fact value={`${meal.macros.p} g`} label="protein" />
-            <div className="ml-auto flex h-fit items-center gap-3 rounded-full bg-[var(--tint-stone)] px-3 py-1.5">
+            <div className="ml-auto flex h-fit items-center gap-4 rounded-full bg-[var(--tint-stone)] px-3 py-1.5">
               <button
                 type="button"
                 onClick={() => void changeServings(servings - 1)}
                 disabled={isSavingServings || servings <= 1}
-                className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90 disabled:opacity-40"
+                className="relative flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition before:absolute before:inset-[-8px] before:content-[''] active:scale-90 disabled:opacity-40"
                 aria-label="Færre portioner"
               >
                 <Minus size={15} />
@@ -196,7 +200,7 @@ function MealDetail({
                 type="button"
                 onClick={() => void changeServings(servings + 1)}
                 disabled={isSavingServings}
-                className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition active:scale-90 disabled:opacity-40"
+                className="relative flex h-7 w-7 items-center justify-center rounded-full text-[var(--harvest-green-deep)] transition before:absolute before:inset-[-8px] before:content-[''] active:scale-90 disabled:opacity-40"
                 aria-label="Flere portioner"
               >
                 <Plus size={15} />
@@ -236,7 +240,7 @@ function MealDetail({
           ) : null}
 
           <div className={`mt-4 p-4 ${cardClass}`}>
-            <span className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-harvest-gold">
+            <span className="mb-3 block text-[11px] font-black uppercase tracking-[0.18em] text-[var(--harvest-gold-ink)]">
               Ingredienser
             </span>
             {ingredients.length > 0 ? (
@@ -250,12 +254,12 @@ function MealDetail({
                       <span className="block text-sm font-semibold text-[var(--foreground)]">
                         {ingredient.name}
                       </span>
-                      <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                         {categoryLabel[ingredient.category]}
                         {ingredient.quantity ? ` · ${ingredient.quantity}` : ""}
                       </span>
                     </div>
-                    <span className="shrink-0 rounded-full bg-[var(--c-pro-tint)] px-2 py-1 text-[10px] font-black text-[var(--c-pro)]">
+                    <span className="shrink-0 rounded-full bg-[var(--c-pro-tint)] px-2 py-1 text-[11px] font-black text-[var(--c-pro)]">
                       {ingredient.macros.fiber}g fiber
                     </span>
                   </li>
