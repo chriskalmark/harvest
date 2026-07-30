@@ -82,16 +82,6 @@ export function MealCardBody({
   );
 }
 
-type MacroTone = "cal" | "protein" | "carb" | "fat" | "fiber";
-
-const macroToneClasses: Record<MacroTone, string> = {
-  cal: "bg-[var(--c-cal-tint)] text-[var(--c-cal)]",
-  protein: "bg-[var(--c-pro-tint)] text-[var(--c-pro)]",
-  carb: "bg-[var(--c-carb-tint)] text-[var(--c-carb)]",
-  fat: "bg-[var(--c-fat-tint)] text-[var(--c-fat)]",
-  fiber: "bg-[var(--c-fat-tint)] text-[var(--c-fat)]",
-};
-
 export function MacroInline({ meal }: { meal: StoredMeal }) {
   return (
     <span className="shrink-0 text-[10px] font-semibold tracking-[-0.01em] text-[var(--muted-text)]">
@@ -110,40 +100,32 @@ export function MacroInline({ meal }: { meal: StoredMeal }) {
 
 export function MacroRow({ meal }: { meal: StoredMeal }) {
   return (
-    <div className="mt-4 grid grid-cols-5 gap-2 border-t border-[var(--border-subtle)] pt-3 text-center">
-      <MacroStat tone="cal" label="Kcal" value={meal.macros.cal} />
-      <MacroStat tone="protein" label="Protein" value={`${meal.macros.p}g`} />
-      <MacroStat tone="carb" label="Kulhyd." value={`${meal.macros.c}g`} />
-      <MacroStat tone="fat" label="Fedt" value={`${meal.macros.f}g`} />
-      <MacroStat
-        tone="fiber"
-        label="Fibre"
-        value={`${meal.macros.fiber}g`}
-        highlight
-      />
+    <div className="mt-4 grid grid-cols-5 gap-1.5 border-t border-[var(--border-subtle)] pt-3 text-center">
+      <MacroStat label="Kcal" value={meal.macros.cal} />
+      <MacroStat label="Protein" value={`${meal.macros.p}g`} />
+      <MacroStat label="Kulhydrat" value={`${meal.macros.c}g`} />
+      <MacroStat label="Fedt" value={`${meal.macros.f}g`} />
+      <MacroStat label="Fibre" value={`${meal.macros.fiber}g`} />
     </div>
   );
 }
 
+// One restrained treatment for all five — the row differentiates macros by
+// label and value, not by competing hues (see .impeccable.md: accent colour
+// is rare, not a five-way rainbow).
 function MacroStat({
-  tone,
   label,
   value,
-  highlight = false,
 }: {
-  tone: MacroTone;
   label: string;
   value: string | number;
-  highlight?: boolean;
 }) {
   return (
-    <div
-      className={`relative overflow-hidden rounded-2xl px-2 py-2 ${macroToneClasses[tone]} ${
-        highlight ? "ring-1 ring-inset ring-[var(--c-pro)]/40" : ""
-      }`}
-    >
-      <span className="relative block text-sm font-black">{value}</span>
-      <span className="relative block text-[9px] font-black uppercase tracking-[0.18em] opacity-75">
+    <div className="rounded-2xl bg-[var(--tint-stone)] px-1.5 py-2">
+      <span className="block text-sm font-black text-[var(--foreground)]">
+        {value}
+      </span>
+      <span className="block text-[8px] font-bold uppercase leading-tight tracking-[0.04em] text-[var(--text-muted)]">
         {label}
       </span>
     </div>
