@@ -19,8 +19,9 @@
     "test:aggregation": "tsx scripts/testShoppingAggregation.ts",
     "test:derivation": "tsx scripts/testShoppingListDerivation.ts",
     "test:meal-repository-writes": "tsx scripts/testMealRepositoryWrites.ts",
+    "test:meal-partial-update": "tsx scripts/testMealPartialUpdate.ts",
     "test:widget": "tsx scripts/testMealPlanWidget.ts",
-    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation && npm run test:meal-repository-writes && npm run test:widget"
+    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation && npm run test:meal-repository-writes && npm run test:meal-partial-update && npm run test:widget"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

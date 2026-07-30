@@ -1,6 +1,6 @@
 import { pool, withTransaction } from "@/lib/db";
 import * as mealRepository from "@/lib/db/mealRepository";
-import { mapMeal, mealInputToRow } from "@/lib/domain/mealMappers";
+import { mapMeal, mealInputToRow, toMealInput } from "@/lib/domain/mealMappers";
 import {
   MealIngredient,
   MealInput,
@@ -13,20 +13,41 @@ import { ApiError } from "@/lib/apiUtils";
 import { requireNumber, requireString } from "@/lib/routeValidation";
 import { DEFAULT_STORE_ZONE } from "@/lib/constants";
 
-function parseMealInput(value: unknown): MealInput {
+// `existing` is the current MealInput for the row being updated (undefined
+// when creating a new meal). Any field the caller's payload omits falls back
+// to `existing`'s value instead of a hardcoded default — a payload that only
+// names `servings` (or any other subset of fields) must never invent zeroed
+// ingredients, wiped steps, or a cleared image for the fields it didn't send.
+// Without `existing` (create), an omitted required field is still an error,
+// and omitted optional fields keep their original create-time defaults.
+export function parseMealInput(
+  value: unknown,
+  existing?: MealInput,
+): MealInput {
   if (!value || typeof value !== "object") {
     throw new ApiError("Meal payload must be an object.", 400);
   }
   const obj = value as Record<string, unknown>;
 
-  const name = requireString(obj.name, "name");
-  const type = requireString(obj.type, "type") as MealType;
+  const name =
+    obj.name !== undefined
+      ? requireString(obj.name, "name")
+      : requireExisting(existing?.name, "name");
+  const type = (
+    obj.type !== undefined
+      ? requireString(obj.type, "type")
+      : requireExisting(existing?.type, "type")
+  ) as MealType;
 
   const buildRaw = obj.build;
-  if (!buildRaw || typeof buildRaw !== "object") {
-    throw new ApiError("build is required.", 400);
+  if (buildRaw === undefined) {
+    if (!existing) {
+      throw new ApiError("build is required.", 400);
+    }
+  } else if (!buildRaw || typeof buildRaw !== "object") {
+    throw new ApiError("build must be an object.", 400);
   }
-  const buildObj = buildRaw as Record<string, unknown>;
+  const buildObj = (buildRaw ?? {}) as Record<string, unknown>;
 
   const normalizeStringArray = (v: unknown, field: string) => {
     if (typeof v === "string") {
@@ -45,12 +66,15 @@ function parseMealInput(value: unknown): MealInput {
     throw new ApiError(`${field} must be a string or string[].`, 400);
   };
 
-  const build = {
-    pro: normalizeStringArray(buildObj.pro, "build.pro"),
-    base: normalizeStringArray(buildObj.base, "build.base"),
-    veg: normalizeStringArray(buildObj.veg, "build.veg"),
-    engine: normalizeStringArray(buildObj.engine, "build.engine"),
-  };
+  const build =
+    buildRaw === undefined && existing
+      ? existing.build
+      : {
+          pro: normalizeStringArray(buildObj.pro, "build.pro"),
+          base: normalizeStringArray(buildObj.base, "build.base"),
+          veg: normalizeStringArray(buildObj.veg, "build.veg"),
+          engine: normalizeStringArray(buildObj.engine, "build.engine"),
+        };
 
   const parseIngredients = (raw: unknown): MealIngredient[] | undefined => {
     if (raw === undefined) {
@@ -102,29 +126,64 @@ function parseMealInput(value: unknown): MealInput {
   };
 
   const macrosRaw = obj.macros;
-  if (!macrosRaw || typeof macrosRaw !== "object") {
-    throw new ApiError("macros is required.", 400);
+  if (macrosRaw === undefined) {
+    if (!existing) {
+      throw new ApiError("macros is required.", 400);
+    }
+  } else if (!macrosRaw || typeof macrosRaw !== "object") {
+    throw new ApiError("macros must be an object.", 400);
   }
-  const macrosObj = macrosRaw as Record<string, unknown>;
+  const macrosObj = (macrosRaw ?? {}) as Record<string, unknown>;
+
+  const macros =
+    macrosRaw === undefined && existing
+      ? existing.macros
+      : {
+          cal: requireNumber(macrosObj.cal, "macros.cal"),
+          p: requireNumber(macrosObj.p, "macros.p"),
+          c: requireNumber(macrosObj.c, "macros.c"),
+          f: requireNumber(macrosObj.f, "macros.f"),
+          fiber: optionalNumber(macrosObj.fiber, existing?.macros.fiber ?? 0),
+        };
+
+  const ingredients =
+    obj.ingredients === undefined
+      ? (existing?.ingredients ?? parseIngredients(obj.ingredients))
+      : parseIngredients(obj.ingredients);
+
+  const servings =
+    typeof obj.servings === "number" && Number.isFinite(obj.servings)
+      ? obj.servings
+      : (existing?.servings ?? 2);
+
+  const steps = Array.isArray(obj.steps)
+    ? obj.steps.filter((step): step is string => typeof step === "string")
+    : (existing?.steps ?? []);
+
+  const imageUrl =
+    typeof obj.imageUrl === "string"
+      ? obj.imageUrl
+      : obj.imageUrl === null
+        ? null
+        : (existing?.imageUrl ?? null);
 
   return {
     name,
     type,
     build,
-    ingredients: parseIngredients(obj.ingredients),
-    macros: {
-      cal: requireNumber(macrosObj.cal, "macros.cal"),
-      p: requireNumber(macrosObj.p, "macros.p"),
-      c: requireNumber(macrosObj.c, "macros.c"),
-      f: requireNumber(macrosObj.f, "macros.f"),
-      fiber: optionalNumber(macrosObj.fiber, 0),
-    },
-    servings: optionalNumber(obj.servings, 2),
-    steps: Array.isArray(obj.steps)
-      ? obj.steps.filter((step): step is string => typeof step === "string")
-      : [],
-    imageUrl: typeof obj.imageUrl === "string" ? obj.imageUrl : null,
+    ingredients,
+    macros,
+    servings,
+    steps,
+    imageUrl,
   };
+}
+
+function requireExisting<T>(value: T | undefined, field: string): T {
+  if (value === undefined) {
+    throw new ApiError(`${field} is required.`, 400);
+  }
+  return value;
 }
 
 function optionalNumber(value: unknown, fallback: number): number {
@@ -274,8 +333,13 @@ export async function updateMealById(
   mealId: number,
   input: unknown,
 ): Promise<void> {
-  const parsed = parseMealInput(input);
   await withTransaction(async (client) => {
+    const existingRow = await mealRepository.getMealById(client, mealId);
+    if (!existingRow) {
+      throw new ApiError("Meal not found", 404);
+    }
+    const existing = toMealInput(mapMeal(existingRow));
+    const parsed = parseMealInput(input, existing);
     const updated = await mealRepository.updateMeal(client, {
       id: mealId,
       ...mealInputToRow(parsed),
