@@ -21,18 +21,21 @@ const nextConfig: NextConfig = {
       {
         source: "/api/:path*",
         headers: [
-          { key: "Access-Control-Allow-Credentials", value: "true" },
-          // Open CORS is convenient for local demos. Lock this down before public deploy.
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value:
-              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-          },
+          // Ingen CORS-headere med vilje.
+          //
+          // Appens egne skaerme kalder same-origin og har derfor ikke brug for
+          // dem. Uden dem kan fremmede websites ikke laese eller aendre
+          // madplanen fra din browser — og de fleste ruter kraever ingen
+          // godkendelse, saa det var reelt aabent.
+          //
+          // GET /api/widget er beskyttet af WIDGET_TOKEN og er tiltaenkt
+          // serverside-kald (Home Assistant og lignende henter fra deres egen
+          // backend, hvor CORS ikke gaelder). Et browser-dashboard ville skulle
+          // laegge tokenet i klient-JavaScript, hvor enhver kan laese det —
+          // saa den vej boer ikke aabnes med CORS, men med en anden loesning.
+          //
+          // Skal en bestemt frontend paa et andet domaene have adgang, saa
+          // tilfoej praecis det ene domaene her. Aldrig "*".
           {
             key: "Cache-Control",
             value: "no-store, max-age=0, must-revalidate",
