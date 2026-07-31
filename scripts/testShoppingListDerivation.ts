@@ -185,4 +185,119 @@ assert.equal(
 
 console.log("servings rescale + checked preservation test passed");
 
+// Two lines sharing a name but differing in unit (olive oil in tsk vs spsk,
+// per two different dishes) must each keep their own checked state across a
+// re-derivation. Before the fix, `unitCountByName` saw the name resolve to
+// two units and deliberately discarded both previous states.
+const oilTsk = meal("Oil dish A", [
+  { name: "Olivenolie", amount: 2, unit: "tsk", zone: "Kolonial" },
+]);
+const oilSpsk = meal("Oil dish B", [
+  { name: "Olivenolie", amount: 1, unit: "spsk", zone: "Kolonial" },
+]);
+
+const oilBaseList = deriveShoppingListFromMeals([oilTsk, oilSpsk], [], []);
+const oilListWithTicks = oilBaseList.map((category) => ({
+  ...category,
+  items: category.items.map((item) => {
+    if (item.n === "Olivenolie" && item.q === "4 tsk") {
+      return { ...item, checked: true };
+    }
+    if (item.n === "Olivenolie" && item.q === "2 spsk") {
+      return { ...item, checked: false };
+    }
+    return item;
+  }),
+}));
+
+const oilRederived = deriveShoppingListFromMeals(
+  [oilTsk, oilSpsk],
+  oilListWithTicks,
+  [],
+);
+const oilItems = oilRederived.flatMap((category) => category.items);
+const rederivedTsk = oilItems.find(
+  (item) => item.n === "Olivenolie" && item.q === "4 tsk",
+);
+const rederivedSpsk = oilItems.find(
+  (item) => item.n === "Olivenolie" && item.q === "2 spsk",
+);
+
+assert.equal(
+  rederivedTsk?.checked,
+  true,
+  "tsk oil line must keep its own checked state",
+);
+assert.equal(
+  rederivedSpsk?.checked,
+  false,
+  "spsk oil line must keep its own checked state, not inherit the tsk tick",
+);
+
+console.log("same-name different-unit checked isolation test passed");
+
+// A tick on a single-unit item still survives (unchanged behaviour).
+const singleUnitMeal = meal("Single unit meal", [
+  { name: "Mel", amount: 500, unit: "g", zone: "Kolonial" },
+]);
+const singleUnitBase = deriveShoppingListFromMeals([singleUnitMeal], [], []);
+const singleUnitTicked = singleUnitBase.map((category) => ({
+  ...category,
+  items: category.items.map((item) =>
+    item.n === "Mel" ? { ...item, checked: true } : item,
+  ),
+}));
+const singleUnitRederived = deriveShoppingListFromMeals(
+  [singleUnitMeal],
+  singleUnitTicked,
+  [],
+);
+const melItem = singleUnitRederived
+  .flatMap((category) => category.items)
+  .find((item) => item.n === "Mel");
+assert.equal(melItem?.checked, true, "single-unit item must keep its tick");
+
+// A hand-added junk item with no unit still keeps its state.
+const junkListWithTick: import("@/lib/types").ListCategory[] = [
+  {
+    category: "Kolonial",
+    items: [{ n: "Håndtilføjet vare", checked: true }],
+  },
+];
+const withJunkTicked = deriveShoppingListFromMeals(
+  [],
+  junkListWithTick,
+  junkListWithTick,
+);
+const junkItem = withJunkTicked
+  .flatMap((category) => category.items)
+  .find((item) => item.n === "Håndtilføjet vare");
+assert.equal(
+  junkItem?.checked,
+  true,
+  "hand-added item with no unit must keep its checked state",
+);
+
+// An item stored BEFORE this change — checked but no `unit` field — must
+// still be matched by name, so nobody loses their ticks on deploy.
+const preExistingList: import("@/lib/types").ListCategory[] = [
+  {
+    category: "Kolonial",
+    items: [{ n: "Ris", q: "300 g", checked: true }],
+  },
+];
+const legacyRederived = deriveShoppingListFromMeals([mealB], preExistingList, [
+  { category: "Kolonial", items: [] },
+]);
+const legacyRis = legacyRederived
+  .flatMap((category) => category.items)
+  .find((item) => item.n === "Ris");
+assert.equal(
+  legacyRis?.checked,
+  true,
+  "an item stored before this change (no unit field) must still be matched by name",
+);
+
+console.log("no-unit and pre-existing-data compatibility tests passed");
+
 console.log("shopping list derivation tests passed");
