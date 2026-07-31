@@ -28,6 +28,12 @@ const MENU_GROUPS: { type: MealType; label: string }[] = [
   { type: "Dinner", label: "Aftensmad" },
 ];
 
+/** Korte navne til fanestrimlen. De fulde bruges alle andre steder. */
+const SHORT_TAB_LABELS: Partial<Record<MealType, string>> = {
+  Breakfast: "Morgen",
+  Dinner: "Aften",
+};
+
 const menuTypeLabel: Record<MealType, string> = {
   Breakfast: "Morgenmad",
   Lunch: "Frokost",
@@ -37,7 +43,12 @@ const menuTypeLabel: Record<MealType, string> = {
 
 type MenuTab = MealType | "Junk" | "Household";
 type MenuGroup = { type: MealType; label: string; meals: StoredMeal[] };
-type MenuTabOption = { type: MenuTab; label: string; iconOnly?: boolean };
+type MenuTabOption = {
+  type: MenuTab;
+  label: string;
+  short?: string;
+  iconOnly?: boolean;
+};
 
 type PickerTarget = {
   mode: "swap" | "add";
@@ -83,11 +94,18 @@ function MenuContent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabFromUrl = parseMenuTab(searchParams.get("type"));
+  // Husholdning staar foerst og er kun et ikon. De oevrige bruger korte
+  // etiketter, saa alle fem kan staa paa een linje paa en telefon — med de
+  // fulde navne kraevede strimlen 461px mod de 343px der er plads til.
   const tabs: MenuTabOption[] = useMemo(
     () => [
-      ...MENU_GROUPS.map((group) => ({ type: group.type, label: group.label })),
-      { type: "Junk" as const, label: "Snacks" },
       { type: "Household" as const, label: "Husholdning", iconOnly: true },
+      ...MENU_GROUPS.map((group) => ({
+        type: group.type,
+        label: group.label,
+        short: SHORT_TAB_LABELS[group.type] ?? group.label,
+      })),
+      { type: "Junk" as const, label: "Snacks" },
     ],
     [],
   );
@@ -142,14 +160,18 @@ function MenuContent({
         </div>
       ) : null}
 
-      <div className="relative mb-1">
-        <div className="flex gap-2 overflow-x-auto pb-1 pr-6">
+      {/* Strimlen gaar helt ud til arkets kant for at vinde plads, og
+          teksttabbene deler resten ligeligt. Alle fem staar paa een linje. */}
+      <div className="-mx-4 mb-1 px-3">
+        <div className="flex items-stretch gap-1.5 pb-1">
           {tabs.map((tab) => (
             <Link
               key={tab.type}
               href={buildHref("/menu", queryString, { type: tab.type })}
               scroll={false}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
+              className={`flex items-center justify-center rounded-full py-2 text-center text-[11px] font-bold uppercase tracking-[0.04em] transition-all ${
+                tab.iconOnly ? "w-11 shrink-0" : "min-w-0 flex-1 px-1"
+              } ${
                 activeTab === tab.type
                   ? tab.type === "Junk"
                     ? "bg-harvest-purple text-white"
@@ -160,13 +182,14 @@ function MenuContent({
               }`}
               aria-label={tab.iconOnly ? "Husholdning" : undefined}
             >
-              {tab.iconOnly ? <Home size={14} strokeWidth={2.5} /> : tab.label}
+              {tab.iconOnly ? (
+                <Home size={15} strokeWidth={2.5} />
+              ) : (
+                (tab.short ?? tab.label)
+              )}
             </Link>
           ))}
         </div>
-        {/* Fade hints that the tab strip scrolls — the last tab (Snacks)
-            used to be clipped mid-word with no sign there was more. */}
-        <div className="pointer-events-none absolute bottom-1 right-0 top-0 w-8 bg-gradient-to-l from-[var(--surface-1)] to-transparent" />
       </div>
 
       <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
