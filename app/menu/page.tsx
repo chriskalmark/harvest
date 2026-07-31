@@ -169,7 +169,7 @@ function MenuContent({
               key={tab.type}
               href={buildHref("/menu", queryString, { type: tab.type })}
               scroll={false}
-              className={`flex items-center justify-center rounded-full py-2 text-center text-[11px] font-bold uppercase tracking-[0.04em] transition-all ${
+              className={`flex min-h-11 items-center justify-center rounded-full text-center text-[11px] font-bold uppercase tracking-[0.04em] transition-all ${
                 tab.iconOnly ? "w-11 shrink-0" : "min-w-0 flex-1 px-1"
               } ${
                 activeTab === tab.type
