@@ -96,8 +96,10 @@ export function useOfflineChecklist({
   const [checkedKeys, setCheckedKeys] = useState<Set<string>>(() => new Set());
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
   const [isOnline, setIsOnline] = useState(true);
+  const [isClearing, setIsClearing] = useState(false);
   const seededWeekRef = useRef<string | null>(null);
   const flushTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const checkedKeysRef = useRef<Set<string>>(new Set());
 
   // Seed checked state once per week: prefer the local snapshot (the user's
   // in-store progress), otherwise fall back to what the server reported.
@@ -118,6 +120,26 @@ export function useOfflineChecklist({
       queueMicrotask(() => setCheckedKeys(new Set(initialCheckedKeys)));
     }
   }, [week, enabled, initialCheckedKeys]);
+
+  // Keep a ref mirror of checkedKeys so async handlers (clearChecked) can
+  // read the latest value for rollback without depending on stale closures.
+  useEffect(() => {
+    checkedKeysRef.current = checkedKeys;
+  }, [checkedKeys]);
+
+  // Applies a fully-resolved set of checked keys to local state + storage.
+  // Shared by markAllChecked and clearChecked's success/rollback paths so
+  // both take the same shape: the network write (if any) is the caller's
+  // responsibility, this just makes local state agree with it.
+  const applyLocalKeys = useCallback(
+    (keys: string[]) => {
+      setCheckedKeys(new Set(keys));
+      if (enabled) {
+        writeChecklist(week, keys);
+      }
+    },
+    [enabled, week],
+  );
 
   const refreshPendingCount = useCallback(() => {
     setPendingSyncCount(readQueue().length);
@@ -237,36 +259,85 @@ export function useOfflineChecklist({
     [checkedKeys],
   );
 
-  const clearChecked = useCallback(() => {
-    setCheckedKeys((prev) => {
-      if (enabled) {
-        for (const key of prev) {
-          const sep = key.indexOf("::");
-          if (sep === -1) continue;
-          const category = key.slice(0, sep);
-          const itemName = key.slice(sep + 2);
-          enqueue({ weekRange: week, category, itemName, checked: false });
-        }
-        writeChecklist(week, []);
+  // Resets every checked item in one request instead of one PATCH per item.
+  //
+  // Why not the per-item queue: `enqueue` fires one `PATCH .../shopping` per
+  // item, and each of those reads the whole meal plan, flips one item, and
+  // writes the entire shopping list back. For a handful of ticks that's fine
+  // — for "uncheck all 46", the 46 writes race each other and overwrite one
+  // another (a lost update): measured live, only a few survived on the
+  // server while local state showed everything cleared. The bulk endpoint
+  // (`{ all: true, checked: false }`, the same one "Ryd hele listen" uses to
+  // set everything checked) writes once, so there is nothing to race.
+  //
+  // Offline: a single bulk request can't be queued the same way a per-item
+  // op can (there is no partial/merge semantics for "the whole list, minus
+  // whatever changed while offline"). Rather than silently pretend it
+  // queued and later surprise the user with stale state, we refuse up
+  // front with a clear message and change nothing locally.
+  //
+  // Local state: optimistic-clear-then-rollback. The screen clears
+  // instantly (matches how `toggle` feels), but if the request fails we
+  // restore the previous checked set both in memory and in localStorage, so
+  // local and server never disagree for longer than the round trip.
+  const clearChecked = useCallback(async (): Promise<{
+    ok: boolean;
+    message?: string;
+  }> => {
+    if (!enabled) {
+      setCheckedKeys(new Set());
+      return { ok: true };
+    }
+
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      return {
+        ok: false,
+        message:
+          "Offline: Nulstil kraever forbindelse. Proev igen naar du er online.",
+      };
+    }
+
+    const previousKeys = Array.from(checkedKeysRef.current);
+    setIsClearing(true);
+    applyLocalKeys([]);
+
+    try {
+      const response = await fetch(SHOPPING_ENDPOINT, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true, checked: false, weekRange: week }),
+      });
+      if (!response.ok) {
+        throw new Error(`Serveren svarede ${response.status}`);
       }
-      return new Set();
-    });
-  }, [enabled, enqueue, week]);
+      return { ok: true };
+    } catch {
+      applyLocalKeys(previousKeys);
+      return {
+        ok: false,
+        message: "Nulstil kunne ikke gemmes. Proev igen.",
+      };
+    } finally {
+      setIsClearing(false);
+    }
+  }, [applyLocalKeys, enabled, week]);
 
   // Marks every given item as checked locally, instantly, without going
-  // through the sync queue. Used by the "clear list" action, which already
-  // persists the bulk change to the server itself (PATCH { all: true }) — so
-  // this only needs to update the local, offline-first source of truth that
-  // `isChecked` reads from, so the "Skjul klaret" filter can hide the items
-  // right away instead of waiting for a round trip.
+  // through the sync queue or making its own request. Used by the "clear
+  // list" action (ClearShoppingListButton), which already persists the bulk
+  // change to the server itself (PATCH { all: true, checked: true }) before
+  // calling this — so this only needs to update the local, offline-first
+  // source of truth that `isChecked` reads from, so the "Skjul klaret"
+  // filter can hide the items right away instead of waiting for a round
+  // trip. It shares `applyLocalKeys` with `clearChecked`'s local-state step,
+  // but intentionally does not call `clearChecked` (or vice versa): the two
+  // differ in who performs the network write and with which `checked`
+  // value, only the "make local state agree" shape is common.
   const markAllChecked = useCallback(
     (keys: string[]) => {
-      setCheckedKeys(new Set(keys));
-      if (enabled) {
-        writeChecklist(week, keys);
-      }
+      applyLocalKeys(keys);
     },
-    [enabled, week],
+    [applyLocalKeys],
   );
 
   return {
@@ -274,6 +345,7 @@ export function useOfflineChecklist({
     isChecked,
     toggle,
     clearChecked,
+    isClearing,
     markAllChecked,
     pendingSyncCount,
     isOnline,

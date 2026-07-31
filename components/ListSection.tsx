@@ -151,6 +151,7 @@ function ListSection(
     isChecked,
     toggle: toggleChecklist,
     clearChecked,
+    isClearing,
     markAllChecked,
     pendingSyncCount,
     isOnline,
@@ -160,6 +161,15 @@ function ListSection(
     initialCheckedKeys: initialCheckedItems,
   });
   const [hideChecked, setHideChecked] = useState(false);
+  const [clearError, setClearError] = useState<string | null>(null);
+
+  const handleClearChecked = async () => {
+    setClearError(null);
+    const result = await clearChecked();
+    if (!result.ok && result.message) {
+      setClearError(result.message);
+    }
+  };
 
   // Read the persisted "hide checked" preference after mount, not during the
   // first render — localStorage isn't available on the server, so reading it
@@ -364,10 +374,11 @@ function ListSection(
                   </button>
                   <button
                     type="button"
-                    onClick={clearChecked}
-                    className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)] hover:bg-[var(--border-subtle)]"
+                    onClick={handleClearChecked}
+                    disabled={isClearing}
+                    className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)] hover:bg-[var(--border-subtle)] disabled:opacity-60"
                   >
-                    Nulstil
+                    {isClearing ? "Nulstiller..." : "Nulstil"}
                   </button>
                 </>
               ) : null}
@@ -379,6 +390,11 @@ function ListSection(
               style={{ width: `${progressPercent}%` }}
             />
           </div>
+          {clearError ? (
+            <p className="mt-2 text-[13px] font-semibold text-[var(--harvest-terracotta)]">
+              {clearError}
+            </p>
+          ) : null}
         </div>
       ) : null}
 
