@@ -293,7 +293,7 @@ export function useOfflineChecklist({
       return {
         ok: false,
         message:
-          "Offline: Nulstil kraever forbindelse. Proev igen naar du er online.",
+          "Du er offline. Nulstil kræver forbindelse — prøv igen, når du er online.",
       };
     }
 
@@ -315,7 +315,7 @@ export function useOfflineChecklist({
       applyLocalKeys(previousKeys);
       return {
         ok: false,
-        message: "Nulstil kunne ikke gemmes. Proev igen.",
+        message: "Nulstil blev ikke gemt. Prøv igen.",
       };
     } finally {
       setIsClearing(false);
