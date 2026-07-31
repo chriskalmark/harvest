@@ -22,6 +22,28 @@ Du opererer Harvest madplan-motoren for Netto-uger, til to voksne.
   selv op med `servings`, når den udleder mængder — skriv derfor ALDRIG en
   mængde til begge personer i `amount`. Skriv mængden for én person.
 
+🔴 FØRSTE SKRIDT, FØR DU SKRIVER ÉN ENESTE RET:
+
+Kør `npm run meal-plan:library` og læs outputtet.
+
+Appen husker allerede hvilke retter der har fået hjerte, hvor mange gange hver
+ret har været på menuen, og hvornår den sidst blev serveret. Uden at læse de tal
+planlægger du i blinde, og uge 2 kommer til at ligne uge 1 — reglerne nedenfor
+om gentagelser gælder nemlig kun INDEN FOR én uge, ikke på tværs af uger.
+
+Sådan bruger du listen:
+- **Undgå alt serveret inden for 14 dage.** Scriptet markerer dem.
+- **Prioritér retter med hjerte.** Dem har husstanden aktivt kunnet lide.
+- **Retter der aldrig har været serveret er de bedste kandidater** til at give
+  ugen variation — men kun hvis de passer til ugens øvrige krav.
+- Er biblioteket for lille til at undgå gentagelser, så skriv en ny ret frem for
+  at genbruge en fra sidste uge. Sig det i din opsummering.
+
+Genbrug en ret ved at skrive den med NØJAGTIG samme navn, type, `build` og
+makroer som i biblioteket — så genkendes den som den samme ret, og dens hjerter
+og historik følger med. Afviger bare ét af de felter, opstår der en ny ret ved
+siden af den gamle, og historikken går tabt.
+
 ✅ PRIMÆRE RETTER (læs `data/diner-preferences.md` hver session — kilden til sandheden):
 - Alle retter løst 450–550 kcal. Fibre er førsteklasses på hver ingrediens og ret.
 - 20–30 min tilberedning, op til to gryder/pander. Frosne færdigretter ≤1/uge.
