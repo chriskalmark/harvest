@@ -149,7 +149,7 @@ function MealDetail({
       </div>
 
       {/* Hvid plade — fotoet bryder sømmen mellem flade og plade */}
-      <div className="relative -mt-8 rounded-[34px] bg-[var(--surface-1)] pt-20">
+      <div className="relative -mt-8 rounded-[34px] bg-[var(--surface-1)] pb-6 pt-20">
         <div className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-[60%] justify-center">
           <PhotoPlaceholder
             imageUrl={meal.imageUrl}

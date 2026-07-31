@@ -334,7 +334,7 @@ export default function MenuPage() {
               </div>
             </div>
 
-            <div className="relative -mt-5 rounded-[34px] bg-[var(--surface-1)] px-4 pt-5">
+            <div className="relative -mt-5 rounded-[34px] bg-[var(--surface-1)] px-4 pb-6 pt-5">
               <MenuContent
                 groups={groups}
                 junkList={readyPlan.junkList}
