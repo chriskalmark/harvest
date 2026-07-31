@@ -115,7 +115,7 @@ export default function ExplorePage() {
   return (
     <div className="mx-auto max-w-md pb-[120px]">
       {/* Grøn flade — samme opbygning som /menu, så Udforsk ikke føles som en anden app */}
-      <div className="rounded-b-[34px] bg-harvest-green px-4 pb-8 pt-2 text-white">
+      <div className="rounded-[34px] bg-harvest-green px-4 pb-8 pt-2 text-white">
         <p className="text-[0.8rem] font-semibold uppercase tracking-[0.1em] opacity-[0.72]">
           Retbiblioteket
         </p>
@@ -126,7 +126,7 @@ export default function ExplorePage() {
       </div>
 
       {/* Hvid plade */}
-      <div className="relative -mt-5 rounded-t-[34px] bg-[var(--surface-1)] px-4 pt-5">
+      <div className="relative -mt-5 rounded-[34px] bg-[var(--surface-1)] px-4 pt-5">
         {/* Søgning leder — det er den almindelige handling. At tilføje en ret er sjældent. */}
         <div className="relative mb-4">
           <Search

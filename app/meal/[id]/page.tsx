@@ -119,7 +119,7 @@ function MealDetail({
           Deep variant (not the brighter --harvest-green) so the white
           label text below clears 4.5:1 — plain white on the lighter
           green only reached ~3.5:1. */}
-      <div className="relative rounded-b-[34px] bg-[var(--harvest-green-deep)] px-4 pb-20 pt-2 text-white">
+      <div className="relative rounded-[34px] bg-[var(--harvest-green-deep)] px-4 pb-20 pt-2 text-white">
         <div className="flex items-start justify-between gap-4">
           <span className="text-[11px] font-bold uppercase tracking-[0.18em] opacity-90">
             {mealTypeLabel[meal.type]}
@@ -149,7 +149,7 @@ function MealDetail({
       </div>
 
       {/* Hvid plade — fotoet bryder sømmen mellem flade og plade */}
-      <div className="relative -mt-8 rounded-t-[34px] bg-[var(--surface-1)] pt-20">
+      <div className="relative -mt-8 rounded-[34px] bg-[var(--surface-1)] pt-20">
         <div className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-[60%] justify-center">
           <PhotoPlaceholder
             imageUrl={meal.imageUrl}

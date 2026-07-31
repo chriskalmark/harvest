@@ -315,7 +315,7 @@ export default function MenuPage() {
 
         return (
           <main className="pb-8">
-            <div className="rounded-b-[34px] bg-harvest-green px-5 pb-8 pt-2 text-white">
+            <div className="rounded-[34px] bg-harvest-green px-5 pb-8 pt-2 text-white">
               <div className="text-[0.8rem] font-semibold uppercase tracking-[0.1em] opacity-[0.72]">
                 {formatWeekRangeDanish(readyPlan.weekRange)}
               </div>
@@ -334,7 +334,7 @@ export default function MenuPage() {
               </div>
             </div>
 
-            <div className="relative -mt-5 rounded-t-[34px] bg-[var(--surface-1)] px-4 pt-5">
+            <div className="relative -mt-5 rounded-[34px] bg-[var(--surface-1)] px-4 pt-5">
               <MenuContent
                 groups={groups}
                 junkList={readyPlan.junkList}
