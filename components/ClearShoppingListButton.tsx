@@ -1,32 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
+import { CheckCheck } from "lucide-react";
 
 /**
- * Rydder hele indkoebslisten.
+ * Markerer alle varer i indkoebslisten som klaret og skjuler dem.
+ *
+ * Listen kan ikke tommes for rigtig: den er afledt af ugens retter (se
+ * mealPlanService.buildStoredMealPlan), saa en DELETE bliver regenereret i
+ * samme request. "Checked" derimod er rigtigt gemt pr. vare, ligesom
+ * "Skjul klaret"-filteret i ListSection allerede bruger. Saa knappen her
+ * markerer alt som klaret og taender filteret, i stedet for at forsoege at
+ * slette noget, der bare kommer igen.
  *
  * Bekraeftelsen er to trin i selve siden frem for en modal — den er nemmere
  * at ramme med en tommelfinger og nemmere at fortryde ved at scrolle vaek.
- *
- * Teksten siger sandheden om, hvad der sker: varer fra ugens retter kommer
- * igen, naar listen udledes paa ny, fordi listen er afledt af maaltiderne.
- * Kun haandtilfoejede varer forsvinder permanent.
  */
 export default function ClearShoppingListButton({
   weekRange,
-  itemCount,
+  uncheckedCount,
+  onClearedLocally,
   onCleared,
 }: {
   weekRange: string;
-  itemCount: number;
+  uncheckedCount: number;
+  /** Marks everything checked + hides them in ListSection, instantly. */
+  onClearedLocally: () => void;
   onCleared: () => Promise<void> | void;
 }) {
   const [confirming, setConfirming] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (itemCount === 0) {
+  if (uncheckedCount === 0) {
     return null;
   }
 
@@ -36,15 +42,16 @@ export default function ClearShoppingListButton({
 
     try {
       const response = await fetch("/api/mealplan/shopping", {
-        method: "DELETE",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ all: true, weekRange }),
+        body: JSON.stringify({ all: true, checked: true, weekRange }),
       });
 
       if (!response.ok) {
         throw new Error(`Serveren svarede ${response.status}`);
       }
 
+      onClearedLocally();
       await onCleared();
       setConfirming(false);
     } catch (cause) {
@@ -64,7 +71,7 @@ export default function ClearShoppingListButton({
           onClick={() => setConfirming(true)}
           className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border-subtle)] px-4 text-[15px] font-semibold text-[var(--text-muted)] transition active:scale-[0.99]"
         >
-          <Trash2 className="h-4 w-4" aria-hidden="true" />
+          <CheckCheck className="h-4 w-4" aria-hidden="true" />
           Ryd hele listen
         </button>
       </div>
@@ -77,9 +84,8 @@ export default function ClearShoppingListButton({
         Er du sikker?
       </p>
       <p className="mt-2 text-[14px] leading-relaxed text-[var(--text-muted)]">
-        Alle {itemCount} varer forsvinder fra listen. Varerne fra ugens retter
-        kommer igen, når listen genberegnes — kun dem, du selv har tilføjet, er
-        væk for altid.
+        Alt bliver markeret som klaret og forsvinder fra listen. Der bliver ikke
+        slettet noget — tryk »Vis alle«, hvis du fortryder.
       </p>
 
       {error ? (

@@ -40,7 +40,9 @@ function readChecklist(weekRange: string): string[] | null {
     const raw = window.localStorage.getItem(checklistStorageKey(weekRange));
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === "string") : null;
+    return Array.isArray(parsed)
+      ? parsed.filter((value): value is string => typeof value === "string")
+      : null;
   } catch {
     return null;
   }
@@ -49,7 +51,10 @@ function readChecklist(weekRange: string): string[] | null {
 function writeChecklist(weekRange: string, keys: string[]) {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(checklistStorageKey(weekRange), JSON.stringify(keys));
+    window.localStorage.setItem(
+      checklistStorageKey(weekRange),
+      JSON.stringify(keys),
+    );
   } catch {
     // Storage full or unavailable; UI state still works for the session.
   }
@@ -159,14 +164,14 @@ export function useOfflineChecklist({
             existing.weekRange === op.weekRange &&
             existing.category === op.category &&
             existing.itemName === op.itemName
-          )
+          ),
       );
       queue.push(op);
       writeQueue(queue);
       refreshPendingCount();
       void flushQueue();
     },
-    [flushQueue, refreshPendingCount]
+    [flushQueue, refreshPendingCount],
   );
 
   // Retry sync on reconnect, when the app regains focus, and on a slow interval.
@@ -223,12 +228,13 @@ export function useOfflineChecklist({
         return next;
       });
     },
-    [enabled, enqueue, week]
+    [enabled, enqueue, week],
   );
 
   const isChecked = useCallback(
-    (category: string, itemName: string) => checkedKeys.has(itemKey(category, itemName)),
-    [checkedKeys]
+    (category: string, itemName: string) =>
+      checkedKeys.has(itemKey(category, itemName)),
+    [checkedKeys],
   );
 
   const clearChecked = useCallback(() => {
@@ -247,11 +253,28 @@ export function useOfflineChecklist({
     });
   }, [enabled, enqueue, week]);
 
+  // Marks every given item as checked locally, instantly, without going
+  // through the sync queue. Used by the "clear list" action, which already
+  // persists the bulk change to the server itself (PATCH { all: true }) — so
+  // this only needs to update the local, offline-first source of truth that
+  // `isChecked` reads from, so the "Skjul klaret" filter can hide the items
+  // right away instead of waiting for a round trip.
+  const markAllChecked = useCallback(
+    (keys: string[]) => {
+      setCheckedKeys(new Set(keys));
+      if (enabled) {
+        writeChecklist(week, keys);
+      }
+    },
+    [enabled, week],
+  );
+
   return {
     checkedCount: checkedKeys.size,
     isChecked,
     toggle,
     clearChecked,
+    markAllChecked,
     pendingSyncCount,
     isOnline,
   };

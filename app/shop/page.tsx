@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import ClearShoppingListButton from "@/components/ClearShoppingListButton";
-import ListSection from "@/components/ListSection";
+import ListSection, { type ListSectionHandle } from "@/components/ListSection";
 import MealPlanGate from "@/components/MealPlanGate";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { getShoppingItemUsage } from "@/lib/domain/shoppingUsage";
@@ -13,6 +13,7 @@ export default function ShopPage() {
     () => (plan ? getShoppingItemUsage(plan) : {}),
     [plan],
   );
+  const listSectionRef = useRef<ListSectionHandle>(null);
 
   return (
     <MealPlanGate
@@ -32,6 +33,7 @@ export default function ShopPage() {
           </h1>
 
           <ListSection
+            ref={listSectionRef}
             data={readyPlan.shoppingList}
             colorClass="bg-harvest-green"
             editable={true}
@@ -43,10 +45,14 @@ export default function ShopPage() {
 
           <ClearShoppingListButton
             weekRange={readyPlan.weekRange}
-            itemCount={readyPlan.shoppingList.reduce(
-              (total, section) => total + section.items.length,
+            uncheckedCount={readyPlan.shoppingList.reduce(
+              (total, section) =>
+                total + section.items.filter((item) => !item.checked).length,
               0,
             )}
+            onClearedLocally={() =>
+              listSectionRef.current?.markAllCheckedAndHide()
+            }
             onCleared={refresh}
           />
         </main>

@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+  type Ref,
+} from "react";
 import {
   Archive,
   Check,
@@ -26,25 +33,65 @@ function listItemKey(category: string, itemName: string) {
   return `${category}::${itemName}`;
 }
 
-export default function ListSection({
-  data,
-  colorClass = "bg-harvest-green",
-  editable = false,
-  weekRange,
-  mealPlanId,
-  type = "shopping",
-  itemUsageByKey,
-  onUpdate,
-}: {
-  data: ListCategory[];
-  colorClass?: string;
-  editable?: boolean;
-  weekRange?: string;
-  mealPlanId?: number;
-  type?: "shopping" | "junk";
-  itemUsageByKey?: ShoppingUsageByKey;
-  onUpdate?: () => void | Promise<void>;
-}) {
+// Whether the "Skjul klaret" filter is on. Persisted so the clear-list
+// action (which marks everything checked and turns this on) survives a
+// reload — otherwise the items would just reappear on the next page load,
+// the same failure the clear button used to have.
+const HIDE_CHECKED_STORAGE_KEY = "harvest-hide-checked";
+
+function readHideChecked(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(HIDE_CHECKED_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function writeHideChecked(value: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(
+      HIDE_CHECKED_STORAGE_KEY,
+      value ? "true" : "false",
+    );
+  } catch {
+    // Storage full or unavailable; the preference just won't survive reload.
+  }
+}
+
+export interface ListSectionHandle {
+  /**
+   * Marks every item in the list as checked (locally, instantly) and turns
+   * on the "Skjul klaret" filter, so the list visually empties. Called by
+   * ClearShoppingListButton after it persists the same bulk-checked change
+   * to the server.
+   */
+  markAllCheckedAndHide: () => void;
+}
+
+function ListSection(
+  {
+    data,
+    colorClass = "bg-harvest-green",
+    editable = false,
+    weekRange,
+    mealPlanId,
+    type = "shopping",
+    itemUsageByKey,
+    onUpdate,
+  }: {
+    data: ListCategory[];
+    colorClass?: string;
+    editable?: boolean;
+    weekRange?: string;
+    mealPlanId?: number;
+    type?: "shopping" | "junk";
+    itemUsageByKey?: ShoppingUsageByKey;
+    onUpdate?: () => void | Promise<void>;
+  },
+  ref: Ref<ListSectionHandle>,
+) {
   const displayData = useMemo(() => {
     if (type === "shopping") {
       const order = new Map(
@@ -104,6 +151,7 @@ export default function ListSection({
     isChecked,
     toggle: toggleChecklist,
     clearChecked,
+    markAllChecked,
     pendingSyncCount,
     isOnline,
   } = useOfflineChecklist({
@@ -112,6 +160,38 @@ export default function ListSection({
     initialCheckedKeys: initialCheckedItems,
   });
   const [hideChecked, setHideChecked] = useState(false);
+
+  // Read the persisted "hide checked" preference after mount, not during the
+  // first render — localStorage isn't available on the server, so reading it
+  // synchronously here would make the client's first render disagree with
+  // the server-rendered markup (a hydration mismatch). Starting from `false`
+  // and correcting it in an effect keeps the two in sync.
+  useEffect(() => {
+    queueMicrotask(() => {
+      if (readHideChecked()) {
+        setHideChecked(true);
+      }
+    });
+  }, []);
+
+  const setHideCheckedPersisted = (value: boolean) => {
+    setHideChecked(value);
+    writeHideChecked(value);
+  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      markAllCheckedAndHide: () => {
+        const allKeys = displayData.flatMap((category) =>
+          category.items.map((item) => listItemKey(category.category, item.n)),
+        );
+        markAllChecked(allKeys);
+        setHideCheckedPersisted(true);
+      },
+    }),
+    [displayData, markAllChecked],
+  );
   const [recentlyDeleted, setRecentlyDeleted] = useState<{
     category: string;
     name: string;
@@ -277,7 +357,7 @@ export default function ListSection({
                 <>
                   <button
                     type="button"
-                    onClick={() => setHideChecked((prev) => !prev)}
+                    onClick={() => setHideCheckedPersisted(!hideChecked)}
                     className="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-harvest-green hover:bg-harvest-green/10"
                   >
                     {hideChecked ? "Vis alle" : "Skjul klaret"}
@@ -543,6 +623,8 @@ export default function ListSection({
     </div>
   );
 }
+
+export default forwardRef(ListSection);
 
 const mealTypeUsageDisplay: Record<
   MealType,

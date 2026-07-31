@@ -10,6 +10,7 @@ import {
   resolveStoreZone,
   organizeShoppingListForStoreLayout,
 } from "@/lib/shoppingListOrder";
+import { setAllItemsChecked } from "@/lib/domain/shoppingListBulkChecked";
 import type { ListCategory, StoredMealPlan } from "@/lib/types";
 
 async function saveShoppingList(
@@ -151,21 +152,11 @@ export const DELETE = createRouteHandler(async (request: NextRequest) => {
     body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
 
-  // { all: true } toemmer hele listen. Bemaerk at varer, der stammer fra
-  // ugens retter, kommer igen naeste gang listen udledes — kun haandtilfoejede
-  // varer forsvinder permanent. Knappen i brugerfladen siger det samme.
-  const clearAll = obj.all === true;
-
   const mealPlan = weekRange
     ? await getMealPlanByWeekRange(weekRange)
     : await getLatestMealPlan();
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
-  }
-
-  if (clearAll) {
-    const cleared = await saveShoppingList(mealPlan, [], "shopping_list_clear");
-    return { shoppingList: cleared.shoppingList };
   }
 
   const category = requireString(obj.category, "category");
@@ -194,25 +185,50 @@ export const DELETE = createRouteHandler(async (request: NextRequest) => {
   return { shoppingList: updated.shoppingList };
 });
 
-// PATCH: Toggle pantry and/or checked status for an item
+// PATCH: Toggle pantry and/or checked status for an item, or bulk-set
+// checked status for every item at once ({ all: true, checked }).
 export const PATCH = createRouteHandler(async (request: NextRequest) => {
   const body = (await request.json()) as unknown;
   const obj =
     body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
-  const category = requireString(obj.category, "category");
-  const itemName = requireString(obj.itemName, "itemName");
-  const pantry = typeof obj.pantry === "boolean" ? obj.pantry : undefined;
-  const checked = typeof obj.checked === "boolean" ? obj.checked : undefined;
-  if (pantry === undefined && checked === undefined) {
-    throw new ApiError("pantry or checked is required", 400);
-  }
+  const all = obj.all === true;
 
   const mealPlan = weekRange
     ? await getMealPlanByWeekRange(weekRange)
     : await getLatestMealPlan();
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
+  }
+
+  if (all) {
+    // Marks every shopping item as checked (or unchecked). Used by the
+    // "clear list" action: the items are never deleted — they get filtered
+    // out of view by the "Skjul klaret" toggle instead. See
+    // ClearShoppingListButton for why the list can't be emptied directly.
+    const checked = typeof obj.checked === "boolean" ? obj.checked : undefined;
+    if (checked === undefined) {
+      throw new ApiError("checked is required when all is true", 400);
+    }
+
+    const shoppingList = setAllItemsChecked(mealPlan.shoppingList, checked);
+
+    const updated = await saveShoppingList(
+      mealPlan,
+      shoppingList,
+      "shopping_list_checked_toggle_all",
+      { preserveItemOrder: true },
+    );
+
+    return { shoppingList: updated.shoppingList };
+  }
+
+  const category = requireString(obj.category, "category");
+  const itemName = requireString(obj.itemName, "itemName");
+  const pantry = typeof obj.pantry === "boolean" ? obj.pantry : undefined;
+  const checked = typeof obj.checked === "boolean" ? obj.checked : undefined;
+  if (pantry === undefined && checked === undefined) {
+    throw new ApiError("pantry or checked is required", 400);
   }
 
   const shoppingList = [...mealPlan.shoppingList];
