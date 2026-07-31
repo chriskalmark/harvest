@@ -78,8 +78,8 @@ export default function ClearShoppingListButton({
       </p>
       <p className="mt-2 text-[14px] leading-relaxed text-[var(--text-muted)]">
         Alle {itemCount} varer forsvinder fra listen. Varerne fra ugens retter
-        kommer igen, naar listen genberegnes — kun dem, du selv har tilfoejet,
-        er væk for altid.
+        kommer igen, når listen genberegnes — kun dem, du selv har tilføjet, er
+        væk for altid.
       </p>
 
       {error ? (
