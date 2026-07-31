@@ -150,8 +150,11 @@ export const DELETE = createRouteHandler(async (request: NextRequest) => {
   const obj =
     body && typeof body === "object" ? (body as Record<string, unknown>) : {};
   const weekRange = typeof obj.weekRange === "string" ? obj.weekRange : null;
-  const category = requireString(obj.category, "category");
-  const itemName = requireString(obj.itemName, "itemName");
+
+  // { all: true } toemmer hele listen. Bemaerk at varer, der stammer fra
+  // ugens retter, kommer igen naeste gang listen udledes — kun haandtilfoejede
+  // varer forsvinder permanent. Knappen i brugerfladen siger det samme.
+  const clearAll = obj.all === true;
 
   const mealPlan = weekRange
     ? await getMealPlanByWeekRange(weekRange)
@@ -159,6 +162,14 @@ export const DELETE = createRouteHandler(async (request: NextRequest) => {
   if (!mealPlan) {
     throw new ApiError("Meal plan not found", 404);
   }
+
+  if (clearAll) {
+    const cleared = await saveShoppingList(mealPlan, [], "shopping_list_clear");
+    return { shoppingList: cleared.shoppingList };
+  }
+
+  const category = requireString(obj.category, "category");
+  const itemName = requireString(obj.itemName, "itemName");
 
   const shoppingList = [...mealPlan.shoppingList];
   const target = findShoppingItemIndex(shoppingList, category, itemName);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import ClearShoppingListButton from "@/components/ClearShoppingListButton";
 import ListSection from "@/components/ListSection";
 import MealPlanGate from "@/components/MealPlanGate";
 import { useMealPlan } from "@/lib/MealPlanProvider";
@@ -38,6 +39,15 @@ export default function ShopPage() {
             type="shopping"
             itemUsageByKey={shoppingItemUsage}
             onUpdate={refresh}
+          />
+
+          <ClearShoppingListButton
+            weekRange={readyPlan.weekRange}
+            itemCount={readyPlan.shoppingList.reduce(
+              (total, section) => total + section.items.length,
+              0,
+            )}
+            onCleared={refresh}
           />
         </main>
       )}
