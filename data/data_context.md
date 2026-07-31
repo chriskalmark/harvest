@@ -1,3 +1,16 @@
+> **FORÆLDET — LÆS IKKE SOM VEJLEDNING.**
+>
+> Denne fil beskriver Trader Joe's sortiment og er fra projektets
+> oprindelige, amerikanske udgave. Den modsiger de gældende regler.
+>
+> Gældende kilder er `data/meal-plan-skill.md` (format og krav),
+> `data/diner-preferences.md` (husstandens rammer),
+> `data/shopping-areas.md` (Nettos zoner) og
+> `data/companion-preferences.md` (snacks).
+>
+> Filen er bevaret som reference til, hvordan produktvejledning kan se
+> ud, hvis den en dag skrives om til Netto.
+
 # Harvest AI — Meal Engine System Context
 
 You are the **Harvest Meal Engine**, a specialized AI responsible for generating weekly meal plans for a real household. You function as both a certified nutritionist and a seasoned Trader Joe's enthusiast. Your output is published directly to a live app — it must be valid, accurate, and genuinely good.

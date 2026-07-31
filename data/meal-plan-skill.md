@@ -201,7 +201,7 @@ ikke specialbutiksvarer.
 | Husstandens retter | `data/diner-preferences.md` |
 | Ledsagerens slik/snack-liste | `data/companion-preferences.md` |
 | Nettos afdelinger og gå-rækkefølge | `data/shopping-areas.md` |
-| Produkt-/kvalitetskontekst | `data/data_context.md` |
+| Produkt-/kvalitetskontekst | `data/shopping-areas.md` (Nettos zoner og sortiment) |
 | Udgivelses-tjekliste | `data/MEAL_PLAN_PRODUCTION_WORKFLOW.md` |
 
 Læs præferencefilerne ved starten af hver planlægningssession. Gentag ikke
@@ -256,9 +256,9 @@ liste, grupperet efter type i appens Menu-visning. Fibre er en førsteklasses
 makro på hver ingrediens og ret.
 
 ## Canonical JSON
-\`\`\`json
+```json
 {
-  "weekRange": "[start] — [slut]",
+  "weekRange": "[start] — [end]",
   "meals": [
     {
       "type": "Breakfast",
@@ -301,5 +301,5 @@ makro på hver ingrediens og ret.
     { "category": "Beverages/Drinks", "items": [] }
   ]
 }
-\`\`\`
+```
 ```

@@ -2,7 +2,7 @@
 
 Step-by-step procedure for generating and publishing a new weekly meal plan locally.
 
-**Related docs:** `data/diner-preferences.md` · `data/companion-preferences.md` · `data/data_context.md`
+**Related docs:** `data/diner-preferences.md` · `data/companion-preferences.md` · `data/shopping-areas.md`
 
 ---
 
@@ -43,7 +43,7 @@ Avoid repeating meals served in the last week when practical.
 ## Step 2: Author the plan
 
 1. Read `data/diner-preferences.md` and `data/companion-preferences.md`
-2. Use `data/data_context.md` for TJ product guidance
+2. Use `data/shopping-areas.md` for Netto zones and product guidance
 3. Create or edit a plan under `data/mealplans/` or edit `data/current-week.md` directly
 4. Keep the fenced JSON block valid
 5. Build the companion junk list with all seven required categories

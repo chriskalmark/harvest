@@ -254,7 +254,7 @@ function validateIngredientZones(
 }
 
 function printShoppingOrder(shoppingList: ListCategory[]) {
-  console.log("🛒 Derived Trader Joe's shopping order:");
+  console.log("🛒 Udledt indkøbsrækkefølge (Netto):");
   for (const category of shoppingList) {
     console.log(
       `  ${category.category}: ${category.items.map((item) => item.n).join(", ")}`,

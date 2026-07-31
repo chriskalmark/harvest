@@ -1,459 +1,195 @@
 {
-  "weekRange": "July 27 — August 2",
+  "weekRange": "August 3 — August 9",
   "meals": [
     {
       "type": "Breakfast",
-      "name": "Skyr med havregryn, blåbær og hasselnødder",
+      "name": "Røræg med spinat, feta og fuldkornsknækbrød",
       "servings": 2,
       "build": {
         "pro": [
-          "Skyr naturel"
+          "Æg"
         ],
         "base": [
-          "Havregryn"
+          "Fuldkornsknækbrød"
         ],
         "veg": [
-          "Blåbær"
+          "Babyspinat"
         ],
         "engine": [
-          "Hasselnødder",
-          "Honning"
+          "Feta"
         ]
       },
       "ingredients": [
         {
-          "name": "Skyr naturel",
-          "quantity": "200 g",
-          "amount": 200,
-          "unit": "g",
+          "name": "Æg",
+          "quantity": "3 stk",
+          "amount": 3,
+          "unit": "stk",
           "zone": "Køl",
           "category": "pro",
           "macros": {
-            "cal": 130,
-            "p": 22,
-            "c": 8,
-            "f": 0,
+            "cal": 216,
+            "p": 19,
+            "c": 1,
+            "f": 15,
             "fiber": 0
           }
         },
         {
-          "name": "Havregryn",
-          "quantity": "50 g",
-          "amount": 50,
-          "unit": "g",
-          "zone": "Kolonial",
-          "category": "base",
-          "macros": {
-            "cal": 195,
-            "p": 6,
-            "c": 33,
-            "f": 4,
-            "fiber": 5
-          }
-        },
-        {
-          "name": "Blåbær",
-          "quantity": "100 g",
-          "amount": 100,
+          "name": "Babyspinat",
+          "quantity": "60 g",
+          "amount": 60,
           "unit": "g",
           "zone": "Frugt & grønt",
           "category": "veg",
           "macros": {
-            "cal": 57,
-            "p": 1,
-            "c": 14,
-            "f": 0,
-            "fiber": 2
-          }
-        },
-        {
-          "name": "Hasselnød",
-          "quantity": "15 g",
-          "amount": 15,
-          "unit": "g",
-          "zone": "Kolonial",
-          "category": "engine",
-          "macros": {
-            "cal": 94,
+            "cal": 14,
             "p": 2,
-            "c": 2,
-            "f": 9,
-            "fiber": 2
+            "c": 1,
+            "f": 0,
+            "fiber": 1
           }
         },
         {
-          "name": "Honning",
-          "quantity": "10 g",
-          "amount": 10,
+          "name": "Feta",
+          "quantity": "40 g",
+          "amount": 40,
           "unit": "g",
-          "zone": "Kolonial",
+          "zone": "Ost & pålæg",
           "category": "engine",
           "macros": {
-            "cal": 30,
-            "p": 0,
-            "c": 8,
-            "f": 0,
+            "cal": 106,
+            "p": 6,
+            "c": 1,
+            "f": 9,
             "fiber": 0
           }
-        }
-      ],
-      "macros": {
-        "cal": 506,
-        "p": 31,
-        "c": 65,
-        "f": 13,
-        "fiber": 9
-      },
-      "steps": [
-        "1. Rør skyren igennem, til den er cremet.",
-        "2. Fordel skyren i to skåle.",
-        "3. Drys havregryn over begge portioner.",
-        "4. Top med blåbær og groft hakkede hasselnødder.",
-        "5. Dryp honning over og server med det samme."
-      ],
-      "imageUrl": "/meals/skyr-havregryn-blaabaer.webp"
-    },
-    {
-      "type": "Lunch",
-      "name": "Rugbrødsmad med hytteost, æg, avocado og radise",
-      "servings": 2,
-      "build": {
-        "pro": [
-          "Hytteost",
-          "Æg"
-        ],
-        "base": [
-          "Rugbrød"
-        ],
-        "veg": [
-          "Avocado",
-          "Agurk",
-          "Radise"
-        ],
-        "engine": [
-          "Sennep",
-          "Purløg"
-        ]
-      },
-      "ingredients": [
+        },
         {
-          "name": "Rugbrød",
-          "quantity": "3 skiver",
+          "name": "Fuldkornsknækbrød",
+          "quantity": "3 stk",
           "amount": 3,
           "unit": "stk",
           "zone": "Brød",
           "category": "base",
           "macros": {
-            "cal": 240,
-            "p": 9,
-            "c": 42,
-            "f": 3,
-            "fiber": 9
+            "cal": 105,
+            "p": 3,
+            "c": 18,
+            "f": 1,
+            "fiber": 5
           }
         },
         {
-          "name": "Hytteost",
-          "quantity": "100 g",
-          "amount": 100,
+          "name": "Smør",
+          "quantity": "8 g",
+          "amount": 8,
           "unit": "g",
           "zone": "Køl",
-          "category": "pro",
+          "category": "engine",
           "macros": {
-            "cal": 98,
-            "p": 11,
-            "c": 3,
-            "f": 4,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Æg, kogt",
-          "quantity": "1 stk",
-          "amount": 1,
-          "unit": "stk",
-          "zone": "Køl",
-          "category": "pro",
-          "macros": {
-            "cal": 78,
-            "p": 6,
-            "c": 1,
-            "f": 5,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Avocado",
-          "quantity": "50 g",
-          "amount": 50,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 80,
-            "p": 1,
-            "c": 4,
-            "f": 7,
-            "fiber": 4
-          }
-        },
-        {
-          "name": "Agurk",
-          "quantity": "50 g",
-          "amount": 50,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 8,
+            "cal": 59,
             "p": 0,
-            "c": 2,
-            "f": 0,
+            "c": 0,
+            "f": 7,
+            "fiber": 0
+          }
+        }
+      ],
+      "macros": {
+        "cal": 500,
+        "p": 30,
+        "c": 21,
+        "f": 32,
+        "fiber": 6
+      },
+      "steps": [
+        "1. Pisk æggene med et nip salt og peber.",
+        "2. Smelt smørret på en pande ved middel varme.",
+        "3. Hæld æggene i og rør langsomt, til de netop er sat.",
+        "4. Vend spinaten i til sidst, så den kun falder sammen.",
+        "5. Smuldr fetaen over og server med knækbrødet."
+      ],
+      "imageUrl": null
+    },
+    {
+      "type": "Lunch",
+      "name": "Tunsalat-wrap med kikært, majs og rødløg",
+      "servings": 2,
+      "build": {
+        "pro": [
+          "Tun",
+          "Kikært"
+        ],
+        "base": [
+          "Tortilla"
+        ],
+        "veg": [
+          "Rødløg"
+        ],
+        "engine": [
+          "Græsk yoghurt"
+        ]
+      },
+      "ingredients": [
+        {
+          "name": "Tun i vand",
+          "quantity": "1 dåse",
+          "amount": 1,
+          "unit": "dåse",
+          "zone": "Kolonial",
+          "category": "pro",
+          "macros": {
+            "cal": 128,
+            "p": 28,
+            "c": 0,
+            "f": 2,
             "fiber": 0
           }
         },
         {
-          "name": "Radise",
+          "name": "Kikært",
+          "quantity": "80 g",
+          "amount": 80,
+          "unit": "g",
+          "zone": "Kolonial",
+          "category": "pro",
+          "macros": {
+            "cal": 96,
+            "p": 5,
+            "c": 13,
+            "f": 2,
+            "fiber": 6
+          }
+        },
+        {
+          "name": "Majs",
+          "quantity": "0,5 dåse",
+          "amount": 0.5,
+          "unit": "dåse",
+          "zone": "Kolonial",
+          "category": "veg",
+          "macros": {
+            "cal": 70,
+            "p": 2,
+            "c": 14,
+            "f": 1,
+            "fiber": 3
+          }
+        },
+        {
+          "name": "Rødløg",
           "quantity": "30 g",
           "amount": 30,
           "unit": "g",
           "zone": "Frugt & grønt",
           "category": "veg",
           "macros": {
-            "cal": 5,
+            "cal": 12,
             "p": 0,
-            "c": 1,
+            "c": 3,
             "f": 0,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Sennep",
-          "quantity": "1 tsk",
-          "amount": 1,
-          "unit": "tsk",
-          "zone": "Kolonial",
-          "category": "engine",
-          "macros": {
-            "cal": 5,
-            "p": 0,
-            "c": 0,
-            "f": 0,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Purløg",
-          "quantity": "5 g",
-          "amount": 5,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "engine",
-          "macros": {
-            "cal": 2,
-            "p": 0,
-            "c": 0,
-            "f": 0,
-            "fiber": 0
-          }
-        }
-      ],
-      "macros": {
-        "cal": 516,
-        "p": 27,
-        "c": 53,
-        "f": 19,
-        "fiber": 13
-      },
-      "steps": [
-        "1. Skær rugbrødsskiverne i to halve, hvis det er nemmere at spise.",
-        "2. Smør et tykt lag hytteost på hver skive.",
-        "3. Skær det kogte æg og avocadoen i skiver.",
-        "4. Fordel æg, avocado, agurk og radise ovenpå.",
-        "5. Slut af med en klat sennep og lidt hakket purløg."
-      ],
-      "imageUrl": "/meals/rugbroedsmad-hytteost-aeg.webp"
-    },
-    {
-      "type": "Dinner",
-      "name": "Ovnbagt kyllingelår med kartofler, gulerod og hvidløgsdressing",
-      "servings": 2,
-      "build": {
-        "pro": [
-          "Kyllingelår"
-        ],
-        "base": [
-          "Kartofler"
-        ],
-        "veg": [
-          "Gulerod",
-          "Hvidløg",
-          "Citron"
-        ],
-        "engine": [
-          "Olivenolie",
-          "Rosmarin"
-        ]
-      },
-      "ingredients": [
-        {
-          "name": "Kyllingelår, udbenet",
-          "quantity": "150 g",
-          "amount": 150,
-          "unit": "g",
-          "zone": "Kød & fjerkræ",
-          "category": "pro",
-          "macros": {
-            "cal": 258,
-            "p": 37,
-            "c": 0,
-            "f": 14,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Kartoffel",
-          "quantity": "200 g",
-          "amount": 200,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "base",
-          "macros": {
-            "cal": 154,
-            "p": 4,
-            "c": 34,
-            "f": 0,
-            "fiber": 4
-          }
-        },
-        {
-          "name": "Gulerod",
-          "quantity": "80 g",
-          "amount": 80,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 33,
-            "p": 1,
-            "c": 8,
-            "f": 0,
-            "fiber": 2
-          }
-        },
-        {
-          "name": "Hvidløg",
-          "quantity": "2 fed",
-          "amount": 2,
-          "unit": "stk",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 9,
-            "p": 0,
-            "c": 2,
-            "f": 0,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Citron",
-          "quantity": "1/2 stk",
-          "amount": 0.5,
-          "unit": "stk",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 5,
-            "p": 0,
-            "c": 1,
-            "f": 0,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Olivenolie",
-          "quantity": "2 tsk",
-          "amount": 2,
-          "unit": "tsk",
-          "zone": "Kolonial",
-          "category": "engine",
-          "macros": {
-            "cal": 80,
-            "p": 0,
-            "c": 0,
-            "f": 9,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Rosmarin",
-          "quantity": "1/2 bundt",
-          "amount": 0.5,
-          "unit": "bundt",
-          "zone": "Frugt & grønt",
-          "category": "engine",
-          "macros": {
-            "cal": 2,
-            "p": 0,
-            "c": 0,
-            "f": 0,
-            "fiber": 0
-          }
-        }
-      ],
-      "macros": {
-        "cal": 541,
-        "p": 42,
-        "c": 45,
-        "f": 23,
-        "fiber": 6
-      },
-      "steps": [
-        "1. Tænd ovnen på 200°C varmluft.",
-        "2. Skær kartoflerne i både og fordel dem på en bageplade med lidt olivenolie, salt og peber.",
-        "3. Sæt kartoflerne i ovnen i 15 minutter, imens du skærer gulerødderne i stave.",
-        "4. Tilføj kyllingelår og gulerødder til pladen, og bag videre i 20-25 minutter, til kyllingen er gennemstegt.",
-        "5. Pres imens hvidløg og citronsaft sammen med resten af olivenolien til en dressing.",
-        "6. Hak rosmarinen fint og rør den i dressingen.",
-        "7. Tag pladen ud, hæld dressingen over og server med det samme."
-      ],
-      "imageUrl": "/meals/ovnbagt-kyllingelaar.webp"
-    },
-    {
-      "type": "Dinner",
-      "name": "Tacos med hakket oksekød, avocado og salsa",
-      "servings": 2,
-      "build": {
-        "pro": [
-          "Hakket oksekød"
-        ],
-        "base": [
-          "Tortilla"
-        ],
-        "veg": [
-          "Løg",
-          "Peberfrugt",
-          "Avocado"
-        ],
-        "engine": [
-          "Salsa",
-          "Tacokrydderi"
-        ]
-      },
-      "ingredients": [
-        {
-          "name": "Hakket oksekød",
-          "quantity": "125 g",
-          "amount": 125,
-          "unit": "g",
-          "zone": "Kød & fjerkræ",
-          "category": "pro",
-          "macros": {
-            "cal": 220,
-            "p": 25,
-            "c": 0,
-            "f": 13,
-            "fiber": 0
+            "fiber": 1
           }
         },
         {
@@ -464,11 +200,390 @@
           "zone": "Brød",
           "category": "base",
           "macros": {
-            "cal": 180,
+            "cal": 160,
+            "p": 5,
+            "c": 27,
+            "f": 3,
+            "fiber": 3
+          }
+        },
+        {
+          "name": "Græsk yoghurt",
+          "quantity": "60 g",
+          "amount": 60,
+          "unit": "g",
+          "zone": "Køl",
+          "category": "engine",
+          "macros": {
+            "cal": 60,
+            "p": 6,
+            "c": 2,
+            "f": 3,
+            "fiber": 0
+          }
+        }
+      ],
+      "macros": {
+        "cal": 526,
+        "p": 46,
+        "c": 59,
+        "f": 11,
+        "fiber": 13
+      },
+      "steps": [
+        "1. Hæld vandet fra tun, kikærter og majs, og skyl kikærterne.",
+        "2. Snit rødløget fint.",
+        "3. Rør tun, kikærter, majs og rødløg sammen med yoghurten.",
+        "4. Fordel salaten på tortillaerne og rul dem sammen."
+      ],
+      "imageUrl": null
+    },
+    {
+      "type": "Dinner",
+      "name": "Wok med rejer, broccoli og cashewnød",
+      "servings": 2,
+      "build": {
+        "pro": [
+          "Rejer"
+        ],
+        "base": [
+          "Jasminris"
+        ],
+        "veg": [
+          "Broccoli"
+        ],
+        "engine": [
+          "Soja og ingefær"
+        ]
+      },
+      "ingredients": [
+        {
+          "name": "Rejer, pillede",
+          "quantity": "140 g",
+          "amount": 140,
+          "unit": "g",
+          "zone": "Fisk",
+          "category": "pro",
+          "macros": {
+            "cal": 118,
+            "p": 25,
+            "c": 1,
+            "f": 1,
+            "fiber": 0
+          }
+        },
+        {
+          "name": "Broccoli",
+          "quantity": "150 g",
+          "amount": 150,
+          "unit": "g",
+          "zone": "Frugt & grønt",
+          "category": "veg",
+          "macros": {
+            "cal": 51,
             "p": 4,
-            "c": 30,
-            "f": 4,
+            "c": 7,
+            "f": 1,
+            "fiber": 4
+          }
+        },
+        {
+          "name": "Jasminris",
+          "quantity": "65 g",
+          "amount": 65,
+          "unit": "g",
+          "zone": "Kolonial",
+          "category": "base",
+          "macros": {
+            "cal": 234,
+            "p": 4,
+            "c": 51,
+            "f": 1,
             "fiber": 2
+          }
+        },
+        {
+          "name": "Cashewnød",
+          "quantity": "20 g",
+          "amount": 20,
+          "unit": "g",
+          "zone": "Kolonial",
+          "category": "engine",
+          "macros": {
+            "cal": 110,
+            "p": 4,
+            "c": 6,
+            "f": 9,
+            "fiber": 1
+          }
+        },
+        {
+          "name": "Soja",
+          "quantity": "1 spsk",
+          "amount": 1,
+          "unit": "spsk",
+          "zone": "Kolonial",
+          "category": "engine",
+          "macros": {
+            "cal": 10,
+            "p": 1,
+            "c": 1,
+            "f": 0,
+            "fiber": 0
+          }
+        },
+        {
+          "name": "Ingefær",
+          "quantity": "10 g",
+          "amount": 10,
+          "unit": "g",
+          "zone": "Frugt & grønt",
+          "category": "engine",
+          "macros": {
+            "cal": 8,
+            "p": 0,
+            "c": 2,
+            "f": 0,
+            "fiber": 0
+          }
+        },
+        {
+          "name": "Hvidløg",
+          "quantity": "1 stk",
+          "amount": 1,
+          "unit": "stk",
+          "zone": "Frugt & grønt",
+          "category": "engine",
+          "macros": {
+            "cal": 4,
+            "p": 0,
+            "c": 1,
+            "f": 0,
+            "fiber": 0
+          }
+        }
+      ],
+      "macros": {
+        "cal": 535,
+        "p": 38,
+        "c": 69,
+        "f": 12,
+        "fiber": 7
+      },
+      "steps": [
+        "1. Kog risene efter anvisningen på posen.",
+        "2. Imens risene koger, skær broccolien i små buketter og hak hvidløg og ingefær.",
+        "3. Wok broccoli, hvidløg og ingefær på høj varme i 3 minutter.",
+        "4. Tilsæt rejerne og wok videre 2 minutter, til de er varme igennem.",
+        "5. Vend sojaen i og drys cashewnødderne over.",
+        "6. Server med det samme oven på risene."
+      ],
+      "imageUrl": null
+    },
+    {
+      "type": "Dinner",
+      "name": "Cremet laksepasta med spinat og citron",
+      "servings": 2,
+      "build": {
+        "pro": [
+          "Laks"
+        ],
+        "base": [
+          "Fuldkornspasta"
+        ],
+        "veg": [
+          "Babyspinat"
+        ],
+        "engine": [
+          "Fløde og citron"
+        ]
+      },
+      "ingredients": [
+        {
+          "name": "Laksefilet",
+          "quantity": "110 g",
+          "amount": 110,
+          "unit": "g",
+          "zone": "Fisk",
+          "category": "pro",
+          "macros": {
+            "cal": 229,
+            "p": 21,
+            "c": 0,
+            "f": 16,
+            "fiber": 0
+          }
+        },
+        {
+          "name": "Fuldkornspasta",
+          "quantity": "65 g",
+          "amount": 65,
+          "unit": "g",
+          "zone": "Kolonial",
+          "category": "base",
+          "macros": {
+            "cal": 227,
+            "p": 9,
+            "c": 43,
+            "f": 1,
+            "fiber": 6
+          }
+        },
+        {
+          "name": "Babyspinat",
+          "quantity": "70 g",
+          "amount": 70,
+          "unit": "g",
+          "zone": "Frugt & grønt",
+          "category": "veg",
+          "macros": {
+            "cal": 16,
+            "p": 2,
+            "c": 1,
+            "f": 0,
+            "fiber": 1
+          }
+        },
+        {
+          "name": "Piskefløde",
+          "quantity": "0,3 dl",
+          "amount": 0.3,
+          "unit": "dl",
+          "zone": "Køl",
+          "category": "engine",
+          "macros": {
+            "cal": 60,
+            "p": 1,
+            "c": 1,
+            "f": 6,
+            "fiber": 0
+          }
+        },
+        {
+          "name": "Citron",
+          "quantity": "0,5 stk",
+          "amount": 0.5,
+          "unit": "stk",
+          "zone": "Frugt & grønt",
+          "category": "engine",
+          "macros": {
+            "cal": 8,
+            "p": 0,
+            "c": 2,
+            "f": 0,
+            "fiber": 1
+          }
+        },
+        {
+          "name": "Hvidløg",
+          "quantity": "1 stk",
+          "amount": 1,
+          "unit": "stk",
+          "zone": "Frugt & grønt",
+          "category": "engine",
+          "macros": {
+            "cal": 4,
+            "p": 0,
+            "c": 1,
+            "f": 0,
+            "fiber": 0
+          }
+        }
+      ],
+      "macros": {
+        "cal": 544,
+        "p": 33,
+        "c": 48,
+        "f": 23,
+        "fiber": 8
+      },
+      "steps": [
+        "1. Kog pastaen i rigeligt saltet vand. Gem 1 dl kogevand.",
+        "2. Imens pastaen koger, skær laksen i store tern og hak hvidløget.",
+        "3. Steg laksen 2 minutter på hver side og tag den af panden.",
+        "4. Svits hvidløget, hæld fløden ved og lad den koge ind et minut.",
+        "5. Vend pasta, spinat og laks i saucen, og spæd med kogevandet.",
+        "6. Riv citronskal over og pres saften i, lige før servering."
+      ],
+      "imageUrl": null
+    },
+    {
+      "type": "Dinner",
+      "name": "Kalkunfrikadelle med bulgursalat og tzatziki",
+      "servings": 2,
+      "build": {
+        "pro": [
+          "Hakket kalkun"
+        ],
+        "base": [
+          "Bulgur"
+        ],
+        "veg": [
+          "Agurk"
+        ],
+        "engine": [
+          "Tzatziki"
+        ]
+      },
+      "ingredients": [
+        {
+          "name": "Hakket kalkun",
+          "quantity": "140 g",
+          "amount": 140,
+          "unit": "g",
+          "zone": "Kød & fjerkræ",
+          "category": "pro",
+          "macros": {
+            "cal": 172,
+            "p": 30,
+            "c": 0,
+            "f": 6,
+            "fiber": 0
+          }
+        },
+        {
+          "name": "Bulgur",
+          "quantity": "70 g",
+          "amount": 70,
+          "unit": "g",
+          "zone": "Kolonial",
+          "category": "base",
+          "macros": {
+            "cal": 240,
+            "p": 8,
+            "c": 50,
+            "f": 1,
+            "fiber": 8
+          }
+        },
+        {
+          "name": "Agurk",
+          "quantity": "80 g",
+          "amount": 80,
+          "unit": "g",
+          "zone": "Frugt & grønt",
+          "category": "veg",
+          "macros": {
+            "cal": 12,
+            "p": 1,
+            "c": 2,
+            "f": 0,
+            "fiber": 1
+          }
+        },
+        {
+          "name": "Græsk yoghurt",
+          "quantity": "70 g",
+          "amount": 70,
+          "unit": "g",
+          "zone": "Køl",
+          "category": "engine",
+          "macros": {
+            "cal": 70,
+            "p": 7,
+            "c": 3,
+            "f": 3,
+            "fiber": 0
           }
         },
         {
@@ -487,133 +602,18 @@
           }
         },
         {
-          "name": "Peberfrugt",
-          "quantity": "60 g",
-          "amount": 60,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 19,
-            "p": 1,
-            "c": 4,
-            "f": 0,
-            "fiber": 1
-          }
-        },
-        {
-          "name": "Avocado",
-          "quantity": "50 g",
-          "amount": 50,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 80,
-            "p": 1,
-            "c": 4,
-            "f": 7,
-            "fiber": 4
-          }
-        },
-        {
-          "name": "Salsa",
-          "quantity": "40 g",
-          "amount": 40,
-          "unit": "g",
-          "zone": "Kolonial",
-          "category": "engine",
-          "macros": {
-            "cal": 20,
-            "p": 0,
-            "c": 4,
-            "f": 0,
-            "fiber": 1
-          }
-        },
-        {
-          "name": "Tacokrydderi",
+          "name": "Spidskommen",
           "quantity": "1 tsk",
           "amount": 1,
           "unit": "tsk",
           "zone": "Kolonial",
           "category": "engine",
           "macros": {
-            "cal": 5,
+            "cal": 8,
             "p": 0,
             "c": 1,
             "f": 0,
             "fiber": 0
-          }
-        }
-      ],
-      "macros": {
-        "cal": 540,
-        "p": 31,
-        "c": 47,
-        "f": 24,
-        "fiber": 9
-      },
-      "steps": [
-        "1. Brun oksekødet i en pande på høj varme, til det er gennemstegt.",
-        "2. Krydr med tacokrydderi og lidt vand, og lad det simre 2-3 minutter.",
-        "3. Imens kødet simrer, skær løg, peberfrugt og avocado i tern.",
-        "4. Varm tortillaerne kort på en tør pande eller i ovnen.",
-        "5. Fyld tortillaerne med kød, grøntsager og salsa.",
-        "6. Server med det samme, mens tortillaerne er varme."
-      ],
-      "imageUrl": "/meals/tacos-oksekoed.webp"
-    },
-    {
-      "type": "Dinner",
-      "name": "Ovnbagt torsk med kartoffelmos og persillesovs",
-      "servings": 2,
-      "build": {
-        "pro": [
-          "Torskefilet"
-        ],
-        "base": [
-          "Kartoffelmos"
-        ],
-        "veg": [
-          "Persille",
-          "Citron"
-        ],
-        "engine": [
-          "Smør",
-          "Mel",
-          "Mælk"
-        ]
-      },
-      "ingredients": [
-        {
-          "name": "Torskefilet",
-          "quantity": "150 g",
-          "amount": 150,
-          "unit": "g",
-          "zone": "Fisk",
-          "category": "pro",
-          "macros": {
-            "cal": 123,
-            "p": 27,
-            "c": 0,
-            "f": 1,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Kartoffel",
-          "quantity": "200 g",
-          "amount": 200,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "base",
-          "macros": {
-            "cal": 154,
-            "p": 4,
-            "c": 34,
-            "f": 0,
-            "fiber": 4
           }
         },
         {
@@ -622,7 +622,7 @@
           "amount": 10,
           "unit": "g",
           "zone": "Frugt & grønt",
-          "category": "veg",
+          "category": "engine",
           "macros": {
             "cal": 4,
             "p": 0,
@@ -630,34 +630,102 @@
             "f": 0,
             "fiber": 0
           }
-        },
+        }
+      ],
+      "macros": {
+        "cal": 522,
+        "p": 46,
+        "c": 61,
+        "f": 10,
+        "fiber": 10
+      },
+      "steps": [
+        "1. Kog bulguren efter anvisningen på pakken.",
+        "2. Imens bulguren koger, riv det halve af agurken groft og pres saften fra.",
+        "3. Rør den revne agurk sammen med yoghurten til tzatziki.",
+        "4. Ælt kalkun, hakket løg og spidskommen sammen og form otte frikadeller.",
+        "5. Steg frikadellerne 4 minutter på hver side, til de er gennemstegte.",
+        "6. Vend den resterende agurk og persille i bulguren.",
+        "7. Server frikadellerne på bulgursalaten med tzatziki ved siden af."
+      ],
+      "imageUrl": null
+    },
+    {
+      "type": "Dinner",
+      "name": "Stegt rødspætte med grønærtestuvning og kartoffel",
+      "servings": 2,
+      "build": {
+        "pro": [
+          "Rødspætte"
+        ],
+        "base": [
+          "Kartofler"
+        ],
+        "veg": [
+          "Grønært"
+        ],
+        "engine": [
+          "Grønærtestuvning"
+        ]
+      },
+      "ingredients": [
         {
-          "name": "Citron",
-          "quantity": "1/2 stk",
-          "amount": 0.5,
-          "unit": "stk",
-          "zone": "Frugt & grønt",
-          "category": "veg",
+          "name": "Rødspættefilet",
+          "quantity": "150 g",
+          "amount": 150,
+          "unit": "g",
+          "zone": "Fisk",
+          "category": "pro",
           "macros": {
-            "cal": 5,
-            "p": 0,
-            "c": 1,
-            "f": 0,
+            "cal": 132,
+            "p": 26,
+            "c": 0,
+            "f": 3,
             "fiber": 0
           }
         },
         {
-          "name": "Smør",
-          "quantity": "15 g",
-          "amount": 15,
+          "name": "Kartoffel",
+          "quantity": "220 g",
+          "amount": 220,
           "unit": "g",
+          "zone": "Frugt & grønt",
+          "category": "base",
+          "macros": {
+            "cal": 169,
+            "p": 4,
+            "c": 38,
+            "f": 0,
+            "fiber": 4
+          }
+        },
+        {
+          "name": "Grønært",
+          "quantity": "120 g",
+          "amount": 120,
+          "unit": "g",
+          "zone": "Frost",
+          "category": "veg",
+          "macros": {
+            "cal": 97,
+            "p": 7,
+            "c": 14,
+            "f": 0,
+            "fiber": 6
+          }
+        },
+        {
+          "name": "Mælk",
+          "quantity": "1 dl",
+          "amount": 1,
+          "unit": "dl",
           "zone": "Køl",
           "category": "engine",
           "macros": {
-            "cal": 108,
-            "p": 0,
-            "c": 0,
-            "f": 12,
+            "cal": 46,
+            "p": 3,
+            "c": 5,
+            "f": 2,
             "fiber": 0
           }
         },
@@ -669,183 +737,37 @@
           "zone": "Kolonial",
           "category": "engine",
           "macros": {
-            "cal": 36,
+            "cal": 35,
             "p": 1,
-            "c": 8,
+            "c": 7,
             "f": 0,
             "fiber": 0
           }
         },
         {
-          "name": "Mælk",
-          "quantity": "1 dl",
-          "amount": 1,
-          "unit": "dl",
+          "name": "Smør",
+          "quantity": "10 g",
+          "amount": 10,
+          "unit": "g",
           "zone": "Køl",
           "category": "engine",
           "macros": {
-            "cal": 64,
-            "p": 3,
-            "c": 5,
-            "f": 3,
-            "fiber": 0
-          }
-        }
-      ],
-      "macros": {
-        "cal": 494,
-        "p": 35,
-        "c": 48,
-        "f": 16,
-        "fiber": 4
-      },
-      "steps": [
-        "1. Tænd ovnen på 200°C.",
-        "2. Skræl og skær kartoflerne i mindre stykker, og kog dem møre i saltet vand i ca. 15 minutter.",
-        "3. Læg torskefileten i et ovnfast fad, krydr med salt og peber, og bag den i ovnen i 12-15 minutter.",
-        "4. Imens fisken bager, smelt smørret i en gryde og pisk melet i til en jævning.",
-        "5. Tilsæt mælken lidt efter lidt under piskning, til sovsen er tyk og jævn.",
-        "6. Mos kartoflerne, og rør den hakkede persille og citronsaften i sovsen.",
-        "7. Server torsken med kartoffelmos og persillesovs."
-      ],
-      "imageUrl": "/meals/ovnbagt-torsk-kartoffelmos.webp"
-    },
-    {
-      "type": "Dinner",
-      "name": "Kikærtegryde med spinat, tomat og feta",
-      "servings": 2,
-      "build": {
-        "pro": [
-          "Kikærter"
-        ],
-        "base": [
-          "Flåede tomater"
-        ],
-        "veg": [
-          "Løg",
-          "Hvidløg",
-          "Spinat"
-        ],
-        "engine": [
-          "Feta",
-          "Spidskommen"
-        ]
-      },
-      "ingredients": [
-        {
-          "name": "Kikært",
-          "quantity": "150 g",
-          "amount": 150,
-          "unit": "g",
-          "zone": "Kolonial",
-          "category": "pro",
-          "macros": {
-            "cal": 195,
-            "p": 10,
-            "c": 30,
-            "f": 3,
-            "fiber": 8
-          }
-        },
-        {
-          "name": "Løg",
-          "quantity": "50 g",
-          "amount": 50,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 20,
+            "cal": 74,
             "p": 0,
-            "c": 5,
-            "f": 0,
-            "fiber": 1
-          }
-        },
-        {
-          "name": "Hvidløg",
-          "quantity": "1 fed",
-          "amount": 1,
-          "unit": "stk",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 5,
-            "p": 0,
-            "c": 1,
-            "f": 0,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Flåede tomat",
-          "quantity": "200 g",
-          "amount": 200,
-          "unit": "g",
-          "zone": "Kolonial",
-          "category": "base",
-          "macros": {
-            "cal": 36,
-            "p": 2,
-            "c": 7,
-            "f": 0,
-            "fiber": 2
-          }
-        },
-        {
-          "name": "Babyspinat",
-          "quantity": "60 g",
-          "amount": 60,
-          "unit": "g",
-          "zone": "Frugt & grønt",
-          "category": "veg",
-          "macros": {
-            "cal": 14,
-            "p": 2,
-            "c": 2,
-            "f": 0,
-            "fiber": 1
-          }
-        },
-        {
-          "name": "Feta",
-          "quantity": "40 g",
-          "amount": 40,
-          "unit": "g",
-          "zone": "Ost & pålæg",
-          "category": "engine",
-          "macros": {
-            "cal": 106,
-            "p": 6,
-            "c": 2,
+            "c": 0,
             "f": 8,
             "fiber": 0
           }
         },
         {
-          "name": "Olivenolie",
-          "quantity": "1 spsk",
-          "amount": 1,
-          "unit": "spsk",
-          "zone": "Kolonial",
+          "name": "Purløg",
+          "quantity": "8 g",
+          "amount": 8,
+          "unit": "g",
+          "zone": "Frugt & grønt",
           "category": "engine",
           "macros": {
-            "cal": 119,
-            "p": 0,
-            "c": 0,
-            "f": 14,
-            "fiber": 0
-          }
-        },
-        {
-          "name": "Spidskommen",
-          "quantity": "1 tsk",
-          "amount": 1,
-          "unit": "tsk",
-          "zone": "Kolonial",
-          "category": "engine",
-          "macros": {
-            "cal": 7,
+            "cal": 3,
             "p": 0,
             "c": 1,
             "f": 0,
@@ -854,21 +776,21 @@
         }
       ],
       "macros": {
-        "cal": 502,
-        "p": 20,
-        "c": 48,
-        "f": 25,
-        "fiber": 12
+        "cal": 556,
+        "p": 41,
+        "c": 65,
+        "f": 13,
+        "fiber": 10
       },
       "steps": [
-        "1. Hak løg og hvidløg fint.",
-        "2. Svits løg og hvidløg i olivenolien i en gryde, til løget er blødt.",
-        "3. Tilsæt kikærter, flåede tomater og spidskommen, og lad gryden simre i 10 minutter.",
-        "4. Imens gryden simrer, skyl spinaten.",
-        "5. Rør spinaten i gryden de sidste 2 minutter, til den er faldet sammen.",
-        "6. Smuldr feta over og server gryden varm."
+        "1. Skrub kartoflerne og kog dem møre i saltet vand.",
+        "2. Imens kartoflerne koger, smelt smørret i en gryde og rør melet i.",
+        "3. Spæd langsomt med mælken under omrøring, til stuvningen er glat.",
+        "4. Vend ærterne i stuvningen og lad dem varme igennem.",
+        "5. Steg rødspættefileterne 2 minutter på hver side på en varm pande.",
+        "6. Klip purløg over stuvningen og server med kartoflerne."
       ],
-      "imageUrl": "/meals/kikaertegryde-spinat-feta.webp"
+      "imageUrl": null
     }
   ],
   "junkList": [
@@ -876,34 +798,19 @@
       "category": "Coffee/Creamer",
       "items": [
         {
-          "n": "Gevalia Guld formalet kaffe",
-          "q": "1 pakke"
-        },
-        {
-          "n": "Arla Kaffefløde 18%",
-          "q": "1 stk"
+          "n": "Kaffebønner"
         }
       ]
     },
     {
       "category": "Beer/Wine",
-      "items": [
-        {
-          "n": "Tuborg Classic",
-          "q": "1 sixpak"
-        },
-        {
-          "n": "Chilensk Cabernet Sauvignon",
-          "q": "1 flaske"
-        }
-      ]
+      "items": []
     },
     {
       "category": "Chips",
       "items": [
         {
-          "n": "Kims Sourcream chips",
-          "q": "1 pose"
+          "n": "Saltede chips"
         }
       ]
     },
@@ -911,26 +818,19 @@
       "category": "Sweets",
       "items": [
         {
-          "n": "Anthon Berg Marcipanbrød",
-          "q": "1 æske"
+          "n": "Mørk chokolade"
         }
       ]
     },
     {
       "category": "Frozen Food",
-      "items": [
-        {
-          "n": "Findus Kyllingefilet i karrysovs",
-          "q": "1 pakke"
-        }
-      ]
+      "items": []
     },
     {
       "category": "Frozen Treats",
       "items": [
         {
-          "n": "Häagen-Dazs Vanilje",
-          "q": "1 bæger"
+          "n": "Ispinde"
         }
       ]
     },
@@ -938,8 +838,273 @@
       "category": "Beverages/Drinks",
       "items": [
         {
-          "n": "Nettorama Danskvand Citrus",
-          "q": "1 flaske"
+          "n": "Danskvand"
+        }
+      ]
+    }
+  ],
+  "shoppingList": [
+    {
+      "category": "Frugt & grønt",
+      "items": [
+        {
+          "n": "Babyspinat",
+          "q": "260 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Rødløg",
+          "q": "60 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Broccoli",
+          "q": "300 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Ingefær",
+          "q": "20 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Hvidløg",
+          "q": "4 stk",
+          "zone": "Frugt & grønt",
+          "unit": "stk"
+        },
+        {
+          "n": "Citron",
+          "q": "1 stk",
+          "zone": "Frugt & grønt",
+          "unit": "stk"
+        },
+        {
+          "n": "Agurk",
+          "q": "160 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Løg",
+          "q": "80 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Persille",
+          "q": "20 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Kartoffel",
+          "q": "440 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        },
+        {
+          "n": "Purløg",
+          "q": "16 g",
+          "zone": "Frugt & grønt",
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "category": "Brød",
+      "items": [
+        {
+          "n": "Fuldkornsknækbrød",
+          "q": "6 stk",
+          "zone": "Brød",
+          "unit": "stk"
+        },
+        {
+          "n": "Tortilla",
+          "q": "4 stk",
+          "zone": "Brød",
+          "unit": "stk"
+        }
+      ]
+    },
+    {
+      "category": "Køl",
+      "items": [
+        {
+          "n": "Æg",
+          "q": "6 stk",
+          "zone": "Køl",
+          "unit": "stk"
+        },
+        {
+          "n": "Smør",
+          "q": "36 g",
+          "zone": "Køl",
+          "unit": "g"
+        },
+        {
+          "n": "Græsk yoghurt",
+          "q": "260 g",
+          "zone": "Køl",
+          "unit": "g"
+        },
+        {
+          "n": "Piskefløde",
+          "q": "0,6 dl",
+          "zone": "Køl",
+          "unit": "dl"
+        },
+        {
+          "n": "Mælk",
+          "q": "2 dl",
+          "zone": "Køl",
+          "unit": "dl"
+        }
+      ]
+    },
+    {
+      "category": "Ost & pålæg",
+      "items": [
+        {
+          "n": "Feta",
+          "q": "80 g",
+          "zone": "Ost & pålæg",
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "category": "Kød & fjerkræ",
+      "items": [
+        {
+          "n": "Hakket kalkun",
+          "q": "280 g",
+          "zone": "Kød & fjerkræ",
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "category": "Fisk",
+      "items": [
+        {
+          "n": "Rejer, pillede",
+          "q": "280 g",
+          "zone": "Fisk",
+          "unit": "g"
+        },
+        {
+          "n": "Laksefilet",
+          "q": "220 g",
+          "zone": "Fisk",
+          "unit": "g"
+        },
+        {
+          "n": "Rødspættefilet",
+          "q": "300 g",
+          "zone": "Fisk",
+          "unit": "g"
+        }
+      ]
+    },
+    {
+      "category": "Kolonial",
+      "items": [
+        {
+          "n": "Tun i vand",
+          "q": "2 dåse",
+          "zone": "Kolonial",
+          "unit": "dåse"
+        },
+        {
+          "n": "Kikært",
+          "q": "160 g",
+          "zone": "Kolonial",
+          "unit": "g"
+        },
+        {
+          "n": "Majs",
+          "q": "1 dåse",
+          "zone": "Kolonial",
+          "unit": "dåse"
+        },
+        {
+          "n": "Jasminris",
+          "q": "130 g",
+          "zone": "Kolonial",
+          "unit": "g"
+        },
+        {
+          "n": "Cashewnød",
+          "q": "40 g",
+          "zone": "Kolonial",
+          "unit": "g"
+        },
+        {
+          "n": "Soja",
+          "q": "2 spsk",
+          "zone": "Kolonial",
+          "unit": "spsk"
+        },
+        {
+          "n": "Fuldkornspasta",
+          "q": "130 g",
+          "zone": "Kolonial",
+          "unit": "g"
+        },
+        {
+          "n": "Bulgur",
+          "q": "140 g",
+          "zone": "Kolonial",
+          "unit": "g"
+        },
+        {
+          "n": "Spidskommen",
+          "q": "2 tsk",
+          "zone": "Kolonial",
+          "unit": "tsk"
+        },
+        {
+          "n": "Hvedemel",
+          "q": "20 g",
+          "zone": "Kolonial",
+          "unit": "g"
+        },
+        {
+          "n": "Kaffebønner",
+          "shoppingSource": "junk"
+        },
+        {
+          "n": "Saltede chips",
+          "shoppingSource": "junk"
+        },
+        {
+          "n": "Mørk chokolade",
+          "shoppingSource": "junk"
+        },
+        {
+          "n": "Ispinde",
+          "shoppingSource": "junk"
+        },
+        {
+          "n": "Danskvand",
+          "shoppingSource": "junk"
+        }
+      ]
+    },
+    {
+      "category": "Frost",
+      "items": [
+        {
+          "n": "Grønært",
+          "q": "240 g",
+          "zone": "Frost",
+          "unit": "g"
         }
       ]
     }
