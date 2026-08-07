@@ -1,0 +1,2278 @@
+{
+ "byline": {},
+ "totalMinutes": 30,
+ "showTimeline": true,
+ "introduction": "<p>Denne ret er super nem, og hurtig at lave.</p>\n<p>Det, der tager længst tid, er kartoflerne i ovnen. Men de passer heldigvis sig selv det meste af tiden. </p>",
+ "introductionStripped": "Denne ret er super nem, og hurtig at lave.\nDet, der tager længst tid, er kartoflerne i ovnen. Men de passer heldigvis sig selv det meste af tiden. ",
+ "steps": [
+  {
+   "minutesInTimeline": 0,
+   "title": "Lad os starte med",
+   "text": "<p>Skyl grønt, frugt og krydderurter. Vask hænder og redskaber efter håndtering af fisk, kød og grøntsager. Find alle ingredienser og redskaber frem.</p>",
+   "textStripped": "Skyl grønt, frugt og krydderurter. Vask hænder og redskaber efter håndtering af fisk, kød og grøntsager. Find alle ingredienser og redskaber frem.",
+   "ingredients": [],
+   "videoMatches": [],
+   "isAssemblyStep": false,
+   "childSteps": []
+  },
+  {
+   "minutesInTimeline": 1,
+   "title": "Kartofler",
+   "text": "<p>Tænd ovnen på 250 grader varmluft. </p>\n<p>Skrub kartoflerne, skær dem i slanke både, og dup dem tørre.</p>\n<p>Bred kartoflerne ud på bagepapir på en bageplade, dryp dem med olivenolie, og krydr med salt.</p>\n<p>Bag dem i den varme ovn i ca. 25-30 min., til de er møre og gyldne, og vend gerne rundt i dem undervejs. </p>",
+   "textStripped": "Tænd ovnen på 250 grader varmluft. \nSkrub kartoflerne, skær dem i slanke både, og dup dem tørre.\nBred kartoflerne ud på bagepapir på en bageplade, dryp dem med olivenolie, og krydr med salt.\nBag dem i den varme ovn i ca. 25-30 min., til de er møre og gyldne, og vend gerne rundt i dem undervejs. ",
+   "ingredients": [
+    {
+     "amount": 800,
+     "unitKey": "g",
+     "name": "bagekartofler",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3311/bagekartofler.jpg",
+       "size": {
+        "width": 413,
+        "height": 413
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3311/bagekartofler.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    }
+   ],
+   "videoMatches": [],
+   "isAssemblyStep": false,
+   "childSteps": []
+  },
+  {
+   "minutesInTimeline": 4,
+   "title": "Ærtemash",
+   "text": "<p>Kom ærter og pillede hvidløgsfed i en gryde med kogende, saltet vand, og kog dem op i 1-2 min. Afdryp grundigt, og lad det køle lidt af. </p>\n<p>Blend begge dele med en stavblender sammen med lidt af yoghurten. Krydr med salt og citronsaft, og vend det sidste yoghurt i.</p>\n<p>Smag til igen med salt, citronsaft og evt. en smule olivenolie.</p>\n<p>Gem et par citronbåde til anretning.</p>",
+   "textStripped": "Kom ærter og pillede hvidløgsfed i en gryde med kogende, saltet vand, og kog dem op i 1-2 min. Afdryp grundigt, og lad det køle lidt af. \nBlend begge dele med en stavblender sammen med lidt af yoghurten. Krydr med salt og citronsaft, og vend det sidste yoghurt i.\nSmag til igen med salt, citronsaft og evt. en smule olivenolie.\nGem et par citronbåde til anretning.",
+   "ingredients": [
+    {
+     "amount": 1,
+     "unitKey": "pose",
+     "name": "ærter, frost",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/5022/aerterloese.jpg",
+       "size": {
+        "width": 480,
+        "height": 385
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/5022/aerterloese.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    },
+    {
+     "amount": 2,
+     "unitKey": "fed",
+     "name": "hvidløg",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2977/hvidloeg.jpg",
+       "size": {
+        "width": 445,
+        "height": 445
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2977/hvidloeg.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    },
+    {
+     "amount": 200,
+     "unitKey": "g",
+     "name": "græsk yoghurt, 10%",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3940/creme-fraiche.jpg",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3940/creme-fraiche.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    },
+    {
+     "amount": 1,
+     "unitKey": "stk",
+     "name": "citron",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/1008/citron-1023.jpg",
+       "size": {
+        "width": 977,
+        "height": 977
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/1008/citron-1023.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    }
+   ],
+   "videoMatches": [],
+   "isAssemblyStep": false,
+   "childSteps": []
+  },
+  {
+   "minutesInTimeline": 15,
+   "title": "Salat",
+   "text": "<p>Snit fennikel i både, pluk salaten, og anret begge dele på et fad. </p>\n<p>Pluk mynten groft over salaten, og dryp med olivenolie og eddike. Krydr med salt og peber lige inden servering. </p>",
+   "textStripped": "Snit fennikel i både, pluk salaten, og anret begge dele på et fad. \nPluk mynten groft over salaten, og dryp med olivenolie og eddike. Krydr med salt og peber lige inden servering. ",
+   "ingredients": [
+    {
+     "amount": 1,
+     "unitKey": "stk",
+     "name": "Fennikel",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3953/fennikel.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3953/fennikel.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    },
+    {
+     "amount": 1,
+     "unitKey": "stk",
+     "name": "salat",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2965/salathoved.jpg",
+       "size": {
+        "width": 408,
+        "height": 408
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2965/salathoved.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    },
+    {
+     "amount": 1,
+     "unitKey": "bundt",
+     "name": "mynte",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2887/mynte.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2887/mynte.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    }
+   ],
+   "videoMatches": [],
+   "isAssemblyStep": false,
+   "childSteps": []
+  },
+  {
+   "minutesInTimeline": 20,
+   "title": "Fisk",
+   "text": "<p>Del fisken i grove stykker, så der er 2-3 stk. pr. pers. </p>\n<p>Vend dem enten direkte i rasp, og tryk dem godt rundt i det, eller vend dem i lidt pisket æg eller mælk, hvis du har, inden raspen.</p>\n<p>Steg fisken gylden og akkurat gennemstegt i rigelig olie på en varm pande, og krydr med salt. </p>",
+   "textStripped": "Del fisken i grove stykker, så der er 2-3 stk. pr. pers. \nVend dem enten direkte i rasp, og tryk dem godt rundt i det, eller vend dem i lidt pisket æg eller mælk, hvis du har, inden raspen.\nSteg fisken gylden og akkurat gennemstegt i rigelig olie på en varm pande, og krydr med salt. ",
+   "ingredients": [
+    {
+     "amount": 560,
+     "unitKey": "g",
+     "name": "mørksejfilet uden skind",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/10155/_mg_7159.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/10155/_mg_7159.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    },
+    {
+     "amount": 150,
+     "unitKey": "g",
+     "name": "rasp",
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/4247/shutterstock_58235632.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/4247/shutterstock_58235632.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     }
+    }
+   ],
+   "videoMatches": [],
+   "isAssemblyStep": false,
+   "childSteps": []
+  },
+  {
+   "minutesInTimeline": 29,
+   "title": "Anretning",
+   "text": "<p>Servér fisk med ærtemash, fennikelsalat og kartofler, og giv citronbåde til.</p>",
+   "textStripped": "Servér fisk med ærtemash, fennikelsalat og kartofler, og giv citronbåde til.",
+   "ingredients": [],
+   "videoMatches": [],
+   "isAssemblyStep": false,
+   "childSteps": []
+  }
+ ],
+ "image": {
+  "source": {
+   "url": "https://recipes.skagenfood.dk/media/9621/img_4667.jpeg",
+   "size": {
+    "width": 1920,
+    "height": 1440
+   },
+   "focalPoint": {
+    "top": 0.5,
+    "left": 0.5
+   }
+  },
+  "standardCrops": {
+   "thumbnail": {
+    "url": "https://recipes.skagenfood.dk/media/9621/img_4667.jpeg?width=221&height=173&mode=crop&center=0.5%2C0.5",
+    "size": {
+     "width": 221,
+     "height": 173
+    }
+   },
+   "thumbnailWide": {
+    "url": "https://recipes.skagenfood.dk/media/9621/img_4667.jpeg?width=462&height=173&mode=crop&center=0.5%2C0.5",
+    "size": {
+     "width": 462,
+     "height": 173
+    }
+   },
+   "banner": {
+    "url": "https://recipes.skagenfood.dk/media/9621/img_4667.jpeg?width=986&height=654&mode=crop&center=0.5%2C0.5",
+    "size": {
+     "width": 986,
+     "height": 654
+    }
+   }
+  }
+ },
+ "ingredientGroups": [
+  {
+   "name": "",
+   "ingredients": [
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 400,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "400 g bagekartofler",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 600,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "600 g bagekartofler",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 800,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "800 g bagekartofler",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 1000,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1000 g bagekartofler",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "bagekartofler",
+     "baseIngredientName": "3. Frugt, grønsager & snitgrønt",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3311/bagekartofler.jpg",
+       "size": {
+        "width": 413,
+        "height": 413
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3311/bagekartofler.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 0.5,
+       "unitKey": "pose",
+       "unit": {
+        "name": "pose",
+        "namePlural": "poser",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "0,5 pose ærter, frost",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "pose",
+       "unit": {
+        "name": "pose",
+        "namePlural": "poser",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 pose ærter, frost",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "pose",
+       "unit": {
+        "name": "pose",
+        "namePlural": "poser",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 pose ærter, frost",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "pose",
+       "unit": {
+        "name": "pose",
+        "namePlural": "poser",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 pose ærter, frost",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "ærter, frost",
+     "baseIngredientName": "3. Frugt, grønsager & snitgrønt",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/5022/aerterloese.jpg",
+       "size": {
+        "width": 480,
+        "height": 385
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/5022/aerterloese.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "fed",
+       "unit": {
+        "name": "fed",
+        "namePlural": "fed",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 fed hvidløg",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "fed",
+       "unit": {
+        "name": "fed",
+        "namePlural": "fed",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 fed hvidløg",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 2,
+       "unitKey": "fed",
+       "unit": {
+        "name": "fed",
+        "namePlural": "fed",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "2 fed hvidløg",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 2,
+       "unitKey": "fed",
+       "unit": {
+        "name": "fed",
+        "namePlural": "fed",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "2 fed hvidløg",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "hvidløg",
+     "baseIngredientName": "3. Frugt, grønsager & snitgrønt",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2977/hvidloeg.jpg",
+       "size": {
+        "width": 445,
+        "height": 445
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2977/hvidloeg.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 100,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "100 g græsk yoghurt, 10%",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 100,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "100 g græsk yoghurt, 10%",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 200,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "200 g græsk yoghurt, 10%",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 200,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "200 g græsk yoghurt, 10%",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "græsk yoghurt, 10%",
+     "namePlural": "",
+     "baseIngredientName": "7. Ost & mælkeprodukter",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3940/creme-fraiche.jpg",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3940/creme-fraiche.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk citron",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk citron",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk citron",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk citron",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "citron",
+     "baseIngredientName": "3. Frugt, grønsager & snitgrønt",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/1008/citron-1023.jpg",
+       "size": {
+        "width": 977,
+        "height": 977
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/1008/citron-1023.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 0.5,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "0,5 stk Fennikel",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk Fennikel",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk Fennikel",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk Fennikel",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "Fennikel",
+     "baseIngredientName": "Fennikel",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3953/fennikel.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3953/fennikel.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk salat",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk salat",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk salat",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "stk",
+       "unit": {
+        "name": "stk",
+        "namePlural": "stk",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": true
+       },
+       "formattedIngredientLine": "1 stk salat",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "salat",
+     "baseIngredientName": "3. Frugt, grønsager & snitgrønt",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2965/salathoved.jpg",
+       "size": {
+        "width": 408,
+        "height": 408
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2965/salathoved.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "bundt",
+       "unit": {
+        "name": "bundt",
+        "namePlural": "bundter",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 bundt mynte",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "bundt",
+       "unit": {
+        "name": "bundt",
+        "namePlural": "bundter",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 bundt mynte",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "bundt",
+       "unit": {
+        "name": "bundt",
+        "namePlural": "bundter",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 bundt mynte",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 1,
+       "unitKey": "bundt",
+       "unit": {
+        "name": "bundt",
+        "namePlural": "bundter",
+        "alwaysPluralizeIngredient": false,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "1 bundt mynte",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "mynte",
+     "baseIngredientName": "6. Krydderier, pastes & syltevarer",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2887/mynte.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2887/mynte.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 280,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "280 g mørksejfilet uden skind",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 420,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "420 g mørksejfilet uden skind",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 560,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "560 g mørksejfilet uden skind",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 700,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "700 g mørksejfilet uden skind",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "mørksejfilet uden skind",
+     "baseIngredientName": "1. Fisk & skaldyr",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/10155/_mg_7159.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/10155/_mg_7159.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": true,
+       "amount": 50,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "50 g rasp",
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": true,
+       "amount": 75,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "75 g rasp",
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": true,
+       "amount": 150,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "150 g rasp",
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": true,
+       "amount": 150,
+       "unitKey": "g",
+       "unit": {
+        "name": "g",
+        "namePlural": "g",
+        "alwaysPluralizeIngredient": true,
+        "pluralizeIngredientBasedOnAmount": false
+       },
+       "formattedIngredientLine": "150 g rasp",
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "rasp",
+     "baseIngredientName": "5. Mel, ris, pasta & gryn",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/4247/shutterstock_58235632.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/4247/shutterstock_58235632.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    }
+   ]
+  },
+  {
+   "name": "Du skal selv have:",
+   "ingredients": [
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "salt",
+     "baseIngredientName": "6. Krydderier, pastes & syltevarer",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/1127/salt-444.jpg",
+       "size": {
+        "width": 1076,
+        "height": 1076
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/1127/salt-444.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "eddike",
+     "baseIngredientName": "6. Krydderier, pastes & syltevarer",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3947/eddike.jpg",
+       "size": {
+        "width": 1920,
+        "height": 1920
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3947/eddike.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "sort peber",
+     "baseIngredientName": "6. Krydderier, pastes & syltevarer",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2914/hele_sorte_peberkorn.jpg",
+       "size": {
+        "width": 1276,
+        "height": 1276
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2914/hele_sorte_peberkorn.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "olivenolie, EVOO",
+     "baseIngredientName": "9. Olier, eddiker, vin og spiritus",
+     "synonyms": [
+      "jomfruolivenolie",
+      "jomfruolie"
+     ],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/11600/shutterstock_2608220407.jpg",
+       "size": {
+        "width": 500,
+        "height": 500
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/11600/shutterstock_2608220407.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "olie til stegning",
+     "baseIngredientName": "6. Krydderier, pastes & syltevarer",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/3525/sesamolie.jpg",
+       "size": {
+        "width": 340,
+        "height": 340
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/3525/sesamolie.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "evt. mælk",
+     "baseIngredientName": "7. Ost & mælkeprodukter",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/4237/maelk.jpg",
+       "size": {
+        "width": 900,
+        "height": 503
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/4237/maelk.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "æg",
+     "baseIngredientName": "2. Kød, fjerkræ, æg & pølser",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/2758/aeg.jpg",
+       "size": {
+        "width": 206,
+        "height": 245
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/2758/aeg.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    }
+   ]
+  },
+  {
+   "name": "Redskaber:",
+   "ingredients": [
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "ovn",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7529/ovn.jpg",
+       "size": {
+        "width": 567,
+        "height": 567
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7529/ovn.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "bageplade",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7491/bageplade.jpg",
+       "size": {
+        "width": 500,
+        "height": 350
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7491/bageplade.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "kniv",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7390/kokkekniv.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7390/kokkekniv.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "skærebræt",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7391/skaerebraedt.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7391/skaerebraedt.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "Gryde",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7372/kaserolle-lille-gryde.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7372/kaserolle-lille-gryde.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "sigte",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7373/sigte.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7373/sigte.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "pande",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7368/pande-stoebejern.png",
+       "size": {
+        "width": 1200,
+        "height": 1200
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7368/pande-stoebejern.png?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "blender / stavblender",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/7595/blender.jpg",
+       "size": {
+        "width": 425,
+        "height": 400
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/7595/blender.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    },
+    {
+     "mainIngredient": false,
+     "amounts": [
+      {
+       "hasValue": false,
+       "numberOfPortions": 1
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 2
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 3
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 4
+      },
+      {
+       "hasValue": false,
+       "numberOfPortions": 5
+      }
+     ],
+     "name": "fad",
+     "namePlural": "fade",
+     "baseIngredientName": "1 Køkkenredskaber",
+     "synonyms": [],
+     "image": {
+      "source": {
+       "url": "https://recipes.skagenfood.dk/media/8518/rosti-modula-fad-35-x-25-x-8-cm-hvid.jpg",
+       "size": {
+        "width": 425,
+        "height": 425
+       },
+       "focalPoint": {
+        "top": 0.5,
+        "left": 0.5
+       }
+      },
+      "standardCrops": {
+       "icon": {
+        "url": "https://recipes.skagenfood.dk/media/8518/rosti-modula-fad-35-x-25-x-8-cm-hvid.jpg?width=44&height=44&mode=crop&center=0.5%2C0.5",
+        "size": {
+         "width": 44,
+         "height": 44
+        }
+       }
+      }
+     },
+     "energyData": [],
+     "allergenic": false
+    }
+   ]
+  }
+ ],
+ "tags": [
+  {
+   "groupName": "Forfatter",
+   "groupAlias": "forfatter",
+   "public": true,
+   "values": [
+    {
+     "name": "Louisa Lorang",
+     "alias": "louisaLorang",
+     "url": "/da-dk/opskrifter/kokkene-bag/louisa-lorang-60",
+     "image": {
+      "url": "https://recipes.skagenfood.dk/media/9228/louisa.jpg",
+      "size": {
+       "width": 1920,
+       "height": 2560
+      },
+      "focalPoint": {
+       "top": 0.5,
+       "left": 0.5
+      }
+     },
+     "sortIndex": 100
+    }
+   ],
+   "sortIndex": 0
+  },
+  {
+   "groupName": "Opskriftstype",
+   "groupAlias": "opskriftstype",
+   "public": false,
+   "values": [
+    {
+     "name": "Fiskeretter",
+     "alias": "fiskeretter",
+     "sortIndex": 0
+    }
+   ],
+   "sortIndex": 0
+  },
+  {
+   "groupName": "Hovedingrediens",
+   "groupAlias": "hovedingrediens",
+   "public": true,
+   "values": [
+    {
+     "name": "Fisk",
+     "alias": "fisk",
+     "sortIndex": 0
+    }
+   ],
+   "sortIndex": 10
+  },
+  {
+   "groupName": "MåltidsKasse",
+   "groupAlias": "maaltidsKasse",
+   "public": true,
+   "values": [
+    {
+     "name": "LynKassen by Louisa Lorang",
+     "alias": "lynKassenByLouisaLorang",
+     "sortIndex": 0
+    }
+   ],
+   "sortIndex": 100
+  },
+  {
+   "groupName": "Sæson",
+   "groupAlias": "aarstid",
+   "public": true,
+   "values": [
+    {
+     "name": "Forår",
+     "alias": "foraar",
+     "sortIndex": 10
+    },
+    {
+     "name": "Sommer",
+     "alias": "sommer",
+     "sortIndex": 20
+    }
+   ],
+   "sortIndex": 30
+  },
+  {
+   "groupName": "Tidsforbrug",
+   "groupAlias": "duration",
+   "public": true,
+   "values": [
+    {
+     "name": "Under 40 minutter",
+     "alias": "under40",
+     "sortIndex": 20
+    },
+    {
+     "name": "Under 60 minutter",
+     "alias": "under60",
+     "sortIndex": 30
+    }
+   ],
+   "sortIndex": 40
+  }
+ ],
+ "productIds": [],
+ "energyData": [],
+ "formattedTimeTotal": "30 minutter",
+ "bonusInfos": [
+  {
+   "image": {
+    "source": {
+     "url": "https://recipes.skagenfood.dk/media/10155/_mg_7159.jpg",
+     "size": {
+      "width": 1920,
+      "height": 1920
+     },
+     "focalPoint": {
+      "top": 0.5,
+      "left": 0.5
+     }
+    },
+    "standardCrops": {
+     "thumbnail": {
+      "url": "https://recipes.skagenfood.dk/media/10155/_mg_7159.jpg?width=240&height=200&mode=crop&center=0.5%2C0.5",
+      "size": {
+       "width": 240,
+       "height": 200
+      }
+     }
+    }
+   },
+   "text": "<p><strong>Kend din fisk: </strong>Mørksej </p>\n<p><strong>GASTRONOMISK</strong></p>\n<p class=\"p1\">Kødet på en mørksej har et svagt gråt-rosa skær. Det er magert, og har en lidt kraftigere og mere markant smag end lyssejen. Den er særligt god som stegt, grillet, paneret eller bagt, og kan som andre torskefisk koges og dampes, omend knap så udbredt til pochering eller kogning. Den egner sig til gengæld rigtigt godt til fiskefars. </p>\n<p class=\"p1\">Den fiskes og spises hele året, men kvaliteten topper i 2. halvdel af året, fra juni til december.<br /><br /><strong>SUNDHED</strong></p>\n<p class=\"p1\">Mørksejen er en meget mager fisk og fedtprocenten er på beskedne 0,3 gram pr. 100 gram. Den har til gengæld et højt indhold af jod og kalium, hvor sidstnævnte ligger på ca. 440 mg/100 g. Den har et proteinindhold på ca. 19,3 g/100 gram.<br /><br /><strong>Læs mere om mørksej her &gt; <a href=\"https://skagenfood.dk/da-dk/kend-din-fisk/moerksej/\">KEND DIN FISK</a></strong></p>"
+  },
+  {
+   "image": {
+    "source": {
+     "url": "https://recipes.skagenfood.dk/media/11600/shutterstock_2608220407.jpg",
+     "size": {
+      "width": 500,
+      "height": 500
+     },
+     "focalPoint": {
+      "top": 0.5,
+      "left": 0.5
+     }
+    },
+    "standardCrops": {
+     "thumbnail": {
+      "url": "https://recipes.skagenfood.dk/media/11600/shutterstock_2608220407.jpg?width=240&height=200&mode=crop&center=0.5%2C0.5",
+      "size": {
+       "width": 240,
+       "height": 200
+      }
+     }
+    }
+   },
+   "text": "<p><strong>EVOO</strong> står for <em>Extra Virgin Olive Oil</em> og er den højeste kvalitet inden for olivenolie. Den fremstilles udelukkende ved mekanisk, kold presning uden brug af varme eller kemikalier og har en meget lav syregrad. Det giver en ren, frugtig smag med noter af græs, artiskok, mandel eller peber – afhængigt af olivensort og høsttidspunkt. EVOO bruges traditionelt i Middelhavskøkkenet både rå og til madlavning og bidrager med sunde fedtsyrer og naturlige antioxidanter.</p>\n<p><strong>3 fun facts om EVOO</strong></p>\n<ol>\n<li>\n<p>Den let bitre og pebrede fornemmelse i halsen er et kvalitetstegn og skyldes polyfenoler – de samme antioxidanter, der gør olien sund.</p>\n</li>\n<li>\n<p>Tidligt høstede, grønne oliven giver mindre olie, men markant mere smag og flere antioxidanter end sent høstede, modne oliven.</p>\n</li>\n<li>\n<p>En god EVOO er mere varmestabil, end mange tror, fordi dens antioxidanter beskytter fedtet – den kan derfor godt bruges til moderat stegning uden problemer.</p>\n</li>\n</ol>"
+  }
+ ],
+ "allergies": [],
+ "numberOfComments": 40,
+ "averageRating": 4.125,
+ "id": 13677,
+ "name": "Fish & chips med ærtemash og salat med fennikel",
+ "meta": {
+  "urlName": "fish-and-chips-med-aertemash-og-salat-med-fennikel"
+ }
+}

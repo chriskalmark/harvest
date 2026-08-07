@@ -14,6 +14,7 @@
     "meal-plan:publish": "tsx scripts/publishMealPlan.ts",
     "meal-plan:workflow": "tsx scripts/publishFromBackup.ts",
     "meal-plan": "tsx scripts/mealPlanSkill.ts",
+    "catalog:skagenfood": "tsx scripts/importSkagenfoodWeek.ts",
     "test:shopping": "tsx scripts/testShoppingListOrder.ts",
     "test:meal-plans": "tsx scripts/testMealPlanFixtures.ts",
     "test:aggregation": "tsx scripts/testShoppingAggregation.ts",
@@ -22,7 +23,8 @@
     "test:meal-partial-update": "tsx scripts/testMealPartialUpdate.ts",
     "test:widget": "tsx scripts/testMealPlanWidget.ts",
     "test:bulk-checked": "tsx scripts/testShoppingBulkChecked.ts",
-    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation && npm run test:meal-repository-writes && npm run test:meal-partial-update && npm run test:widget && npm run test:bulk-checked",
+    "test:skagenfood": "tsx scripts/testSkagenfoodCatalog.ts",
+    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation && npm run test:meal-repository-writes && npm run test:meal-partial-update && npm run test:widget && npm run test:bulk-checked && npm run test:skagenfood",
     "meal-plan:library": "tsx scripts/printMealLibrary.ts"
   },
   "dependencies": {

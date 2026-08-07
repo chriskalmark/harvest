@@ -1,0 +1,412 @@
+{
+ "subscriptionPackages": [
+  {
+   "id": 9013550,
+   "sku": "680279",
+   "name": "Lynkassen by Louisa Lorang 4 dage/2 pers",
+   "url": "/da-dk/maaltidskasser/lynkassen-by-louisa-lorang/p-9013550",
+   "sortOrder": 0,
+   "weeks": [
+    {
+     "name": "32",
+     "year": 2026,
+     "displayName": "Uge 32 - sø 2/8 - lø 8/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/11532/img_3519.jpeg",
+     "teaser": "Inspirerende og grønne måltider",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Mørksejfilet uden skind (Pollachius virens)",
+         "recipe": {
+          "id": 13677,
+          "title": "Fish & chips med ærtemash og salat med fennikel",
+          "imageUrl": "https://recipes.skagenfood.dk/media/9621/img_4667.jpeg",
+          "url": "/da-dk/opskrifter/fish-and-chips-med-aertemash-og-salat-med-fennikel-13677",
+          "formattedTimeTotal": "30 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 2",
+         "title": "Kotelet",
+         "recipe": {
+          "id": 13621,
+          "title": "Grillede koteletter med rustik mos, blomkål og dild",
+          "imageUrl": "https://recipes.skagenfood.dk/media/9569/2023-grillede-koteletter-med-blomkaal-13621.jpg",
+          "url": "/da-dk/opskrifter/grillede-koteletter-med-rustik-mos-blomkaal-og-dild-13621",
+          "formattedTimeTotal": "30 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 3",
+         "title": "Oksekød i strimler",
+         "recipe": {
+          "id": 13622,
+          "title": "Thailandsk oksekødssalat med agurk, tomat og ris",
+          "imageUrl": "https://recipes.skagenfood.dk/media/9568/2023-thailandsk-oksekoedssalat-13622.jpg",
+          "url": "/da-dk/opskrifter/thailandsk-oksekoedssalat-med-agurk-tomat-og-ris-13622",
+          "formattedTimeTotal": "20 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 4",
+         "title": "Ragu Bolognese",
+         "recipe": {
+          "id": 16170,
+          "title": "HEAT Pasta bolognese med frisk mozzarella og snackgrønt",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12147/img_7649.jpeg",
+          "url": "/da-dk/opskrifter/heat-pasta-bolognese-med-frisk-mozzarella-og-snackgroent-16170",
+          "formattedTimeTotal": "15 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "33",
+     "year": 2026,
+     "displayName": "Uge 33 - sø 9/8 - lø 15/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/11532/img_3519.jpeg",
+     "teaser": "Inspirerende og grønne måltider",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "ASC laksefilet med skind ASC-C-00626 (Salmo salar - Salmonidae)",
+         "recipe": {
+          "id": 16345,
+          "title": "Bagt laks med spicy soja, pak choy og edamamebønner",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12363/img_1835.jpeg",
+          "url": "/da-dk/opskrifter/bagt-laks-med-spicy-soja-pak-choy-og-edamameboenner-16345",
+          "formattedTimeTotal": "25 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 2",
+         "title": "Hakket gris",
+         "recipe": {
+          "id": 16346,
+          "title": "Pasta med gris og bønnesalat",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12364/img_1813.jpeg",
+          "url": "/da-dk/opskrifter/pasta-med-gris-og-boennesalat-16346",
+          "formattedTimeTotal": "30 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 3",
+         "title": "Kylling",
+         "recipe": {
+          "id": 16347,
+          "title": "Thaistyle nudelsalat med kylling, agurk og tomat",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12365/img_1808.jpeg",
+          "url": "/da-dk/opskrifter/thaistyle-nudelsalat-med-kylling-agurk-og-tomat-16347",
+          "formattedTimeTotal": "25 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 4",
+         "title": "Hakket okse",
+         "recipe": {
+          "id": 16348,
+          "title": "Lune fladbrød med oksekød, spinat, kota og mynteyoghurt",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12366/img_1820.jpeg",
+          "url": "/da-dk/opskrifter/lune-fladbroed-med-oksekoed-spinat-kota-og-mynteyoghurt-16348",
+          "formattedTimeTotal": "30 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "34",
+     "year": 2026,
+     "displayName": "Uge 34 - sø 16/8 - lø 22/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/11532/img_3519.jpeg",
+     "teaser": "Inspirerende og grønne måltider",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Mørksejfilet uden skind (Pollachius virens)",
+         "recipe": {
+          "id": 16363,
+          "title": "Sommerminestrone med parmesan og mørksej",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12373/img_1959.jpeg",
+          "url": "/da-dk/opskrifter/sommerminestrone-med-parmesan-og-moerksej-16363",
+          "formattedTimeTotal": "30 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 2",
+         "title": "Nakkekoteletter",
+         "recipe": {
+          "id": 16364,
+          "title": "BBQ nakkekoteletter og tomatsalat med nektarin og mozzarella",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12372/img_1962.jpeg",
+          "url": "/da-dk/opskrifter/bbq-nakkekoteletter-og-tomatsalat-med-nektarin-og-mozzarella-16364",
+          "formattedTimeTotal": "25 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 3",
+         "title": "Pizza",
+         "recipe": {
+          "id": 16365,
+          "title": "Pizza med bacon, ricotta og pecorino",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12371/img_1952.jpeg",
+          "url": "/da-dk/opskrifter/pizza-med-bacon-ricotta-og-pecorino-16365",
+          "formattedTimeTotal": "25 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 4",
+         "title": "Pasta med tun",
+         "recipe": {
+          "id": 16366,
+          "title": "Pasta med tun og persille & salat med ærter",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12374/img_1970.jpeg",
+          "url": "/da-dk/opskrifter/pasta-med-tun-og-persille-og-salat-med-aerter-16366",
+          "formattedTimeTotal": "25 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 9010837,
+   "sku": "680001",
+   "name": "Skagen Måltidskassen 2 dage /2 pers.",
+   "url": "/da-dk/maaltidskasser/skagen-maaltidskassen/p-9010837",
+   "sortOrder": 0,
+   "weeks": [
+    {
+     "name": "32",
+     "year": 2026,
+     "displayName": "Uge 32 - sø 2/8 - lø 8/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/12450/skagen.jpg",
+     "teaser": "Havfrisk hverdagsgastronomi",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Kulmulefilet med skind (Merluccius merluccius)",
+         "recipe": {
+          "id": 12904,
+          "title": "Stegt kulmule mujaddara med mynteyoghurt og salat",
+          "imageUrl": "https://recipes.skagenfood.dk/media/8893/stegt-kulmule-mujaddara-med-mynteyoghurt-og-salat-af-tomat-og-agurk-1.jpg",
+          "url": "/da-dk/opskrifter/stegt-kulmule-mujaddara-med-mynteyoghurt-og-salat-12904",
+          "formattedTimeTotal": "35 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 2",
+         "title": "Laksefilet med skind (Salmo salar - Salmonidae)",
+         "recipe": {
+          "id": 8251,
+          "title": "Stegt laks med kartofler i basilikumpesto",
+          "imageUrl": "https://recipes.skagenfood.dk/media/3122/grillet-laks-med-coleslaw-og-pestopommes.jpg",
+          "url": "/da-dk/opskrifter/stegt-laks-med-kartofler-i-basilikumpesto-8251",
+          "formattedTimeTotal": "35 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 3 (modtages kun ved 3 måltider)",
+         "title": "Ragu Bolognese",
+         "recipe": {
+          "id": 11822,
+          "title": "Heat: Ragù Bolognese med spaghetti",
+          "imageUrl": "https://recipes.skagenfood.dk/media/3937/ragu-bolognaise.jpg",
+          "url": "/da-dk/opskrifter/heat-ragu-bolognese-med-spaghetti-11822",
+          "formattedTimeTotal": "20 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "33",
+     "year": 2026,
+     "displayName": "Uge 33 - sø 9/8 - lø 15/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/12450/skagen.jpg",
+     "teaser": "Havfrisk hverdagsgastronomi",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Kulmulefilet med skind (Merluccius merluccius) / Hvillingfilet med skind (Merlangius merlangus)",
+         "recipe": {
+          "id": 16469,
+          "title": "Kulmule/hvilling med nye gulerødder og kartoffelsalat i bagnèt verd",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12448/skindstegt-laks-med-nye-guleroedder-og-kartoffelsalat-i-bagne-t-verd-piemontese.jpg",
+          "url": "/da-dk/opskrifter/kulmule-hvilling-med-nye-guleroedder-og-kartoffelsalat-i-bagnèt-verd-16469",
+          "formattedTimeTotal": "35 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 2",
+         "title": "Torskefilet uden skind (Gadus Morhua)",
+         "recipe": {
+          "id": 10075,
+          "title": "Bagt torsk med rejer, blomkål, dild og thousand island",
+          "imageUrl": "https://recipes.skagenfood.dk/media/5758/citronbagt-kullerfilet-med-rejer-blomka-l-dild-og-thousand-island-3.jpg",
+          "url": "/da-dk/opskrifter/bagt-torsk-med-rejer-blomkaal-dild-og-thousand-island-10075",
+          "formattedTimeTotal": "30 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 3 (modtages kun ved 3 måltider)",
+         "title": "Kødboller i tomat",
+         "recipe": {
+          "id": 16001,
+          "title": "HEAT Kødboller med pasta og mozzarella",
+          "imageUrl": "https://recipes.skagenfood.dk/media/11980/img_5609.jpeg",
+          "url": "/da-dk/opskrifter/heat-koedboller-i-tomatsauce-med-pasta-og-mozzarella-16001",
+          "formattedTimeTotal": "20 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "34",
+     "year": 2026,
+     "displayName": "Uge 34 - sø 16/8 - lø 22/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/12450/skagen.jpg",
+     "teaser": "Havfrisk hverdagsgastronomi",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Rødspættefilet uden skind (Pleuronectes platessa)",
+         "recipe": {
+          "id": 8459,
+          "title": "Bagt rødspætte med baba ganoush, fladbrød og kartofler",
+          "imageUrl": "https://recipes.skagenfood.dk/media/3680/bagt-skaerising-med-baba-ganoush-fladbroed-og-stegte-kartofler-1.jpg",
+          "url": "/da-dk/opskrifter/bagt-roedspaette-med-baba-ganoush-fladbroed-og-kartofler-8459",
+          "formattedTimeTotal": "40 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 2",
+         "title": "ASC laksefilet med skind ASC-C-00626 (Salmo salar - Salmonidae)",
+         "recipe": {
+          "id": 16468,
+          "title": "Vietnamesisk Cha ca la vong med laks, dild og gurkemeje",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12481/kuller-a-la-vietnamesisk-cha-ca-la-vong-med-dild-stegte-loeg-frisk-gurkemejerod-1.jpg",
+          "url": "/da-dk/opskrifter/vietnamesisk-cha-ca-la-vong-med-laks-fra-skagen-dild-og-gurkemeje-16468",
+          "formattedTimeTotal": "35 minutter"
+         }
+        },
+        {
+         "dayName": "Dag 3 (modtages kun ved 3 måltider)",
+         "title": "Marokkanske kødboller",
+         "recipe": {
+          "id": 9793,
+          "title": "Heat: Marokkanske kødboller i krydret tomatsovs med spinat",
+          "imageUrl": "https://recipes.skagenfood.dk/media/5366/marokkanske-koedboller-i-krydret-tomatsovs-med-spinat-couscous-og-zaatar-5.jpg",
+          "url": "/da-dk/opskrifter/heat-marokkanske-koedboller-i-krydret-tomatsovs-med-spinat-couscous-og-zaatar-9793",
+          "formattedTimeTotal": "15 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 9018720,
+   "sku": "680299",
+   "name": "Tjæpt Kassen Tjæpt 1 dag/2 pers",
+   "url": "/da-dk/maaltidskasser/tjaept-kassen/p-9018720",
+   "sortOrder": 0,
+   "weeks": [
+    {
+     "name": "32",
+     "year": 2026,
+     "displayName": "Uge 32 - sø 2/8 - lø 8/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/11584/tjp.jpg",
+     "teaser": "Mini Måltidskasse med fisk",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Laksefilet med skind (Salmo salar - Salmonidae)",
+         "recipe": {
+          "id": 8251,
+          "title": "Stegt laks med kartofler i basilikumpesto",
+          "imageUrl": "https://recipes.skagenfood.dk/media/3122/grillet-laks-med-coleslaw-og-pestopommes.jpg",
+          "url": "/da-dk/opskrifter/stegt-laks-med-kartofler-i-basilikumpesto-8251",
+          "formattedTimeTotal": "35 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "33",
+     "year": 2026,
+     "displayName": "Uge 33 - sø 9/8 - lø 15/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/11584/tjp.jpg",
+     "teaser": "Mini Måltidskasse med fisk",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Kulmulefilet med skind (Merluccius merluccius) / Hvillingfilet med skind (Merlangius merlangus)",
+         "recipe": {
+          "id": 16469,
+          "title": "Kulmule/hvilling med nye gulerødder og kartoffelsalat i bagnèt verd",
+          "imageUrl": "https://recipes.skagenfood.dk/media/12448/skindstegt-laks-med-nye-guleroedder-og-kartoffelsalat-i-bagne-t-verd-piemontese.jpg",
+          "url": "/da-dk/opskrifter/kulmule-hvilling-med-nye-guleroedder-og-kartoffelsalat-i-bagnèt-verd-16469",
+          "formattedTimeTotal": "35 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "34",
+     "year": 2026,
+     "displayName": "Uge 34 - sø 16/8 - lø 22/8",
+     "imageUrl": "https://cdn.skagenfood.dk/media/11584/tjp.jpg",
+     "teaser": "Mini Måltidskasse med fisk",
+     "items": [
+      {
+       "boxContents": [
+        {
+         "dayName": "Dag 1",
+         "title": "Rødspættefilet uden skind (Pleuronectes platessa)",
+         "recipe": {
+          "id": 8459,
+          "title": "Bagt rødspætte med baba ganoush, fladbrød og kartofler",
+          "imageUrl": "https://recipes.skagenfood.dk/media/3680/bagt-skaerising-med-baba-ganoush-fladbroed-og-stegte-kartofler-1.jpg",
+          "url": "/da-dk/opskrifter/bagt-roedspaette-med-baba-ganoush-fladbroed-og-kartofler-8459",
+          "formattedTimeTotal": "40 minutter"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

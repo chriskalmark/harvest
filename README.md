@@ -168,12 +168,39 @@ docs/                Screenshots and public assets for the README
 | `npm run meal-plan:publish` | Publish the synced week to the database |
 | `npm run meal-plan:bootstrap-markdown` | Rebuild `current-week.md` from JSON |
 | `npm run meal-plan` | CLI wrapper (`new` / `validate` / `publish`; scaffolds from `data/meal-plan-skill.md`) |
+| `npm run catalog:skagenfood` | Pull one week of Skagenfood meal boxes and recipes into the catalog |
 | `npm run test:shopping` | Shopping-list order unit checks |
 | `npm run test:meal-plans` | Meal-plan fixture validation |
-| `npm run test:meal-plan-tools` | Run both test suites |
+| `npm run test:skagenfood` | Skagenfood importer unit checks (offline, real fixtures) |
+| `npm run test:meal-plan-tools` | Run every test script |
 | `npm run lint` | ESLint |
 
 Host-side DB scripts expect `DATABASE_URL` (see `.env.example`). Use the **dev** Compose file, or point `DATABASE_URL` at a reachable Postgres.
+
+### Skagenfood importer
+
+```bash
+npm run catalog:skagenfood                    # next week (the Sunday job)
+npm run catalog:skagenfood -- --uge=denne     # this week
+npm run catalog:skagenfood -- --uge=34 --aar=2026
+npm run catalog:skagenfood -- --proev         # fetch + validate, write nothing
+```
+
+Requires `db/init/004_skagenfood_catalog.sql`. Fetches every meal box and every
+dish for the chosen week, then the full recipe behind each dish: ingredients
+with per-portion quantities, portion options, "du skal selv have", equipment
+and the timestamped steps. Deduplicates on Skagenfood's own recipe id, so a
+re-run updates instead of duplicating.
+
+Skagenfood only serves the three weeks they have published — historic weeks and
+anything further out cannot be fetched, and the importer says so by name.
+
+The whole week is fetched and validated **before** the first write, and the
+write happens in one transaction. If a dish cannot be fetched, nothing is
+written at all. A dish Skagenfood themselves have not finished writing (an
+optional ready meal, say) also aborts the run; pass
+`--spring-ufuldstændige-over` to leave those dishes out of the catalog instead.
+Either way, a half recipe never reaches the database.
 
 ## API overview
 
