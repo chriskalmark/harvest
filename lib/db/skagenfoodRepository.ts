@@ -190,6 +190,96 @@ export async function deleteSkagenfoodBoxesNotIn(
   return result.rowCount ?? 0;
 }
 
+// ---------------------------------------------------------------------------
+// Læsning
+// ---------------------------------------------------------------------------
+
+interface RecipeRow {
+  recipe_id: string | number;
+  name: string;
+  url_name: string | null;
+  url: string | null;
+  image_url: string | null;
+  total_minutes: number | null;
+  portion_options: number[] | null;
+  ingredients: CatalogRecipe["ingredients"] | null;
+  pantry_items: string[] | null;
+  equipment: string[] | null;
+  steps: CatalogRecipe["steps"] | null;
+  tags: CatalogRecipe["tags"] | null;
+  energy: CatalogRecipe["energy"] | null;
+  source: string;
+}
+
+/**
+ * bigint kommer hjem som streng fra pg, og jsonb kommer hjem som objekt.
+ * Kortlægningen her er det ene sted der ved det.
+ */
+function mapRecipeRow(row: RecipeRow): CatalogRecipe {
+  return {
+    recipeId: Number(row.recipe_id),
+    name: row.name,
+    urlName: row.url_name,
+    url: row.url,
+    imageUrl: row.image_url,
+    totalMinutes: row.total_minutes === null ? null : Number(row.total_minutes),
+    portionOptions: (row.portion_options ?? []).map(Number),
+    ingredients: row.ingredients ?? [],
+    pantryItems: row.pantry_items ?? [],
+    equipment: row.equipment ?? [],
+    steps: row.steps ?? [],
+    tags: row.tags ?? [],
+    energy: row.energy ?? [],
+    source: row.source === "ssr" ? "ssr" : "search",
+  };
+}
+
+const RECIPE_COLUMNS = `
+  recipe_id,
+  name,
+  url_name,
+  url,
+  image_url,
+  total_minutes,
+  portion_options,
+  ingredients,
+  pantry_items,
+  equipment,
+  steps,
+  tags,
+  energy,
+  source
+`;
+
+/** Én hel opskrift, eller null hvis id'et ikke findes i kataloget. */
+export async function readSkagenfoodRecipe(
+  client: PoolClient,
+  recipeId: number,
+): Promise<CatalogRecipe | null> {
+  const result = await client.query<RecipeRow>(
+    `SELECT ${RECIPE_COLUMNS} FROM skagenfood_recipes WHERE recipe_id = $1`,
+    [recipeId],
+  );
+  const row = result.rows[0];
+  return row ? mapRecipeRow(row) : null;
+}
+
+/**
+ * Hele kataloget, sorteret efter navn.
+ *
+ * Kataloget er 93 opskrifter og vokser med ca. 50 om ugen der importeres, så
+ * hele listen kan hentes i ét kald. Bliver det en dag til tusinder, er det her
+ * sideinddelingen skal ind — ikke i skærmen.
+ */
+export async function listSkagenfoodRecipes(
+  client: PoolClient,
+): Promise<CatalogRecipe[]> {
+  const result = await client.query<RecipeRow>(
+    `SELECT ${RECIPE_COLUMNS} FROM skagenfood_recipes ORDER BY name ASC, recipe_id ASC`,
+  );
+  return result.rows.map(mapRecipeRow);
+}
+
 export async function countSkagenfoodRecipes(
   client: PoolClient,
 ): Promise<number> {

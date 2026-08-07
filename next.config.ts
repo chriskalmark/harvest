@@ -4,12 +4,25 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Add local tunnel host patterns here if you expose `next dev` behind a reverse proxy.
   images: {
-    // Madfotos ligger lokalt. De serveres fra /app/public/meals, som er et
-    // named volume, og image_url er en relativ sti ("/meals/<slug>.webp").
-    // Lokale stier kraever ingen remotePatterns — og en aaben remotePattern
-    // ville lade hvem som helst bruge optimizeren som proxy for vilkaarlige
-    // eksterne billeder. Tilfoej kun remotePatterns hvis billeder en dag
-    // faktisk hentes fra et andet host, og navngiv da det host praecist.
+    // Den gamle menus madfotos ligger lokalt: de serveres fra
+    // /app/public/meals, som er et named volume, og image_url er en relativ
+    // sti ("/meals/<slug>.webp"). Lokale stier kraever ingen remotePatterns.
+    //
+    // En aaben remotePattern ville lade hvem som helst bruge optimizeren som
+    // proxy for vilkaarlige eksterne billeder. Tilfoej derfor kun et host der
+    // faktisk leverer billeder, og navngiv det praecist.
+    //
+    // Skagenfood-katalogets 93 opskrifter er netop det tilfaelde: deres
+    // image_url peger paa recipes.skagenfood.dk/media/... Hostnavnet og
+    // stien staar praecist herunder, saa optimizeren kun kan naa den ene
+    // mappe paa det ene host — ikke resten af internettet.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "recipes.skagenfood.dk",
+        pathname: "/media/**",
+      },
+    ],
     formats: ["image/webp"],
     // Next 16 afviser enhver quality-vaerdi, der ikke staar her, med 400 —
     // ikke med en advarsel. PhotoPlaceholder beder om 80, saa 80 skal staa

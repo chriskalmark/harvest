@@ -1,12 +1,25 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { useTheme } from "@/lib/useTheme";
 import { formatWeekRangeDanish } from "@/lib/weekRange";
 
+/**
+ * Underteksten viser den gamle menus uge. Paa ugeplanen ville det vaere en
+ * anden uge end den skaermen selv staar paa — to forskellige datoer over
+ * hinanden, hvor den ene er forkert. Dér staar der hvad appen laver i stedet.
+ */
+function headerSubtitle(pathname: string, weekRange?: string): string {
+  if (pathname === "/") return "Aftensmad hele ugen";
+  if (weekRange) return formatWeekRangeDanish(weekRange);
+  return "Venter på første menu";
+}
+
 export default function Header() {
   const { plan } = useMealPlan();
   const { isDark, toggleTheme } = useTheme();
+  const pathname = usePathname();
 
   return (
     <header className="flex items-center justify-between gap-[18px] px-4 pb-7 pt-6">
@@ -51,9 +64,7 @@ export default function Header() {
             Harvest
           </p>
           <p className="mt-1 truncate text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">
-            {plan?.weekRange
-              ? formatWeekRangeDanish(plan.weekRange)
-              : "Venter på første menu"}
+            {headerSubtitle(pathname, plan?.weekRange)}
           </p>
         </div>
       </div>

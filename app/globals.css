@@ -60,6 +60,20 @@
   --text-faint: oklch(0.635 0.018 152);
   --line-2: oklch(0.895 0.014 150 / 0.6);
   --apricot-soft: oklch(0.9 0.05 60);
+
+  /* Den groenne flade -- ugeplanens og vaelgerens baggrund.
+     Egne tokens, ikke --harvest-green, af en maalt grund: hvid tekst paa
+     --harvest-green (0.615) giver 3,48:1 og falder derfor for AA paa alt
+     under 24px. --field-green (0.475) giver 6,14:1 for --field-ink og
+     5,02:1 for --field-ink-soft. I moerkt tema er --harvest-green endnu
+     lysere (0.72 -> 2,36:1), saa fladen skal skifte med temaet -- derfor
+     et selvstaendigt token frem for en opacitet paa det eksisterende.
+     --field-line er kun en kant: 0.45 alpha rammer 3:1 mod fladen. */
+  --field-green: oklch(0.475 0.128 150);
+  --field-ink: oklch(0.99 0.01 150);
+  --field-ink-soft: oklch(0.92 0.03 150);
+  --field-line: oklch(1 0 0 / 0.45);
+
   --shadow-card: 0 6px 20px oklch(0.42 0.06 152 / 0.1);
   --shadow-elevated: 0 14px 40px oklch(0.42 0.06 152 / 0.18);
   --focus-ring: oklch(0.705 0.152 52 / 0.5);
@@ -90,7 +104,17 @@
     --harvest-glass: oklch(0.19 0.018 152 / 0.85);
     --card-bg: oklch(0.26 0.02 152);
     --card-border: oklch(1 0 0 / 0.09);
-    --muted-text: oklch(0.72 0.018 150);
+    /* Hævet fra 0.72: paa --tint-stone (den flade inaktive chips og faner
+       staar paa) maalte 0.72 kun 3,64:1 og faldt dermed for AA. 0.80 giver
+       4,83:1 dér, og loefter samtidig alle de oevrige moerke flader
+       (surface-1 6,27 -> 8,32). Stadig tydeligt daempet mod --foreground. */
+    --muted-text: oklch(0.8 0.018 150);
+    /* De lyse flader har mørkt blæk; her skal det samme blæk være lyst.
+       Uden de tre linjer stod --harvest-green-ink på sin lyse L=0.42 og
+       forsvandt ned i det mørke kort — under 2:1. */
+    --harvest-green-ink: oklch(0.82 0.13 148);
+    --harvest-gold-ink: oklch(0.83 0.13 62);
+    --harvest-terracotta-ink: oklch(0.8 0.13 38);
 
     --text-subtle: oklch(0.93 0.015 150 / 0.62);
     --tint-green: oklch(0.72 0.13 148 / 0.16);
@@ -100,6 +124,11 @@
     --text-faint: oklch(0.55 0.02 150);
     --line-2: oklch(1 0 0 / 0.05);
     --apricot-soft: oklch(0.705 0.152 52 / 0.22);
+
+    /* Fladen gaar dybere i moerkt tema, blaekket bliver staaende:
+       12,71:1 for --field-ink og 9,21:1 for --field-ink-soft. */
+    --field-green: oklch(0.305 0.07 150);
+
     --shadow-card: 0 8px 24px oklch(0 0 0 / 0.4);
     --shadow-elevated: 0 14px 40px oklch(0 0 0 / 0.5);
     --focus-ring: oklch(0.705 0.152 52 / 0.45);
@@ -128,7 +157,15 @@
   --harvest-glass: oklch(0.19 0.018 152 / 0.85);
   --card-bg: oklch(0.26 0.02 152);
   --card-border: oklch(1 0 0 / 0.09);
-  --muted-text: oklch(0.72 0.018 150);
+  /* Se noten i @media-blokken: 0.72 faldt for AA paa --tint-stone. */
+  --muted-text: oklch(0.8 0.018 150);
+  /* Samme tre linjer som i @media-blokken ovenfor, og de manglede her.
+     :root.dark er den klasse temaskiftet faktisk saetter, saa uden dem stod
+     --harvest-green-ink paa sin lyse L=0.42 og forsvandt ned i det moerke
+     kort -- under 2:1 -- for alle der bruger knappen frem for systemtemaet. */
+  --harvest-green-ink: oklch(0.82 0.13 148);
+  --harvest-gold-ink: oklch(0.83 0.13 62);
+  --harvest-terracotta-ink: oklch(0.8 0.13 38);
 
   --text-subtle: oklch(0.93 0.015 150 / 0.62);
   --tint-green: oklch(0.72 0.13 148 / 0.16);
@@ -138,6 +175,10 @@
   --text-faint: oklch(0.55 0.02 150);
   --line-2: oklch(1 0 0 / 0.05);
   --apricot-soft: oklch(0.705 0.152 52 / 0.22);
+
+  /* Se noten i :root -- fladen skifter med temaet, blaekket bliver staaende. */
+  --field-green: oklch(0.305 0.07 150);
+
   --shadow-card: 0 8px 24px oklch(0 0 0 / 0.4);
   --shadow-elevated: 0 14px 40px oklch(0 0 0 / 0.5);
   --focus-ring: oklch(0.705 0.152 52 / 0.45);

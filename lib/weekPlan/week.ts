@@ -1,4 +1,5 @@
 import { isoWeekOf } from "@/lib/skagenfood/isoWeek";
+import type { IsoWeek } from "@/lib/skagenfood/types";
 import type {
   WeekPlan,
   WeekPlanDay,
@@ -39,7 +40,7 @@ export const WEEKDAY_NAMES = [
   "Søndag",
 ] as const;
 
-const MONTH_NAMES = [
+export const MONTH_NAMES = [
   "januar",
   "februar",
   "marts",
@@ -170,13 +171,26 @@ export function weekDates(monday: string): string[] {
   );
 }
 
+/**
+ * ISO-år og -uge for en YYYY-MM-DD.
+ *
+ * isoWeekOf læser Datens LOKALE felter, og parseDateOnly giver UTC-midnat.
+ * Derfor bygges den samme kalenderdag om til lokal tid først -- ellers ville
+ * en bruger vest for Greenwich få gårsdagens uge. Det er den samme omvej
+ * begge kaldere i denne fil tog hver for sig; nu står den ét sted.
+ */
+export function isoWeekOfDateOnly(dateOnly: string): IsoWeek {
+  const date = parseDateOnly(dateOnly);
+  return isoWeekOf(
+    new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+  );
+}
+
 export function weekLabel(monday: string): string {
   requireMonday(monday);
   const start = parseDateOnly(monday);
   const end = parseDateOnly(addDays(monday, DAYS_IN_WEEK - 1));
-  const { week } = isoWeekOf(
-    new Date(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
-  );
+  const { week } = isoWeekOfDateOnly(monday);
 
   const startDay = start.getUTCDate();
   const endDay = end.getUTCDate();
@@ -346,10 +360,7 @@ export function buildWeekPlan(
     };
   });
 
-  const start = parseDateOnly(monday);
-  const { year, week } = isoWeekOf(
-    new Date(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
-  );
+  const { year, week } = isoWeekOfDateOnly(monday);
 
   return {
     weekStart: monday,
