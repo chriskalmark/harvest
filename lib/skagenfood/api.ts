@@ -12,16 +12,20 @@ import type {
  * access-control-allow-origin. Alle kald skal derfor ske server-side — det er
  * derfor henteren er et script og ikke noget browseren kan gøre.
  *
- * To ruter til den fulde opskrift:
- *   1. /api/recipes/search med den præcise titel, match på id.
- *   (Opskriftssidens window.__NUXT__ blev tidligere brugt som reserve. Den
- *    vej er fjernet: den kraevede at koere fremmed JavaScript fra sitet.)
+ * Én rute til den fulde opskrift: /api/recipes/search, match på id.
+ * (Opskriftssidens window.__NUXT__ blev tidligere brugt som reserve. Den
+ *  vej er fjernet: den kraevede at koere fremmed JavaScript fra sitet.)
  *
- * Rute 1 er billigst, men deres søgeindeks er ikke komplet: 2 af 50 retter i
- * uge 33/2026 gav 0 hits (id 16377 og id 15609, hvis titel oven i købet er
- * afkortet med "..."). Rute 2 rammer altid, fordi ugesvaret giver os den
- * præcise sti. Derfor: søg først, fald tilbage til siden, fejl højlydt hvis
- * begge slår fejl.
+ * Deres søgning kan IKKE stoles på med en hel titel. Målt mod uge 33/2026:
+ * "Grillede koteletter med grønne bønner og quinoa" (id 16377) giver 0 hits,
+ * selvom det er ordret det navn indekset selv har på retten — men
+ * "Grillede koteletter med grønne" finder den. Det samme gælder id 13709.
+ * Og id 15609 får sin titel afkortet midt i et ord ("... og yogh...") allerede
+ * i ugesvaret, så den hele titel findes slet ikke at søge på.
+ *
+ * Derfor: søg med titlen, og korter den ét ord ad gangen fra enden, indtil
+ * retten dukker op. Der accepteres kun et svar med det id vi leder efter, så
+ * en kortere søgning kan aldrig hente en forkert ret ind.
  */
 
 const GATEWAY = "https://gateway.skagenfood.dk";
@@ -121,24 +125,54 @@ export async function fetchWeeklyPackages(): Promise<WireWeeklyPackagesResponse>
   );
 }
 
+/** Færrest ord vi vil søge på. Under det bliver et træf tilfældigt. */
+const MIN_QUERY_WORDS = 2;
+
+/** Hvor mange svar vi beder om. Bredt nok til at retten er med, når titlen kortes. */
+const SEARCH_COUNT = 20;
+
 /**
- * Rute 1: slå op på præcis titel og match på id. Returnerer null når retten
- * ikke er i søgeindekset — det er ikke en fejl, det er signalet til at falde
- * tilbage til opskriftssiden.
+ * Søgeord for én ret, længste først.
+ *
+ * Sidste ord ryger et ad gangen, fordi det er halen der får deres søgning til
+ * at svare tomt — og fordi en afkortet titel ("... og yogh...") netop har et
+ * halvt ord til sidst.
+ */
+export function searchQueriesForTitle(title: string): string[] {
+  const cleaned = title.replace(/\s*(\.{3}|…)\s*$/, "").trim();
+  if (!cleaned) return [];
+
+  const words = cleaned.split(/\s+/);
+  const queries: string[] = [];
+  for (let length = words.length; length >= MIN_QUERY_WORDS; length -= 1) {
+    queries.push(words.slice(0, length).join(" "));
+  }
+  // Ét-ords-titler skal stadig kunne slås op.
+  if (queries.length === 0) queries.push(cleaned);
+  return queries;
+}
+
+/**
+ * Slå retten op og match på id. Returnerer null når ingen af søgningerne
+ * finder id'et — så er retten utilgængelig, og det skal fejle højlydt.
+ *
+ * Der accepteres kun et svar hvor id stemmer. En kortere søgning kan derfor
+ * aldrig få en anden ret til at snige sig ind i kataloget.
  */
 export async function searchRecipeById(
   title: string,
   recipeId: number,
 ): Promise<WireRecipe | null> {
-  const query = title.replace(/\s*(\.{3}|…)\s*$/, "").trim();
-  if (!query) return null;
-
-  const url =
-    `${GATEWAY}/api/recipes/search?skip=0&count=10&FilterByFavorites=false` +
-    `&query=${encodeURIComponent(query)}`;
-  const response = await fetchJson<WireRecipeSearchResponse>(
-    url,
-    `opskriften "${title}"`,
-  );
-  return (response.recipes ?? []).find((r) => r.id === recipeId) ?? null;
+  for (const query of searchQueriesForTitle(title)) {
+    const url =
+      `${GATEWAY}/api/recipes/search?skip=0&count=${SEARCH_COUNT}&FilterByFavorites=false` +
+      `&query=${encodeURIComponent(query)}`;
+    const response = await fetchJson<WireRecipeSearchResponse>(
+      url,
+      `opskriften "${title}"`,
+    );
+    const hit = (response.recipes ?? []).find((r) => r.id === recipeId);
+    if (hit) return hit;
+  }
+  return null;
 }

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { searchQueriesForTitle } from "../lib/skagenfood/api";
 import { isoWeekOf, nextIsoWeek } from "../lib/skagenfood/isoWeek";
 import {
   assertCatalogRecipe,
@@ -496,6 +497,55 @@ for (const constraint of [
 assert.ok(
   migration.includes("recipe_id BIGINT PRIMARY KEY"),
   "Skagenfoods eget opskrifts-id skal være primærnøgle, ellers kan genkørsler lave dubletter",
+);
+
+/**
+ * Søgeordene der kortes ned.
+ *
+ * Skagenfoods søgning svarer tomt på mange hele titler, også dem der står
+ * ordret i deres eget indeks. Uden nedkortningen faldt uge 33/2026 på id 16377
+ * og id 15609, og hele ugen blev ikke skrevet.
+ */
+const koteletter = searchQueriesForTitle(
+  "Grillede koteletter med grønne bønner og quinoa",
+);
+assert.equal(
+  koteletter[0],
+  "Grillede koteletter med grønne bønner og quinoa",
+  "den hele titel skal forsøges først",
+);
+assert.ok(
+  koteletter.includes("Grillede koteletter med grønne"),
+  "nedkortningen skal nå det søgeord der faktisk finder id 16377",
+);
+assert.equal(
+  koteletter[koteletter.length - 1],
+  "Grillede koteletter",
+  "der må ikke søges på færre end to ord",
+);
+
+// En afkortet titel har et halvt ord til sidst; "..." skal væk, ikke blive søgeord.
+const afkortet = searchQueriesForTitle(
+  "ELITE Team Danmark Dukkahbagt lyssejfilet/torskefilet med ovnbagte rodfrugter og yogh...",
+);
+assert.ok(
+  !afkortet[0].endsWith("..."),
+  "prikkerne fra den afkortede titel skal fjernes",
+);
+assert.ok(
+  afkortet.includes("ELITE Team Danmark Dukkahbagt"),
+  "nedkortningen skal nå det søgeord der faktisk finder id 15609",
+);
+
+assert.deepEqual(
+  searchQueriesForTitle("   "),
+  [],
+  "en tom titel giver ingen søgeord",
+);
+assert.deepEqual(
+  searchQueriesForTitle("Boghvedegrød"),
+  ["Boghvedegrød"],
+  "en ét-ords-titel skal stadig kunne slås op",
 );
 
 console.log(
