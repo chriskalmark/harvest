@@ -24,12 +24,13 @@
     "test:widget": "tsx scripts/testMealPlanWidget.ts",
     "test:bulk-checked": "tsx scripts/testShoppingBulkChecked.ts",
     "test:skagenfood": "tsx scripts/testSkagenfoodCatalog.ts",
+    "test:skagenfood-auto-import": "tsx scripts/testSkagenfoodAutoImportService.ts",
     "test:week-plan": "tsx scripts/testWeekPlan.ts",
     "test:recipe-view": "tsx scripts/testRecipeView.ts",
     "test:week-plan-screen": "tsx scripts/testWeekPlanScreen.ts",
     "test:katalog-vaelger": "tsx scripts/testKatalogVaelger.ts",
     "test:theme-contrast": "tsx scripts/testThemeContrast.ts",
-    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation && npm run test:meal-repository-writes && npm run test:meal-partial-update && npm run test:widget && npm run test:bulk-checked && npm run test:skagenfood && npm run test:week-plan && npm run test:recipe-view && npm run test:week-plan-screen && npm run test:katalog-vaelger && npm run test:theme-contrast",
+    "test:meal-plan-tools": "npm run test:shopping && npm run test:meal-plans && npm run test:derivation && npm run test:aggregation && npm run test:meal-repository-writes && npm run test:meal-partial-update && npm run test:widget && npm run test:bulk-checked && npm run test:skagenfood && npm run test:skagenfood-auto-import && npm run test:week-plan && npm run test:recipe-view && npm run test:week-plan-screen && npm run test:katalog-vaelger && npm run test:theme-contrast",
     "meal-plan:library": "tsx scripts/printMealLibrary.ts"
   },
   "dependencies": {

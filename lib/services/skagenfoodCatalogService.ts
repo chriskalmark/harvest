@@ -1,9 +1,6 @@
 import { withTransaction } from "@/lib/db";
 import * as skagenfoodRepository from "@/lib/db/skagenfoodRepository";
-import {
-  fetchWeeklyPackages,
-  searchRecipeById,
-} from "@/lib/skagenfood/api";
+import { fetchWeeklyPackages, searchRecipeById } from "@/lib/skagenfood/api";
 import { formatIsoWeek } from "@/lib/skagenfood/isoWeek";
 import {
   assertCatalogRecipe,
@@ -318,4 +315,42 @@ export async function importSkagenfoodWeek(
   const stored = await storeWeek(week, recipes);
 
   return { ...report, ...stored };
+}
+
+// ---------------------------------------------------------------------------
+// Delt spaerre: manuel og automatisk import maa aldrig koere samtidigt
+// ---------------------------------------------------------------------------
+
+/**
+ * En import ad gangen -- uanset om den er bedt om fra den manuelle rute
+ * (POST /api/ugeplan/import) eller startet af det selvhelbredende tjek i
+ * baggrunden. To samtidige koersler ville hente de samme 7,5 MB fra
+ * Skagenfood og skrive oven i hinanden, uden at nogen af dem bliver klogere.
+ */
+let importInFlight: Promise<ImportWeekReport> | null = null;
+
+/** Koerer der en import lige nu, manuel eller automatisk? */
+export function isSkagenfoodImportRunning(): boolean {
+  return importInFlight !== null;
+}
+
+/**
+ * Samme som importSkagenfoodWeek, men afviser hoejlydt hvis en anden import
+ * allerede er i gang, i stedet for at lade de to loebe samtidigt.
+ */
+export async function importSkagenfoodWeekExclusive(
+  options: ImportWeekOptions,
+): Promise<ImportWeekReport> {
+  if (importInFlight) {
+    throw new SkagenfoodImportError(
+      "Der kører allerede en import af Skagenfood-kataloget. Vent til den er færdig.",
+    );
+  }
+  const work = importSkagenfoodWeek(options);
+  importInFlight = work;
+  try {
+    return await work;
+  } finally {
+    importInFlight = null;
+  }
 }

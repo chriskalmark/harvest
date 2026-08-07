@@ -25,9 +25,18 @@ import { formatIsoWeek } from "@/lib/skagenfood/isoWeek";
  */
 
 export class SkagenfoodImportError extends Error {
-  constructor(message: string) {
+  /**
+   * "week_unavailable" naar Skagenfood ganske enkelt ikke har lagt ugen op
+   * endnu -- de udstiller kun tre uger ad gangen. Det er en normal tilstand
+   * for en kommende uge, ikke en fejl, og en kalder kan bruge feltet til at
+   * skelne de to uden at lede efter tekst i beskeden.
+   */
+  readonly code?: "week_unavailable";
+
+  constructor(message: string, code?: "week_unavailable") {
     super(message);
     this.name = "SkagenfoodImportError";
+    this.code = code;
   }
 }
 
@@ -195,6 +204,7 @@ export function selectCatalogWeek(
       `Skagenfood har ingen data for ${formatIsoWeek(target)}. ` +
         `Deres API leverer kun de uger de selv har lagt op — lige nu: ${list}. ` +
         `Historik og uger længere ude kan ikke hentes.`,
+      "week_unavailable",
     );
   }
 

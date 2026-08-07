@@ -1,11 +1,22 @@
 import { NextRequest } from "next/server";
 import { ApiError, createRouteHandler } from "@/lib/apiUtils";
 import { formatIsoWeek } from "@/lib/skagenfood/isoWeek";
-import { importSkagenfoodWeek } from "@/lib/services/skagenfoodCatalogService";
+import { getAutoImportStatus } from "@/lib/services/skagenfoodAutoImportService";
+import {
+  importSkagenfoodWeekExclusive,
+  isSkagenfoodImportRunning,
+} from "@/lib/services/skagenfoodCatalogService";
 import { readJsonBody, withWeekPlanErrors } from "@/lib/weekPlan/apiSupport";
 import { resolveImportWeek } from "@/lib/weekPlan/importSelection";
 
 /**
+ * GET /api/ugeplan/import
+ *
+ * Status for det selvhelbredende tjek der kører hver gang ugeplanen læses:
+ * er det slået til, kører en import lige nu, og hvordan gik det seneste
+ * forsøg på den kommende uge. Findes så en fejl aldrig er tavs -- den kan
+ * altid slås op her, uden terminaladgang.
+ *
  * POST /api/ugeplan/import
  *
  *   {}                                       -> næste uge (standarden)
@@ -18,6 +29,9 @@ import { resolveImportWeek } from "@/lib/weekPlan/importSelection";
  * Kørslen kan tage et par minutter: ét kald på 7,5 MB plus omkring 50
  * opskriftskald. Hele ugen hentes og valideres FÆRDIG, før databasen røres --
  * går én ret galt, skrives der ingenting.
+ *
+ * Spærren mod at to importer kører samtidig er delt med det selvhelbredende
+ * tjek -- se importSkagenfoodWeekExclusive i skagenfoodCatalogService.ts.
  */
 
 // Standalone Node-server, så der er ingen platformsgrænse at ramme -- men
@@ -25,11 +39,10 @@ import { resolveImportWeek } from "@/lib/weekPlan/importSelection";
 export const maxDuration = 600;
 export const dynamic = "force-dynamic";
 
-/**
- * Én import ad gangen. To samtidige kørsler ville hente de samme 7,5 MB og
- * skrive oven i hinanden uden at nogen bliver klogere.
- */
-let running: Promise<unknown> | null = null;
+export const GET = createRouteHandler(async () => {
+  const status = await getAutoImportStatus();
+  return { autoImport: status };
+});
 
 export const POST = createRouteHandler(async (request: NextRequest) => {
   const expectedToken = process.env.HARVEST_IMPORT_TOKEN;
@@ -53,7 +66,11 @@ export const POST = createRouteHandler(async (request: NextRequest) => {
     body["springUfuldstændigeOver"] === true ||
     body.allowIncomplete === true;
 
-  if (running) {
+  // Tjekket her giver en pæn 409 i det almindelige tilfælde. Selve
+  // spærringen sidder i importSkagenfoodWeekExclusive, så et sjældent
+  // kapløb mellem to samtidige kald aldrig kan starte to importer -- det kan
+  // højst give en anden fejlbesked.
+  if (isSkagenfoodImportRunning()) {
     throw new ApiError(
       "Der kører allerede en import. Vent til den er færdig.",
       409,
@@ -61,8 +78,8 @@ export const POST = createRouteHandler(async (request: NextRequest) => {
   }
 
   const log: string[] = [];
-  const work = withWeekPlanErrors(() =>
-    importSkagenfoodWeek({
+  const report = await withWeekPlanErrors(() =>
+    importSkagenfoodWeekExclusive({
       target,
       dryRun,
       allowIncomplete,
@@ -71,18 +88,12 @@ export const POST = createRouteHandler(async (request: NextRequest) => {
       },
     }),
   );
-  running = work;
 
-  try {
-    const report = await work;
-    return {
-      import: {
-        ...report,
-        weekLabel: formatIsoWeek(target),
-        log,
-      },
-    };
-  } finally {
-    running = null;
-  }
+  return {
+    import: {
+      ...report,
+      weekLabel: formatIsoWeek(target),
+      log,
+    },
+  };
 });

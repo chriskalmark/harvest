@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { createRouteHandler } from "@/lib/apiUtils";
+import { scheduleAutoImportCheck } from "@/lib/services/skagenfoodAutoImportService";
 import { getWeekPlan } from "@/lib/services/weekPlanService";
 import { weekFromQuery, withWeekPlanErrors } from "@/lib/weekPlan/apiSupport";
 
@@ -9,9 +10,19 @@ import { weekFromQuery, withWeekPlanErrors } from "@/lib/weekPlan/apiSupport";
  * GET /api/ugeplan?uge=2026-08-10
  *
  * Svarer altid med syv dagspladser, også for en uge der aldrig er planlagt.
- * Kaldet skriver ingenting i databasen.
+ * Kaldet skriver ingenting i databasen -- bortset fra det selvhelbredende
+ * tjek nedenfor, som kun skriver til Skagenfood-kataloget, aldrig til ugen
+ * der laeses.
  */
 export const GET = createRouteHandler(async (request: NextRequest) => {
+  // Selvhelbredende: er den KOMMENDE uges opskrifter der mangler i kataloget,
+  // startes en hentning i baggrunden. Kaldet her venter ikke paa den --
+  // scheduleAutoImportCheck returnerer med det samme, saa denne laesning
+  // aldrig staar og venter paa Skagenfood. Se
+  // lib/services/skagenfoodAutoImportService.ts for spaerre, afkoeling og
+  // hvordan en fejl bliver synlig.
+  scheduleAutoImportCheck();
+
   const weekPlan = await withWeekPlanErrors(() =>
     getWeekPlan({ week: weekFromQuery(request) }),
   );
