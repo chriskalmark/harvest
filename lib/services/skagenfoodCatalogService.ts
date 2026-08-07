@@ -136,6 +136,18 @@ async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
     imageUrl: slot.imageUrl,
     url: slot.recipePath,
   });
+
+  // Serverede siden en anden ret, end vi bad om, har vi ikke fået fat i vores.
+  // Det er "utilgængelig" og skal altid stoppe kørslen — ellers kunne
+  // --spring-ufuldstændige-over komme til at sluge en forbyttet opskrift.
+  if (recipe.recipeId !== slot.recipeId) {
+    return {
+      ok: false,
+      kind: "utilgængelig",
+      message: `${label}: opskriftssiden ${slot.recipePath} handlede om id ${recipe.recipeId}.`,
+    };
+  }
+
   try {
     assertCatalogRecipe(recipe, slot.recipeId);
     return { ok: true, recipe };
