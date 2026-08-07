@@ -77,7 +77,11 @@ const DEFAULT_CONCURRENCY = 4;
  */
 type FetchOutcome =
   | { ok: true; recipe: CatalogRecipe }
-  | { ok: false; kind: "utilgængelig" | "ufuldstændig"; message: string };
+  | {
+      ok: false;
+      kind: "utilgængelig" | "ufuldstændig" | "ukendt-i-indeks";
+      message: string;
+    };
 
 async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
   const label = `"${slot.lookupTitle || `id ${slot.recipeId}`}" (id ${slot.recipeId})`;
@@ -99,10 +103,16 @@ async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
   }
 
   if (!hit) {
+    // Retten staar i ugefeedet, men findes ikke i Skagenfoods soegeindeks.
+    // Bevist paa id 16433 i uge 34: hverken hele titlen, nedkortninger eller
+    // et opslag paa id giver traef, og der findes ingen id-baseret rute til
+    // hele opskriften (alle /api/recipes/<id>-varianter svarer 404).
+    // Det er et hul hos dem, ikke en fejl hos os -- og det maa ikke vaelte
+    // en hel uges import, saadan som en netvaerksfejl skal.
     return {
       ok: false,
-      kind: "utilgængelig",
-      message: `${label}: titelopslaget gav ingen ret med det id.`,
+      kind: "ukendt-i-indeks",
+      message: `${label}: findes ikke i Skagenfoods søgeindeks.`,
     };
   }
 
@@ -127,6 +137,8 @@ async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
 interface FetchAllResult {
   recipes: CatalogRecipe[];
   incomplete: Array<{ recipeId: number; title: string; message: string }>;
+  /** Retter i ugefeedet som Skagenfoods soegeindeks ikke kender. */
+  missingFromIndex: Array<{ recipeId: number; title: string; message: string }>;
 }
 
 async function fetchAllRecipes(
@@ -138,6 +150,7 @@ async function fetchAllRecipes(
   const recipes = new Array<CatalogRecipe | undefined>(slots.length);
   const unavailable: string[] = [];
   const incomplete: FetchAllResult["incomplete"] = [];
+  const missingFromIndex: FetchAllResult["missingFromIndex"] = [];
   let nextIndex = 0;
   let done = 0;
 
@@ -158,7 +171,15 @@ async function fetchAllRecipes(
           message: outcome.message,
         });
       } else {
-        unavailable.push(outcome.message);
+        if (outcome.kind === "ukendt-i-indeks") {
+          missingFromIndex.push({
+            recipeId: slot.recipeId,
+            title: slot.lookupTitle,
+            message: outcome.message,
+          });
+        } else {
+          unavailable.push(outcome.message);
+        }
       }
       done += 1;
       onProgress?.(
@@ -181,6 +202,17 @@ async function fetchAllRecipes(
     );
   }
 
+  if (missingFromIndex.length && !allowIncomplete) {
+    throw new SkagenfoodImportError(
+      `${missingFromIndex.length} af ${slots.length} retter findes ikke i Skagenfoods ` +
+        `søgeindeks. Intet er skrevet til databasen.\n  - ` +
+        `${missingFromIndex.map((entry) => entry.message).join("\n  - ")}\n` +
+        `De kan ikke hentes, uanset hvor mange gange vi prøver — der findes ingen ` +
+        `id-baseret rute til hele opskriften. Kør med --spring-ufuldstændige-over ` +
+        `for at hente resten af ugen og få dem nævnt i rapporten.`,
+    );
+  }
+
   if (incomplete.length && !allowIncomplete) {
     throw new SkagenfoodImportError(
       `${incomplete.length} af ${slots.length} retter er ikke skrevet færdig hos Skagenfood. ` +
@@ -196,6 +228,7 @@ async function fetchAllRecipes(
       Boolean(recipe),
     ),
     incomplete,
+    missingFromIndex,
   };
 }
 
