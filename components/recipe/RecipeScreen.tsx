@@ -400,6 +400,10 @@ function StepRow({
   isLast: boolean;
   onToggle: () => void;
 }) {
+  const inkClass = isDone
+    ? "text-[var(--text-muted)]"
+    : "text-[var(--foreground)]";
+
   return (
     <li className="relative">
       {/* Tråden mellem trinnene. Ren linje, ikke pynt: den viser at
@@ -427,7 +431,11 @@ function StepRow({
           {isDone ? <Check size={22} strokeWidth={3} /> : step.number}
         </span>
 
-        <span className={`min-w-0 flex-1 ${isDone ? "opacity-60" : ""}`}>
+        {/* Et klaret trin dæmpes med --text-muted og ikke med opacity:
+            opacity 0,6 på brødteksten måler 4,2:1 mod pladen og falder
+            dermed for AA. --text-muted rammer 8,8:1 og ser stadig
+            afsluttet ud. */}
+        <span className="min-w-0 flex-1">
           {step.timeLabel ? (
             <span className="block text-[0.85rem] font-black uppercase tracking-[0.16em] text-[var(--harvest-green-ink)]">
               {step.timeLabel}
@@ -435,7 +443,9 @@ function StepRow({
           ) : null}
 
           {step.title ? (
-            <span className="mt-1 block font-serif text-[1.3rem] font-bold leading-[1.15] tracking-[-0.015em] text-[var(--foreground)]">
+            <span
+              className={`mt-1 block font-serif text-[1.3rem] font-bold leading-[1.15] tracking-[-0.015em] ${inkClass}`}
+            >
               {step.title}
             </span>
           ) : null}
@@ -443,7 +453,7 @@ function StepRow({
           {step.paragraphs.map((paragraph, index) => (
             <span
               key={index}
-              className="mt-2 block max-w-[34ch] text-[1.2rem] leading-[1.55] text-[var(--foreground)]"
+              className={`mt-2 block max-w-[34ch] text-[1.2rem] leading-[1.55] ${inkClass}`}
             >
               {paragraph}
             </span>
