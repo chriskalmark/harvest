@@ -1,7 +1,6 @@
 import { withTransaction } from "@/lib/db";
 import * as skagenfoodRepository from "@/lib/db/skagenfoodRepository";
 import {
-  fetchRecipeFromPage,
   fetchWeeklyPackages,
   searchRecipeById,
 } from "@/lib/skagenfood/api";
@@ -85,44 +84,15 @@ type FetchOutcome =
 
 async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
   const label = `"${slot.lookupTitle || `id ${slot.recipeId}`}" (id ${slot.recipeId})`;
-  let searchProblem = "";
-  let searchWasIncomplete = false;
 
+  // Kun JSON-API'et. Der fandtes tidligere en reservevej, som hentede
+  // opskriftssidens HTML og koerte dens window.__NUXT__-IIFE gennem node:vm.
+  // node:vm er ikke en sikkerhedssandkasse, saa det var udfoerelse af fremmed
+  // kode fra et website vi ikke kontrollerer. Den er fjernet. Svarer API'et
+  // ikke, fejler vi hoejlydt i stedet for at falde tilbage.
+  let hit;
   try {
-    const hit = await searchRecipeById(slot.lookupTitle, slot.recipeId);
-    if (hit) {
-      const recipe = normalizeRecipe(hit, {
-        source: "search",
-        imageUrl: slot.imageUrl,
-        url: slot.recipePath,
-      });
-      try {
-        assertCatalogRecipe(recipe, slot.recipeId);
-        return { ok: true, recipe };
-      } catch (error) {
-        // Opslaget ramte den rigtige ret, men indholdet var mangelfuldt.
-        // Opskriftssiden er den fyldigere kilde — prøv den, før vi dømmer.
-        searchWasIncomplete = true;
-        searchProblem = error instanceof Error ? error.message : String(error);
-      }
-    } else {
-      searchProblem = "titelopslaget gav ingen ret med det id";
-    }
-  } catch (error) {
-    searchProblem = error instanceof Error ? error.message : String(error);
-  }
-
-  if (!slot.recipePath) {
-    return {
-      ok: false,
-      kind: searchWasIncomplete ? "ufuldstændig" : "utilgængelig",
-      message: `${label}: ${searchProblem}, og ugesvaret gav ingen sti til opskriftssiden.`,
-    };
-  }
-
-  let page;
-  try {
-    page = await fetchRecipeFromPage(slot.recipePath);
+    hit = await searchRecipeById(slot.lookupTitle, slot.recipeId);
   } catch (error) {
     return {
       ok: false,
@@ -131,22 +101,19 @@ async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
     };
   }
 
-  const recipe = normalizeRecipe(page, {
-    source: "ssr",
-    imageUrl: slot.imageUrl,
-    url: slot.recipePath,
-  });
-
-  // Serverede siden en anden ret, end vi bad om, har vi ikke fået fat i vores.
-  // Det er "utilgængelig" og skal altid stoppe kørslen — ellers kunne
-  // --spring-ufuldstændige-over komme til at sluge en forbyttet opskrift.
-  if (recipe.recipeId !== slot.recipeId) {
+  if (!hit) {
     return {
       ok: false,
       kind: "utilgængelig",
-      message: `${label}: opskriftssiden ${slot.recipePath} handlede om id ${recipe.recipeId}.`,
+      message: `${label}: titelopslaget gav ingen ret med det id.`,
     };
   }
+
+  const recipe = normalizeRecipe(hit, {
+    source: "search",
+    imageUrl: slot.imageUrl,
+    url: slot.recipePath,
+  });
 
   try {
     assertCatalogRecipe(recipe, slot.recipeId);
@@ -154,7 +121,6 @@ async function fetchOneRecipe(slot: CatalogBoxSlot): Promise<FetchOutcome> {
   } catch (error) {
     return {
       ok: false,
-      // Begge kilder er enige om, at opskriften ikke er skrevet færdig.
       kind: "ufuldstændig",
       message: error instanceof Error ? error.message : String(error),
     };

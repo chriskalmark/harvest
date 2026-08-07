@@ -1,4 +1,3 @@
-import vm from "node:vm";
 import { SkagenfoodImportError } from "@/lib/skagenfood/normalize";
 import type {
   WireRecipe,
@@ -15,7 +14,8 @@ import type {
  *
  * To ruter til den fulde opskrift:
  *   1. /api/recipes/search med den præcise titel, match på id.
- *   2. Opskriftssiden, hvor hele objektet ligger i window.__NUXT__.
+ *   (Opskriftssidens window.__NUXT__ blev tidligere brugt som reserve. Den
+ *    vej er fjernet: den kraevede at koere fremmed JavaScript fra sitet.)
  *
  * Rute 1 er billigst, men deres søgeindeks er ikke komplet: 2 af 50 retter i
  * uge 33/2026 gav 0 hits (id 16377 og id 15609, hvis titel oven i købet er
@@ -25,7 +25,6 @@ import type {
  */
 
 const GATEWAY = "https://gateway.skagenfood.dk";
-const SITE = "https://skagenfood.dk";
 
 /** MåltidsKasser. De to andre sektioner har en anden form og ingen ugeopskrifter. */
 export const MEAL_BOX_SECTION_ID = 9000997;
@@ -45,7 +44,6 @@ async function sleep(ms: number): Promise<void> {
  * tjekker vi content-type i stedet for kun at stole på statuskoden.
  */
 const JSON_ACCEPT = "application/json";
-const HTML_ACCEPT = "text/html";
 
 async function fetchText(
   url: string,
@@ -143,72 +141,4 @@ export async function searchRecipeById(
     `opskriften "${title}"`,
   );
   return (response.recipes ?? []).find((r) => r.id === recipeId) ?? null;
-}
-
-/**
- * Rute 2: opskriftssiden er server-renderet, og hele opskriften ligger i en
- * minificeret `window.__NUXT__=…`-IIFE. Den er JavaScript, ikke JSON, så den
- * skal evalueres.
- *
- * node:vm er ikke en sikkerhedssandkasse, men konteksten får kun `{ window: {} }`
- * — ingen require, ingen process, ingen globalThis fra værten — og koden er
- * afgrænset til netop den ene tildeling. Det er den samme teknik som er
- * verificeret mod tre sider under kortlægningen.
- */
-export async function fetchRecipeFromPage(
-  recipePath: string,
-): Promise<WireRecipe> {
-  const url = recipePath.startsWith("http")
-    ? recipePath
-    : `${SITE}${recipePath}`;
-  const html = await fetchText(url, `opskriftssiden ${recipePath}`, {
-    accept: HTML_ACCEPT,
-    expect: "html",
-  });
-
-  const start = html.indexOf("window.__NUXT__=");
-  if (start < 0) {
-    throw new SkagenfoodImportError(
-      `Opskriftssiden ${url} indeholder ikke window.__NUXT__. Siden har skiftet form, og henteren skal rettes.`,
-    );
-  }
-  const end = html.indexOf("</script>", start);
-  if (end < 0) {
-    throw new SkagenfoodImportError(
-      `Opskriftssiden ${url} har et window.__NUXT__ der ikke slutter. Henteren stopper.`,
-    );
-  }
-
-  const sandbox: { window: { __NUXT__?: unknown } } = { window: {} };
-  vm.createContext(sandbox);
-  try {
-    vm.runInContext(html.slice(start, end), sandbox, { timeout: 5_000 });
-  } catch (error) {
-    throw new SkagenfoodImportError(
-      `Kunne ikke læse opskriftsdataene på ${url}: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    );
-  }
-
-  const recipe = readNuxtRecipe(sandbox.window.__NUXT__);
-  if (!recipe) {
-    throw new SkagenfoodImportError(
-      `Opskriftssiden ${url} havde ingen opskrift under window.__NUXT__.data[0].content.content.recipeViewObject.recipe.`,
-    );
-  }
-  return recipe;
-}
-
-function readNuxtRecipe(nuxt: unknown): WireRecipe | null {
-  if (!nuxt || typeof nuxt !== "object") return null;
-  const data = (nuxt as { data?: unknown }).data;
-  if (!Array.isArray(data) || !data.length) return null;
-  const content = (data[0] as { content?: { content?: unknown } })?.content
-    ?.content;
-  if (!content || typeof content !== "object") return null;
-  const recipe = (content as { recipeViewObject?: { recipe?: unknown } })
-    .recipeViewObject?.recipe;
-  if (!recipe || typeof recipe !== "object") return null;
-  return recipe as WireRecipe;
 }

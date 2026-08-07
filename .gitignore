@@ -44,3 +44,4 @@ data/backup-week-*.md
 next-env.d.ts
 .superpowers/
 .claude/
+.gauntlet/
