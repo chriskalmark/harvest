@@ -2,23 +2,23 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import {
-  BookOpen,
-  CalendarDays,
-  LayoutDashboard,
-  Search,
-  ShoppingBag,
-} from "lucide-react";
+import { BookOpen, CalendarDays, ShoppingBag } from "lucide-react";
 import WeekSelector from "@/components/WeekSelector";
 import { useMealPlan } from "@/lib/MealPlanProvider";
 import { buildHref } from "@/lib/urlState";
 
+/**
+ * Appen handler alene om aftensmad, saa bundnavigationen goer det samme: tre
+ * faner, ikke fem. Den gamle menu (/menu) og det gamle retbibliotek
+ * (/explore) er ikke slettet -- ugen med de seks fotos ligger der stadig,
+ * og det er brugerens beslutning at rydde den ud, ikke denne opgaves. De
+ * virker begge fint naar man skriver adressen, de staar bare ikke i
+ * strimlen laengere.
+ */
 const navItems = [
   { name: "Ugeplan", href: "/", icon: CalendarDays },
-  { name: "Menu", href: "/menu", icon: LayoutDashboard },
-  { name: "Indkøb", href: "/shop", icon: ShoppingBag },
   { name: "Opskrifter", href: "/opskrifter", icon: BookOpen },
-  { name: "Udforsk", href: "/explore", icon: Search },
+  { name: "Indkøb", href: "/shop", icon: ShoppingBag },
 ];
 
 /**
@@ -59,24 +59,18 @@ export default function BottomNav() {
         </div>
       )}
 
-      <div className="mx-auto flex h-[75px] max-w-md items-center justify-around px-2">
+      <div className="mx-auto flex h-[78px] max-w-md items-center justify-around px-2">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href === "/menu" &&
-              (pathname.startsWith("/meal") ||
-                pathname === "/week" ||
-                pathname === "/plan" ||
-                pathname === "/junk")) ||
             (item.href === "/opskrifter" && pathname.startsWith("/opskrift/"));
           const Icon = item.icon;
-          // Kun madplanens skærme bærer ugen med rundt i adressen. Kataloget
-          // er det samme uanset uge, og ugeplanen har sin egen ?uge= — begge
-          // dele ville blive forvirret af et weekRange fra den gamle menu.
+          // Kun Indkoeb baerer ugen med rundt i adressen -- den gamle
+          // indkoebsliste er stadig bundet til en uge. Ugeplanen har sin egen
+          // ?uge=, og kataloget er det samme uanset uge, saa begge dele ville
+          // blive forvirret af et weekRange fra den gamle menu.
           const href =
-            item.href === "/" ||
-            item.href === "/explore" ||
-            item.href === "/opskrifter"
+            item.href === "/" || item.href === "/opskrifter"
               ? item.href
               : buildHref(item.href, queryString, {
                   weekRange: effectiveWeekRange,
@@ -86,27 +80,24 @@ export default function BottomNav() {
             <Link
               key={item.name}
               href={href}
-              /* Versaler var det dyre valg, ikke skriftstoerrelsen.
-                 "OPSKRIFTER" fyldte 78px ved 10px/0.06em og braekkede til to
-                 linjer paa de 74px hver fane har paa en 390px-telefon, saa
-                 raekken blev skruet ned til 9px for at undgaa det. 9px fed er
-                 for lille til at laese, og den aktive fane maalte samtidig
-                 3,34:1 mod --surface-1 i lyst tema.
-                 Uden versaler og sporing maaler "Opskrifter" 54px ved 11px --
-                 stoerre skrift OG mere luft end foer -- og --harvest-green-ink
-                 loefter den aktive fane til 7,58:1. */
-              className={`flex min-w-0 flex-1 flex-col items-center gap-1 whitespace-nowrap text-center text-[11px] font-semibold tracking-[0] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)] rounded-xl py-1 ${
+              /* Tre faner i stedet for fem giver hver fane omkring 144px paa
+                 en 390px-telefon i stedet for 74px -- rigeligt rum til
+                 "Opskrifter" uden versaler eller sammenpresset skrift.
+                 Trykmaalet er hele linket (fuld kolonnebredde, ~54px hoejt
+                 med paddingen), godt over de 44px. --harvest-green-ink
+                 giver den aktive fane 7,58:1 lyst og 9,26:1 moerkt. */
+              className={`flex min-w-0 flex-1 flex-col items-center gap-1.5 whitespace-nowrap text-center text-[12px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)] rounded-xl py-1.5 ${
                 isActive
                   ? "text-[var(--harvest-green-ink)]"
                   : "text-[var(--text-muted)]"
               }`}
             >
               <span
-                className={`flex h-7 w-10 items-center justify-center rounded-[11px] transition-colors ${
+                className={`flex h-8 w-11 items-center justify-center rounded-[12px] transition-colors ${
                   isActive ? "bg-[var(--tint-green)]" : ""
                 }`}
               >
-                <Icon size={19} strokeWidth={2.2} />
+                <Icon size={21} strokeWidth={2.2} />
               </span>
               <span>{item.name}</span>
             </Link>

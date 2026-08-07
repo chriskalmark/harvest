@@ -6,7 +6,9 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Harvest",
     description:
       "Plan the week's Trader Joe's meals and shop the list in-store, even with no signal.",
-    start_url: "/menu",
+    // Ugeplanen er forsiden -- installerede PWA-ikoner skal lande der, ikke
+    // paa den gamle menu.
+    start_url: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

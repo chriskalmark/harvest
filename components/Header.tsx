@@ -9,9 +9,18 @@ import { formatWeekRangeDanish } from "@/lib/weekRange";
  * Underteksten viser den gamle menus uge. Paa ugeplanen ville det vaere en
  * anden uge end den skaermen selv staar paa — to forskellige datoer over
  * hinanden, hvor den ene er forkert. Dér staar der hvad appen laver i stedet.
+ *
+ * Opskriftskataloget er heller ikke bundet til en uge -- det er et fast
+ * bibliotek, ikke en menu der ventes paa. "Venter paa foerste menu" er den
+ * gamle models tomme tilstand: den hoerer til /menu og /shop, hvor en uge
+ * rent faktisk mangler. Paa katalogsiderne er den bare forkert, ogsaa efter
+ * den gamle uge er faerdig med at hente.
  */
 function headerSubtitle(pathname: string, weekRange?: string): string {
   if (pathname === "/") return "Aftensmad hele ugen";
+  if (pathname === "/opskrifter" || pathname.startsWith("/opskrift/")) {
+    return "Skagenfoods opskrifter";
+  }
   if (weekRange) return formatWeekRangeDanish(weekRange);
   return "Venter på første menu";
 }
