@@ -86,13 +86,19 @@ export default function BottomNav() {
             <Link
               key={item.name}
               href={href}
-              /* 9px og naesten ingen sporing, fordi der er fem faner nu.
-                 Paa en 390px-telefon er der 74px til hver, og "OPSKRIFTER"
-                 fyldte 78px ved 10px/0.06em — den brød til to linjer og
-                 skubbede raekken hoejere end de andre. Ved 9px/0.02em maaler
-                 det laengste ord 67px, og alle fem staar paa én linje. */
-              className={`flex min-w-0 flex-1 flex-col items-center gap-1 whitespace-nowrap text-center text-[9px] font-bold uppercase tracking-[0.02em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)] rounded-xl py-1 ${
-                isActive ? "text-harvest-green" : "text-[var(--text-muted)]"
+              /* Versaler var det dyre valg, ikke skriftstoerrelsen.
+                 "OPSKRIFTER" fyldte 78px ved 10px/0.06em og braekkede til to
+                 linjer paa de 74px hver fane har paa en 390px-telefon, saa
+                 raekken blev skruet ned til 9px for at undgaa det. 9px fed er
+                 for lille til at laese, og den aktive fane maalte samtidig
+                 3,34:1 mod --surface-1 i lyst tema.
+                 Uden versaler og sporing maaler "Opskrifter" 54px ved 11px --
+                 stoerre skrift OG mere luft end foer -- og --harvest-green-ink
+                 loefter den aktive fane til 7,58:1. */
+              className={`flex min-w-0 flex-1 flex-col items-center gap-1 whitespace-nowrap text-center text-[11px] font-semibold tracking-[0] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)] rounded-xl py-1 ${
+                isActive
+                  ? "text-[var(--harvest-green-ink)]"
+                  : "text-[var(--text-muted)]"
               }`}
             >
               <span

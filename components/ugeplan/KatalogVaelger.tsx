@@ -111,8 +111,13 @@ export default function KatalogVaelger({
 
   return (
     <div>
-      {/* Filtrene bliver staaende, mens retterne ruller under dem. */}
-      <div className="sticky top-0 z-10 -mx-5 bg-[var(--surface-1)] px-5 pb-3">
+      {/* Filtrene bliver staaende, mens retterne ruller under dem.
+          -mt-4/pt-4 er ikke pynt: rulleflasken i DagArk har pt-4, og
+          position:sticky haefter paa POLSTRINGSKASSEN. Med top-0 og uden det
+          her stod barren 16px nede, og retterne rullede synligt gennem
+          baandet over soegefeltet -- en stribe madfoto i begge temaer.
+          Barren daekker nu sin egen polstring. */}
+      <div className="sticky top-0 z-10 -mx-5 -mt-4 bg-[var(--surface-1)] px-5 pb-3 pt-4">
         <div className="relative">
           <Search
             size={16}

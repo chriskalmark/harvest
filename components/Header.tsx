@@ -60,7 +60,11 @@ export default function Header() {
           {/* Persistent app-chrome branding, not a page heading — each
               page supplies its own <h1> for its actual content, so this
               stays a <p> to keep exactly one h1 per page. */}
-          <p className="font-serif text-[1.55rem] font-bold leading-none text-harvest-green">
+          {/* --harvest-green maaler 2,27:1 mod --background i lyst tema, og
+              24,8px fed kraever 3:1. --harvest-green-ink er praecis den
+              variant der findes til tekst; den giver 7,58:1 lyst og 9,26:1
+              moerkt. Se scripts/testThemeContrast.ts. */}
+          <p className="font-serif text-[1.55rem] font-bold leading-none text-[var(--harvest-green-ink)]">
             Harvest
           </p>
           <p className="mt-1 truncate text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">
@@ -71,7 +75,8 @@ export default function Header() {
 
       <button
         onClick={toggleTheme}
-        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-1)] border border-[var(--border-subtle)] shadow-sm transition-all duration-200 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] before:absolute before:inset-[-2px] before:content-['']"
+        /* 44x44, ikke 40x40 -- knappen er et trykmaal som alle andre. */
+        className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-1)] border border-[var(--border-subtle)] shadow-sm transition-all duration-200 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] before:absolute before:inset-[-2px] before:content-['']"
         aria-label="Skift mellem lyst og mørkt tema"
       >
         {isDark === null ? null : isDark ? (
