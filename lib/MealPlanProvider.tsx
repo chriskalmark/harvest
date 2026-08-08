@@ -26,6 +26,21 @@ interface MealPlanState {
 
 const MealPlanContext = createContext<MealPlanState | undefined>(undefined);
 
+/**
+ * Hvilke skaerme der stadig koerer paa den gamle madplan (meal_plans).
+ *
+ * Ugeplanen og Indkoeb bruger week_plans og baerer deres uge i ?uge=.
+ * Kataloget er slet ikke bundet til en uge. De maa ikke faa et weekRange
+ * stemplet i adressen -- det peger paa en anden uge end den de viser.
+ */
+function usesLegacyWeekRange(pathname: string): boolean {
+  return (
+    pathname === "/menu" ||
+    pathname === "/explore" ||
+    pathname.startsWith("/meal/")
+  );
+}
+
 export function MealPlanProvider({ children }: { children: ReactNode }) {
   const [plan, setPlan] = useState<StoredMealPlan | null>(null);
   const [weeks, setWeeks] = useState<WeekOption[]>([]);
@@ -59,7 +74,18 @@ export function MealPlanProvider({ children }: { children: ReactNode }) {
         setPlan(payload.mealPlan);
         setWeeks(payload.weeks);
 
-        if (!weekRangeFromUrl && payload.mealPlan) {
+        // Kun den gamle models egne skaerme faar ugen stemplet i adressen.
+        //
+        // Foer stod den paa ALLE sider, ogsaa ugeplanen og indkoeb, som
+        // taeller uger paa en helt anden maade. Resultatet var en adresse
+        // som /shop?uge=2026-08-17&weekRange=August+3+-+August+9: to uger
+        // i samme link, hvor den ene var forkert. Deler man det link,
+        // deler man forvirringen med.
+        if (
+          !weekRangeFromUrl &&
+          payload.mealPlan &&
+          usesLegacyWeekRange(pathname)
+        ) {
           const nextUrl = buildHref(pathname, queryString, {
             weekRange: payload.mealPlan.weekRange,
           });
@@ -73,7 +99,7 @@ export function MealPlanProvider({ children }: { children: ReactNode }) {
         setError(
           caughtError instanceof Error
             ? caughtError.message
-            : "Unable to load the latest meal plan."
+            : "Unable to load the latest meal plan.",
         );
       } finally {
         if (isMounted) {
@@ -99,7 +125,7 @@ export function MealPlanProvider({ children }: { children: ReactNode }) {
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Unable to load the latest meal plan."
+          : "Unable to load the latest meal plan.",
       );
     }
   }, [weekRangeFromUrl]);
@@ -109,7 +135,7 @@ export function MealPlanProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       router.replace(buildHref(pathname, queryString, { weekRange }));
     },
-    [router, pathname, queryString]
+    [router, pathname, queryString],
   );
 
   const value = useMemo(
@@ -122,7 +148,7 @@ export function MealPlanProvider({ children }: { children: ReactNode }) {
       refresh,
       selectWeek,
     }),
-    [plan, weeks, selectedWeekRange, isLoading, error, refresh, selectWeek]
+    [plan, weeks, selectedWeekRange, isLoading, error, refresh, selectWeek],
   );
 
   return (
@@ -144,18 +170,18 @@ async function fetchWithRetry(
   url: string,
   options: RequestInit,
   retries = 3,
-  delay = 800
+  delay = 800,
 ): Promise<Response> {
   try {
     const response = await fetch(url, options);
     if (!response.ok && retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       return fetchWithRetry(url, options, retries - 1, delay * 1.8);
     }
     return response;
   } catch (error) {
     if (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       return fetchWithRetry(url, options, retries - 1, delay * 1.8);
     }
     throw error;
@@ -163,7 +189,7 @@ async function fetchWithRetry(
 }
 
 async function fetchMealPlan(
-  weekRange?: string | null
+  weekRange?: string | null,
 ): Promise<{ mealPlan: StoredMealPlan | null; weeks: WeekOption[] }> {
   const searchParams = new URLSearchParams();
 
@@ -172,10 +198,12 @@ async function fetchMealPlan(
   }
 
   const response = await fetchWithRetry(
-    searchParams.size ? `/api/mealplan?${searchParams.toString()}` : "/api/mealplan",
+    searchParams.size
+      ? `/api/mealplan?${searchParams.toString()}`
+      : "/api/mealplan",
     {
       cache: "no-store",
-    }
+    },
   );
 
   if (!response.ok) {
@@ -185,6 +213,6 @@ async function fetchMealPlan(
   const result = await response.json();
   return {
     mealPlan: result.data.mealPlan,
-    weeks: result.data.weeks
+    weeks: result.data.weeks,
   };
 }
