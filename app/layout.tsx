@@ -2,10 +2,8 @@ import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Gabarito, Schibsted_Grotesk } from "next/font/google";
-import Header from "@/components/Header";
-import BottomNav from "@/components/BottomNav";
+import AppRamme from "@/components/AppRamme";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import { MealPlanProvider } from "@/lib/MealPlanProvider";
 import "./globals.css";
 
 const schibsted = Schibsted_Grotesk({
@@ -84,13 +82,7 @@ export default function RootLayout({
       <body>
         <ServiceWorkerRegister />
         <Suspense fallback={null}>
-          <MealPlanProvider>
-            <div className="relative mx-auto min-h-screen max-w-md pb-[calc(170px+env(safe-area-inset-bottom))]">
-              <Header />
-              {children}
-              <BottomNav />
-            </div>
-          </MealPlanProvider>
+          <AppRamme>{children}</AppRamme>
         </Suspense>
       </body>
     </html>

@@ -192,13 +192,27 @@ function IndkøbHero({
         </button>
       </div>
 
-      <h1 className="mt-6 font-serif text-[2rem] font-extrabold leading-[1.05] tracking-[-0.025em]">
+      {/*
+        aria-live paa BEGGE linjer.
+        Krydser man en vare af, aendrer overskriften sig fra "26 varer at
+        hente" til "25 varer tilbage" -- men uden det her sagde
+        oplaesningen ingenting, saa man ikke kunne hoere om trykket virkede.
+        "polite" og ikke "assertive": det maa gerne vente til saetningen er
+        laest faerdig, det haster ikke.
+      */}
+      <h1
+        aria-live="polite"
+        className="mt-6 font-serif text-[2rem] font-extrabold leading-[1.05] tracking-[-0.025em]"
+      >
         {headline.line1}
         <br />
         {headline.line2}
       </h1>
 
-      <p className="mt-3 text-[0.9rem] font-medium text-[var(--field-ink-soft)]">
+      <p
+        aria-live="polite"
+        className="mt-3 text-[0.9rem] font-medium text-[var(--field-ink-soft)]"
+      >
         {liste
           ? indkøbSummary(liste.antalVarer, antalKlaret, liste.antalAftener)
           : weekRangeLabel(weekStart)}
