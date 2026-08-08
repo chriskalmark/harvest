@@ -1,0 +1,502 @@
+/**
+ * Zoneklassifikatoren, prøvet af mod virkeligheden.
+ *
+ * ALLE_NAVNE herunder er ikke opdigtet. Det er hvert eneste distinkte
+ * ingrediensnavn i Skagenfood-kataloget, hentet med:
+ *
+ *   SELECT DISTINCT lower(btrim(i->>'name'))
+ *   FROM skagenfood_recipes r, jsonb_array_elements(r.ingredients) i;
+ *
+ * Testen gør to ting. Den beviser at hvert navn får en zone, og den fastholder
+ * de tilfælde hvor et navn ligner én zone og hører til en anden. Hver linje i
+ * FÆLDER er en fejl der faktisk ville være sket med en naiv klassifikator.
+ */
+
+import assert from "node:assert/strict";
+import { erKøbevare, zoneForIngrediens } from "../lib/weekPlan/zoner";
+import { STORE_CATEGORY_ORDER, type StoreZone } from "../lib/constants";
+
+const ALLE_NAVNE = [
+  "agurk",
+  "ansjoser",
+  "asc laks med skind",
+  "aubergine",
+  "avokado",
+  "baba ganoush krydderi",
+  "babyspinat",
+  "babyspinat, skyllet",
+  "bacon",
+  "bacon i tern",
+  "bagekartofler",
+  "baguettes",
+  "basilikum",
+  "basmatiris",
+  "batavia salat",
+  "bbq sauce",
+  "bbq-krydderi / rub",
+  "bechamelsovs",
+  "belugalinser",
+  "bladselleri",
+  "blomkål",
+  "borlottibønner",
+  "bouillon (høns)",
+  "bredbladet persille",
+  "brioche burgerboller",
+  "broccoli",
+  "brun mark-champignon",
+  "bulgur",
+  "butternut squash",
+  "cajun krydderi",
+  "champignons",
+  "cheddar ost",
+  "cherry- eller blommetomater",
+  "chicken korma",
+  "chicken tikka masala",
+  "chili con carne krydderi",
+  "chiliflager",
+  "chimichurri krydderi",
+  "citron",
+  "coleslaw krydderi",
+  "couscous",
+  "creme fraiche 18%",
+  "creme fraiche 38%",
+  "creme frisk 9%",
+  "dijon sennep",
+  "dild",
+  "dildpickles syltekrydderier",
+  "dukkah",
+  "dunsen/dilddellen",
+  "edamame (i bælg)",
+  "fennikel",
+  "fennikel med top",
+  "fennikelfrø",
+  "filet á la mørbrad",
+  "flydende honning",
+  "flåede og hakkede tomater",
+  "fløde 38% (piskefløde)",
+  "fløde 9%",
+  "flødeost naturel",
+  "forårsløg",
+  "frisk mozzarella",
+  "frisk oregano",
+  "frisk ricotta",
+  "friske abrikoser",
+  "gnocchi",
+  "grisekød i strimler",
+  "græsk yoghurt, 10%",
+  "græskarkerner",
+  "grøn courgette",
+  "grøn peberfrugt",
+  "grøn zucchini",
+  "grønkål",
+  "grønne bønner",
+  "grønne linser",
+  "grøntsagsbouillon",
+  "gulerødder",
+  "gulerødder, revet",
+  "gulerødder, skrællede",
+  "gurkemejerod",
+  "gyroskrydderi",
+  "hakket grisekød",
+  "hakket kyllingekød",
+  "hakket oksekød",
+  "harissakrydderi",
+  "harissapaste",
+  "hasselnøddekerner",
+  "hasselnødder",
+  "hel kanel",
+  "helt hvidløg",
+  "himmelbjergost",
+  "hjertesalat",
+  "hoisinsauce",
+  "honning",
+  "hopballe mølle kylling, bryst med skind",
+  "hvide bønner",
+  "hvidkål",
+  "hvidløg",
+  "hvillingfilet med skind",
+  "hytteost",
+  "hytteost, 4%",
+  "høns i asparges",
+  "ingefær",
+  "italiensk kødbollekrydderi",
+  "jasminris",
+  "kapers",
+  "kardemomme",
+  "karse",
+  "kartofler",
+  "kartofler, forkogte",
+  "ketchup",
+  "kikærtemel",
+  "kikærter",
+  "kikærter i vand",
+  "kimchi krydderiblanding",
+  "kinesisk five spice",
+  "knoldselleri",
+  "kofta kebab krydderi",
+  "kogende vand",
+  "kogte, grønne linser",
+  "kokosmel",
+  "kokosmælk",
+  "koreansk gochugaru chili",
+  "koriander",
+  "korianderfrø",
+  "kota-ost",
+  "kotelet af gris",
+  "kruspersille",
+  "krystal karl",
+  "kullerfilet med skind",
+  "kullerfilet uden skind",
+  "kulmulefilet med skind",
+  "kulmulefilet uden skind",
+  "kylling i strimler",
+  "kyllingebryst",
+  "kyllingebryst uden skind",
+  "kyllingelår",
+  "kødboller i tomatsauce",
+  "laks - skagen salmon, asc",
+  "laksefilet med skind",
+  "langefilet uden skind",
+  "lasagne",
+  "lime",
+  "lyssejfilet uden skind",
+  "løg",
+  "løvstikke",
+  "madras karry",
+  "majs",
+  "majs fra dåse",
+  "majskolber",
+  "makrelfilet med skind",
+  "marokkansk tagine",
+  "marokkanske kødboller",
+  "mayonnaise",
+  "melede kartofler",
+  "mesclun, mix salater",
+  "mexicansk krydderiblanding (stærk)",
+  "millionbøf",
+  "mozzarella i tern (fior di latte)",
+  "mujaddara krydderi",
+  "mukimame (bælgede edamamebønner)",
+  "murgh makhani krydderi",
+  "mynte",
+  "mørbradgryde",
+  "mørksejfilet uden skind",
+  "naanbrød",
+  "nakkekoteletter",
+  "nam pla (fiskesauce)",
+  "nektariner",
+  "nice meatball spice",
+  "nudler",
+  "nye kartofler",
+  "nye løg",
+  "oksekød i strimler",
+  "olie til stegning",
+  "oliven, uden sten",
+  "olivenolie, evoo",
+  "onion bhaji krydderimix",
+  "oregano",
+  "orzo pasta",
+  "pak choy",
+  "parmigiano reggiano (parmesan)",
+  "pasta af kikærter",
+  "pastinak",
+  "peanuts",
+  "peberrod",
+  "pecorino romano",
+  "penne pasta",
+  "penne, fuldkorn",
+  "pepperoni",
+  "perlebyg",
+  "perlespelt",
+  "persille",
+  "pinjekerner",
+  "piskefløde",
+  "pitabrød",
+  "pizzadej - på surdej",
+  "pizzadej - på surdej (øko)",
+  "pizzasauce",
+  "polentamel",
+  "pommes frites",
+  "porre",
+  "portobellosvampe",
+  "primitivo surdejs bolle med fuldkorn",
+  "purløg",
+  "quinoa",
+  "radiser",
+  "ragù bolognese",
+  "rasp",
+  "rejer fra launis",
+  "rejer, pillede",
+  "remoulade",
+  "revet cheddar",
+  "rigatoni, 50% fuldkorn",
+  "ristet sesamolie",
+  "romainesalat",
+  "rosiner",
+  "rosmarin",
+  "rucola",
+  "rucola, skyllet",
+  "rugbrød",
+  "rød chili",
+  "rød peberfrugt",
+  "rødbeder",
+  "rødløg",
+  "rødspættefilet",
+  "rødt spidskål",
+  "røget makrelfilet",
+  "røget paprika",
+  "salat",
+  "salathoved",
+  "salathoved, fx batavia",
+  "salatløg",
+  "salatost i tern",
+  "salt",
+  "salvie",
+  "sandwich brød",
+  "sauce bearnaise",
+  "sedani, 50% fuldkorn",
+  "sennep",
+  "sesamfrø",
+  "shivid polo",
+  "skaftkotelet",
+  "skagenfood fiskefrikadeller",
+  "skagenfood frikadeller",
+  "skagenfood ketchup",
+  "skagenfood tomatsugo",
+  "skalotteløg",
+  "skinkegryde",
+  "skipjack tun i økologisk olivenolie",
+  "skysovs",
+  "små kartofler",
+  "smør",
+  "snackpeber",
+  "solsikkekerner",
+  "sort peber",
+  "sorte  bønner",
+  "sorte oliven, uden sten",
+  "southern fried chicken spices",
+  "spaghetti",
+  "spaghetti, 50% fuldkorn",
+  "spanske albondigas kødboller",
+  "spidskål",
+  "spinat",
+  "spisekartofler",
+  "squash",
+  "sriracha sauce",
+  "stegt kartoffel krydderi",
+  "stødt chili",
+  "stødt muskatnød",
+  "surdejsboller",
+  "søde kartofler",
+  "sødmælk",
+  "tabbouleh krydderi",
+  "tagliatelle pasta",
+  "tahin",
+  "tamari soya sauce",
+  "tarteletfyld med høns i asparges",
+  "tarteletter",
+  "teriyakisauce",
+  "texan pork rub",
+  "thai rød karry med gris",
+  "tikka curry paste",
+  "timian",
+  "tomater",
+  "tomater på stilk",
+  "tomatpuré",
+  "tomatrelish",
+  "tomatsugo",
+  "torskefilet uden skind",
+  "tortilla hvede wraps - bløde",
+  "trofie",
+  "tørrede abrikoser",
+  "tørret oregano",
+  "tørret timian",
+  "ungarske kødboller i cremet paprikasovs",
+  "vand",
+  "vandmelon",
+  "yalla-masala",
+  "yoghurt 3,5 %",
+  "yoghurt naturel",
+  "yoghurt naturel 0,5%",
+  "za'atar",
+  "zittauerløg",
+  "æble",
+  "æg",
+  "ærter i bælg",
+  "ærter, frost",
+];
+
+/**
+ * Navne der ligner én zone og hører til en anden. Hver af dem ville være
+ * klassificeret forkert af en naiv delstrengs-søgning.
+ */
+const FÆLDER: [string, StoreZone][] = [
+  // Ligner grønt, er kolonial
+  ["grøntsagsbouillon", "Kolonial"],
+  ["græskarkerner", "Kolonial"],
+  ["stødt chili", "Kolonial"],
+  ["stegt kartoffel krydderi", "Kolonial"],
+  ["tørrede abrikoser", "Kolonial"],
+  ["tørret timian", "Kolonial"],
+  ["tomatpuré", "Kolonial"],
+  ["flåede og hakkede tomater", "Kolonial"],
+  ["majs fra dåse", "Kolonial"],
+  ["kikærter i vand", "Kolonial"],
+  ["sorte  bønner", "Kolonial"],
+  ["hvide bønner", "Kolonial"],
+  ["borlottibønner", "Kolonial"],
+  ["dildpickles syltekrydderier", "Kolonial"],
+  ["koreansk gochugaru chili", "Kolonial"],
+  ["peberrod", "Kolonial"],
+  ["røget paprika", "Kolonial"],
+
+  // Ligner mejeri, er kolonial
+  ["kokosmælk", "Kolonial"],
+  ["kokosmel", "Kolonial"],
+
+  // Ligner ost, står ved mælken
+  ["hytteost", "Køl"],
+  ["hytteost, 4%", "Køl"],
+  ["flødeost naturel", "Køl"],
+  ["creme fraiche 18%", "Køl"],
+  ["creme frisk 9%", "Køl"],
+
+  // Ligner kød, er krydderi eller konserves
+  ["italiensk kødbollekrydderi", "Kolonial"],
+  ["thai rød karry med gris", "Kolonial"],
+  ["texan pork rub", "Kolonial"],
+  ["southern fried chicken spices", "Kolonial"],
+  ["nice meatball spice", "Kolonial"],
+  ["bouillon (høns)", "Kolonial"],
+  ["tarteletfyld med høns i asparges", "Kolonial"],
+
+  // Ligner kolonial, er fisk
+  ["nam pla (fiskesauce)", "Kolonial"],
+  ["skagenfood fiskefrikadeller", "Fisk"],
+  ["asc laks med skind", "Fisk"],
+  ["laks - skagen salmon, asc", "Fisk"],
+
+  // Ord der indeholder andre ord
+  ["friske abrikoser", "Frugt & grønt"],
+  ["basmatiris", "Kolonial"],
+  ["jasminris", "Kolonial"],
+  ["radiser", "Frugt & grønt"],
+  ["gurkemejerod", "Frugt & grønt"],
+  ["salatløg", "Frugt & grønt"],
+  ["salatost i tern", "Ost & pålæg"],
+  ["kota-ost", "Ost & pålæg"],
+  ["bbq-krydderi / rub", "Kolonial"],
+  ["surdejsboller", "Brød"],
+  ["primitivo surdejs bolle med fuldkorn", "Brød"],
+  ["pizzadej - på surdej", "Køl"],
+  ["rød peberfrugt", "Frugt & grønt"],
+  ["sort peber", "Kolonial"],
+  ["helt hvidløg", "Frugt & grønt"],
+  ["hel kanel", "Kolonial"],
+  ["ærter i bælg", "Frugt & grønt"],
+  ["ærter, frost", "Frost"],
+  ["grønne bønner", "Frugt & grønt"],
+  ["olie til stegning", "Kolonial"],
+  ["olivenolie, evoo", "Kolonial"],
+  ["sorte oliven, uden sten", "Kolonial"],
+];
+
+/** Navne hvor zonen ikke er til diskussion. Grundstammen. */
+const KLARE: [string, StoreZone][] = [
+  ["agurk", "Frugt & grønt"],
+  ["gulerødder, skrællede", "Frugt & grønt"],
+  ["rødløg", "Frugt & grønt"],
+  ["små kartofler", "Frugt & grønt"],
+  ["rugbrød", "Brød"],
+  ["naanbrød", "Brød"],
+  ["tortilla hvede wraps - bløde", "Brød"],
+  ["sødmælk", "Køl"],
+  ["æg", "Køl"],
+  ["smør", "Køl"],
+  ["piskefløde", "Køl"],
+  ["græsk yoghurt, 10%", "Køl"],
+  ["frisk mozzarella", "Ost & pålæg"],
+  ["parmigiano reggiano (parmesan)", "Ost & pålæg"],
+  ["revet cheddar", "Ost & pålæg"],
+  ["pepperoni", "Ost & pålæg"],
+  ["nakkekoteletter", "Kød & fjerkræ"],
+  ["hakket oksekød", "Kød & fjerkræ"],
+  ["kyllingebryst uden skind", "Kød & fjerkræ"],
+  ["bacon i tern", "Kød & fjerkræ"],
+  ["skagenfood frikadeller", "Kød & fjerkræ"],
+  ["torskefilet uden skind", "Fisk"],
+  ["rejer, pillede", "Fisk"],
+  ["røget makrelfilet", "Fisk"],
+  ["mørksejfilet uden skind", "Fisk"],
+  ["pommes frites", "Frost"],
+  ["spaghetti", "Kolonial"],
+  ["couscous", "Kolonial"],
+  ["kikærter", "Kolonial"],
+  ["mayonnaise", "Kolonial"],
+  ["salt", "Kolonial"],
+];
+
+let fejl = 0;
+
+function tjek(navn: string, forventet: StoreZone, hvor: string) {
+  const faktisk = zoneForIngrediens(navn);
+  if (faktisk !== forventet) {
+    console.error(`  ${hvor}: "${navn}" → ${faktisk}, forventede ${forventet}`);
+    fejl += 1;
+  }
+}
+
+// 1. Hvert navn får en gyldig zone. Ingen kaster, ingen falder udenfor.
+for (const navn of ALLE_NAVNE) {
+  const zone = zoneForIngrediens(navn);
+  assert.ok(
+    (STORE_CATEGORY_ORDER as readonly string[]).includes(zone),
+    `"${navn}" fik zonen "${zone}", som ikke findes i butikken`,
+  );
+}
+
+// 2. Fælderne.
+for (const [navn, zone] of FÆLDER) tjek(navn, zone, "fælde");
+
+// 3. Grundstammen.
+for (const [navn, zone] of KLARE) tjek(navn, zone, "klar");
+
+// 4. Vand er ikke en vare.
+assert.equal(erKøbevare("vand"), false, "vand skal ikke på indkøbslisten");
+assert.equal(erKøbevare("kogende vand"), false, "kogende vand er ikke en vare");
+assert.equal(erKøbevare("vandmelon"), true, "vandmelon ER en vare");
+assert.equal(erKøbevare("  "), false, "tomt navn er ikke en vare");
+
+// 5. Danske tegn overlever. Den fejl er sket før i dette repo.
+assert.equal(
+  zoneForIngrediens("Rødløg"),
+  "Frugt & grønt",
+  "stort begyndelsesbogstav",
+);
+assert.equal(zoneForIngrediens("ÆBLE"), "Frugt & grønt", "kun store bogstaver");
+assert.equal(
+  zoneForIngrediens("  hvidløg  "),
+  "Frugt & grønt",
+  "mellemrum omkring",
+);
+
+// 6. Ukendte navne falder til kolonial i stedet for at forsvinde.
+assert.equal(zoneForIngrediens("blorkelsnask 3000"), "Kolonial");
+
+if (fejl > 0) {
+  console.error(`\n${fejl} navne havnede i den forkerte zone.`);
+  process.exit(1);
+}
+
+const fordeling = new Map<string, number>();
+for (const navn of ALLE_NAVNE) {
+  const zone = zoneForIngrediens(navn);
+  fordeling.set(zone, (fordeling.get(zone) ?? 0) + 1);
+}
+
+console.log(`Zoner: ${ALLE_NAVNE.length} rigtige navne, alle klassificeret.`);
+for (const zone of STORE_CATEGORY_ORDER) {
+  const antal = fordeling.get(zone) ?? 0;
+  if (antal > 0) console.log(`  ${String(antal).padStart(4)}  ${zone}`);
+}
+console.log(`  ${FÆLDER.length} fælder og ${KLARE.length} klare navne holdt.`);

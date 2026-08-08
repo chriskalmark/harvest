@@ -22,14 +22,17 @@ const navItems = [
 ];
 
 /**
- * Ugevælgeren hører til madplanens skærme.
+ * Ugevælgeren hører til den GAMLE madplans skærme.
  *
- * Opskriftskataloget er ikke bundet til en uge, så dér ville den være en knap
- * uden virkning. Ugeplanen har sin egen ugeskifter i den grønne flade, og to
- * ugevælgere på samme skærm — der peger på hver sin uge — ville være løgn.
+ * Den vælger en uge fra meal_plans. Både ugeplanen og indkøb har nu deres
+ * egen ugeskifter i den grønne flade, som peger på week_plans -- og to
+ * ugevælgere på samme skærm, der peger på hver sin uge, ville være løgn.
+ * Kataloget er det samme uanset uge, så dér ville den være en knap uden
+ * virkning. Tilbage er /menu, som stadig kører på den gamle model.
  */
 function showsWeekSelector(pathname: string): boolean {
   if (pathname === "/" || pathname === "/explore") return false;
+  if (pathname === "/shop") return false;
   if (pathname === "/opskrifter" || pathname.startsWith("/opskrift/")) {
     return false;
   }
@@ -42,9 +45,7 @@ export default function BottomNav() {
   const { selectedWeekRange, selectWeek, weeks } = useMealPlan();
 
   const showWeekSelector = showsWeekSelector(pathname);
-  const queryString = searchParams.toString();
-  const weekRangeFromUrl = searchParams.get("weekRange");
-  const effectiveWeekRange = selectedWeekRange ?? weekRangeFromUrl;
+  const ugeFraUrl = searchParams.get("uge") ?? undefined;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border-subtle)] bg-[var(--surface-1)] pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_25px_rgba(0,0,0,0.04)]">
@@ -65,16 +66,17 @@ export default function BottomNav() {
             pathname === item.href ||
             (item.href === "/opskrifter" && pathname.startsWith("/opskrift/"));
           const Icon = item.icon;
-          // Kun Indkoeb baerer ugen med rundt i adressen -- den gamle
-          // indkoebsliste er stadig bundet til en uge. Ugeplanen har sin egen
-          // ?uge=, og kataloget er det samme uanset uge, saa begge dele ville
-          // blive forvirret af et weekRange fra den gamle menu.
+          // Ugeplanen og Indkoeb er to sider af den samme uge, saa ?uge=
+          // baeres med imellem dem: staar man i uge 34 og trykker Indkoeb,
+          // skal man se uge 34's varer -- ikke denne uges.
+          //
+          // weekRange fra den gamle menu maa IKKE med. De to modeller taeller
+          // uger paa hver sin maade, og et weekRange paa /shop pegede foer paa
+          // en helt anden uge end den ?uge= sagde.
           const href =
-            item.href === "/" || item.href === "/opskrifter"
+            item.href === "/opskrifter"
               ? item.href
-              : buildHref(item.href, queryString, {
-                  weekRange: effectiveWeekRange,
-                });
+              : buildHref(item.href, "", { uge: ugeFraUrl });
 
           return (
             <Link
