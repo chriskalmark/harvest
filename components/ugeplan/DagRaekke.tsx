@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronRight, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Loader2, Pencil } from "lucide-react";
 import DagFoto from "@/components/ugeplan/DagFoto";
 import {
   daySubtitle,
@@ -18,9 +19,19 @@ import type { WeekPlanDay } from "@/lib/weekPlan/types";
  * Resten er taettere raekker. Stoerrelsen fortaeller hvad der er vigtigst --
  * derfor er det en varieret liste og ikke syv ens kort i et gitter.
  *
- * Hele raekken er knappen. Man rammer den med tommelfingeren uden at sigte,
- * og de tomme dage er lige saa trykbare som de fyldte -- det er jo dem man
- * skal ind i.
+ * Raekken har to former, og hvilken der bruges afgoeres af om aftenen har en
+ * opskrift man kan slaa op:
+ *
+ *   Katalogret -- raekken er et LINK til opskriften. Naar retten er valgt, er
+ *   det den man vil ind i: "hvad laver vi i aften, vis mig fremgangsmaaden".
+ *   At skifte ret er sjaeldnere og faar derfor sin egen blyantsknap til hoejre.
+ *
+ *   Tom aften eller egen ret -- hele raekken er stadig knappen der aabner
+ *   dagens ark. Der er ingen opskrift at gaa ind i, saa der er intet at linke
+ *   til, og saa skal trykket foere hen hvor man kan vaelge en.
+ *
+ * Et <a> maa ikke ligge inde i et <button>, saa de to former deler indholdet
+ * gennem DagIndhold i stedet for at pakke det ene ind i det andet.
  */
 export default function DagRaekke({
   day,
@@ -34,19 +45,72 @@ export default function DagRaekke({
   onOpen: () => void;
 }) {
   const lead = variant === "lead";
+  const padding = lead ? "py-5" : "py-4";
+  const rowClass = `flex w-full items-center gap-4 border-b border-[var(--border-subtle)] text-left last:border-b-0 ${padding}`;
+  const focusClass =
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-1)]";
+
+  const recipeId =
+    day.slotKind === "catalog" ? (day.recipe?.recipeId ?? null) : null;
+  const dayLabel = `${day.dayName} ${formatDayDate(day.date)}`;
+
+  if (recipeId === null) {
+    return (
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`${dayLabel} — ${dayTitle(day)}`}
+        className={`${rowClass} ${focusClass} transition active:scale-[0.995]`}
+      >
+        <DagIndhold day={day} lead={lead} />
+        <span className="ml-auto flex h-11 w-8 shrink-0 items-center justify-center text-[var(--text-muted)]">
+          {isSaving ? (
+            <Loader2 size={18} className="animate-spin text-harvest-green" />
+          ) : (
+            <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
+          )}
+        </span>
+      </button>
+    );
+  }
+
+  return (
+    <div className={rowClass}>
+      <Link
+        href={`/opskrift/${recipeId}`}
+        aria-label={`Se opskriften ${dayTitle(day)} — ${dayLabel}`}
+        className={`flex min-w-0 flex-1 items-center gap-4 ${focusClass} rounded-2xl transition active:scale-[0.995]`}
+      >
+        <DagIndhold day={day} lead={lead} />
+      </Link>
+
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`Skift ret ${day.dayName.toLowerCase()} ${formatDayDate(day.date)}`}
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--tint-stone)] text-[var(--harvest-green-ink)] ${focusClass} transition active:scale-90`}
+      >
+        {isSaving ? (
+          <Loader2 size={17} className="animate-spin text-harvest-green" />
+        ) : (
+          <Pencil size={16} strokeWidth={2.3} aria-hidden="true" />
+        )}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Foto, ugedag, ret og underlinje. Præcis det samme uanset om raekken er et
+ * link eller en knap -- ellers ville de to former langsomt drive fra hinanden.
+ */
+function DagIndhold({ day, lead }: { day: WeekPlanDay; lead: boolean }) {
   const empty = day.slotKind === "empty";
   const today = isToday(day.date);
   const past = isPast(day.date);
 
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-label={`${day.dayName} ${formatDayDate(day.date)} — ${dayTitle(day)}`}
-      className={`flex w-full items-center gap-4 border-b border-[var(--border-subtle)] text-left transition last:border-b-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-1)] active:scale-[0.995] ${
-        lead ? "py-5" : "py-4"
-      }`}
-    >
+    <>
       <DagFoto
         slotKind={day.slotKind}
         imageUrl={day.recipe?.imageUrl ?? null}
@@ -92,14 +156,6 @@ export default function DagRaekke({
           {daySubtitle(day)}
         </span>
       </span>
-
-      <span className="ml-auto flex h-11 w-8 shrink-0 items-center justify-center text-[var(--text-muted)]">
-        {isSaving ? (
-          <Loader2 size={18} className="animate-spin text-harvest-green" />
-        ) : (
-          <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
-        )}
-      </span>
-    </button>
+    </>
   );
 }

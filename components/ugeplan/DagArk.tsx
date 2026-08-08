@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Minus, Plus, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Loader2, Minus, Plus, Trash2, X } from "lucide-react";
 import DagFoto from "@/components/ugeplan/DagFoto";
 import KatalogVaelger from "@/components/ugeplan/KatalogVaelger";
 import { useWeekPlanCatalog } from "@/lib/hooks/useWeekPlanCatalog";
@@ -149,23 +150,7 @@ export default function DagArk({
             </p>
           ) : (
             <div className="mb-5">
-              <div className="flex items-center gap-4">
-                <DagFoto
-                  slotKind={day.slotKind}
-                  imageUrl={day.recipe?.imageUrl ?? null}
-                  title={day.title}
-                  size={64}
-                />
-                <div className="min-w-0">
-                  <p className="break-words font-serif text-[1.15rem] font-bold leading-[1.2] tracking-[-0.015em]">
-                    {day.title}
-                  </p>
-                  <p className="mt-1 text-[0.85rem] text-[var(--text-muted)]">
-                    {formatMinutes(day.recipe?.totalMinutes ?? null) ??
-                      "Jeres egen ret"}
-                  </p>
-                </div>
-              </div>
+              <ValgtRet day={day} />
 
               <button
                 type="button"
@@ -254,6 +239,65 @@ export default function DagArk({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Retten der ligger paa dagen.
+ *
+ * Er det en katalogopskrift, er hele blokken et link ind til den -- samme
+ * loefte som paa ugeplanens raekke: trykker man paa navnet, faar man
+ * opskriften. En egen ret er bare et navn, saa der er intet at gaa ind i.
+ */
+function ValgtRet({ day }: { day: WeekPlanDay }) {
+  const recipeId =
+    day.slotKind === "catalog" ? (day.recipe?.recipeId ?? null) : null;
+
+  const foto = (
+    <DagFoto
+      slotKind={day.slotKind}
+      imageUrl={day.recipe?.imageUrl ?? null}
+      title={day.title}
+      size={64}
+    />
+  );
+
+  if (recipeId === null) {
+    return (
+      <div className="flex items-center gap-4">
+        {foto}
+        <div className="min-w-0">
+          <p className="break-words font-serif text-[1.15rem] font-bold leading-[1.2] tracking-[-0.015em]">
+            {day.title}
+          </p>
+          <p className="mt-1 text-[0.85rem] text-[var(--text-muted)]">
+            Jeres egen ret
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={`/opskrift/${recipeId}`}
+      aria-label={`Se opskriften ${day.title}`}
+      className="flex items-center gap-4 rounded-2xl transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-1)] active:scale-[0.99]"
+    >
+      {foto}
+      <div className="min-w-0">
+        <p className="break-words font-serif text-[1.15rem] font-bold leading-[1.2] tracking-[-0.015em]">
+          {day.title}
+        </p>
+        <span className="mt-1 flex items-center gap-1 text-[0.85rem] font-semibold text-[var(--harvest-green-ink)]">
+          Se opskriften
+          <ChevronRight size={14} strokeWidth={2.4} aria-hidden="true" />
+          <span className="font-normal text-[var(--text-muted)]">
+            {formatMinutes(day.recipe?.totalMinutes ?? null)}
+          </span>
+        </span>
+      </div>
+    </Link>
   );
 }
 
