@@ -84,16 +84,21 @@ export default function DagRaekke({
         <DagIndhold day={day} lead={lead} />
       </Link>
 
+      {/*
+        Samme fodaftryk som pilen paa de tomme aftener -- 44 hoej, 32 bred.
+        En rund knap paa 44x44 tog 28px fra titlen, og paa den store raekke
+        var det forskellen paa fire og fem linjer i et langt retnavn.
+      */}
       <button
         type="button"
         onClick={onOpen}
         aria-label={`Skift ret ${day.dayName.toLowerCase()} ${formatDayDate(day.date)}`}
-        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--tint-stone)] text-[var(--harvest-green-ink)] ${focusClass} transition active:scale-90`}
+        className={`flex h-11 w-8 shrink-0 items-center justify-center text-[var(--harvest-green-ink)] ${focusClass} rounded-lg transition active:scale-90`}
       >
         {isSaving ? (
-          <Loader2 size={17} className="animate-spin text-harvest-green" />
+          <Loader2 size={18} className="animate-spin text-harvest-green" />
         ) : (
-          <Pencil size={16} strokeWidth={2.3} aria-hidden="true" />
+          <Pencil size={17} strokeWidth={2.3} aria-hidden="true" />
         )}
       </button>
     </div>
