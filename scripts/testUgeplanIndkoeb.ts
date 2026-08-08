@@ -348,6 +348,28 @@ function find(liste: ReturnType<typeof byggIndkøbsliste>, navn: string) {
   );
 }
 
+// --- 17b. Samme ting står ikke både på sedlen og i skabet ---------------
+// Skagenfood skriver olivenolie som ingrediens med mængde i én opskrift og
+// under "du skal selv have" i en anden. To linjer får den ene glemt.
+{
+  const liste = byggIndkøbsliste([
+    ret(1, "A", [["olivenolie, EVOO", 1, "spsk"]], 2, ["Salt & peber"]),
+    ret(2, "B", [["ris", 75, "g"]], 2, ["Olivenolie, EVOO", "Salt & peber"]),
+    ...[3, 4, 5, 6, 7].map(tom),
+  ]);
+
+  assert.equal(
+    find(liste, "olivenolie, EVOO")?.mængde,
+    "2 spsk",
+    "olien har en mængde og hører på sedlen",
+  );
+  assert.deepEqual(
+    liste.skabet.map((v) => v.navn),
+    ["Salt & peber"],
+    "olien må ikke også stå i skabet",
+  );
+}
+
 // --- 18. Overskriften siger sandheden om ugen ---------------------------
 {
   assert.deepEqual(indkøbHeadline(0, 0, 0), {
@@ -392,4 +414,4 @@ function find(liste: ReturnType<typeof byggIndkøbsliste>, navn: string) {
   assert.equal(indkøbSummary(23, 5, 4), "5 af 23 varer · 4 aftener");
 }
 
-console.log("Indkøbsliste: 19 prøver holdt.");
+console.log("Indkøbsliste: 20 prøver holdt.");

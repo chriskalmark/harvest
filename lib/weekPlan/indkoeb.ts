@@ -264,7 +264,20 @@ export function byggIndkøbsliste(
   }
 
   const afsnit = byggAfsnit(samlet, afkrydsede);
-  const skabet = tilVarer(Array.from(skabsting.values()), afkrydsede);
+
+  // Skagenfood skriver nogle ting begge steder: olivenolie står som
+  // ingrediens MED mængde i én opskrift og under "du skal selv have" i en
+  // anden. Står den på indkøbssedlen, skal den ikke også stå i skabet --
+  // to linjer om det samme får én af dem til at blive glemt.
+  const påSedlen = new Set(
+    Array.from(samlet.values()).map((vare) => nøgleNavn(vare.visningsnavn)),
+  );
+  const skabet = tilVarer(
+    Array.from(skabsting.values()).filter(
+      (ting) => !påSedlen.has(nøgleNavn(ting.visningsnavn)),
+    ),
+    afkrydsede,
+  );
 
   const alleVarer = afsnit.flatMap((a) => a.varer);
   return {
