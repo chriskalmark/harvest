@@ -13,7 +13,17 @@ import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
  * Node-rute. Middleware rører aldrig kodeordet, kun sessionens signatur.
  */
 
-/** Aftrykkets form: scrypt$<N>$<salt-hex>$<aftryk-hex>. */
+/**
+ * Aftrykkets form: scrypt.<N>.<salt-hex>.<aftryk-hex>
+ *
+ * Punktum og IKKE dollartegn, som scrypt-aftryk ellers plejer at bruge.
+ * Aftrykket skal igennem en docker-compose-fil, hvor $ betyder "variabel":
+ * "scrypt$16384$..." ville blive laest som variablen $16384, og aftrykket
+ * ville komme frem i den anden ende med huller i. Resultatet ville vaere
+ * en kode der aldrig passede, uden at nogen kunne se hvorfor.
+ *
+ * Hex indeholder aldrig punktum, saa formen er entydig.
+ */
 const ALGORITME = "scrypt";
 const N = 16384;
 const NØGLELÆNGDE = 64;
@@ -38,7 +48,7 @@ function scryptAsync(
 export async function lavAftryk(kodeord: string): Promise<string> {
   const salt = randomBytes(16);
   const aftryk = await scryptAsync(kodeord, salt, NØGLELÆNGDE);
-  return `${ALGORITME}$${N}$${salt.toString("hex")}$${aftryk.toString("hex")}`;
+  return [ALGORITME, N, salt.toString("hex"), aftryk.toString("hex")].join(".");
 }
 
 /**
@@ -53,7 +63,7 @@ export async function passerKodeord(
 ): Promise<boolean> {
   if (!kodeord || !gemtAftryk) return false;
 
-  const dele = gemtAftryk.split("$");
+  const dele = gemtAftryk.split(".");
   if (dele.length !== 4 || dele[0] !== ALGORITME) return false;
 
   const kostpris = Number(dele[1]);
@@ -85,5 +95,5 @@ export async function passerKodeord(
 
 export function aftrykFindes(): boolean {
   const raw = process.env.HOUSEHOLD_PASSWORD_HASH;
-  return typeof raw === "string" && raw.split("$").length === 4;
+  return typeof raw === "string" && raw.split(".").length === 4;
 }

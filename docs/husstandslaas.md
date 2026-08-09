@@ -23,7 +23,7 @@ intet om hvem du er, for det ved appen ikke.
 ## To miljøvariabler, begge påkrævede
 
 ```
-HOUSEHOLD_PASSWORD_HASH=scrypt$16384$<salt>$<aftryk>
+HOUSEHOLD_PASSWORD_HASH=scrypt.16384.<salt>.<aftryk>
 SESSION_SECRET=<64 hex-tegn>
 ```
 

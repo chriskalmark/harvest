@@ -31,7 +31,11 @@ async function main() {
     !aftryk.includes("stormosegaard"),
     "Aftrykket må aldrig indeholde selve koden",
   );
-  assert.equal(aftryk.split("$").length, 4, "scrypt$N$salt$aftryk");
+  assert.equal(aftryk.split(".").length, 4, "scrypt.N.salt.aftryk");
+  assert.ok(
+    !aftryk.includes("$"),
+    "Aftrykket maa ikke indeholde $ -- docker-compose ville laese det som en variabel",
+  );
 
   assert.equal(
     await passerKodeord("stormosegaard 2026", aftryk),
@@ -74,12 +78,12 @@ async function main() {
     "Ulæseligt aftryk må ikke lukke alle ind",
   );
   assert.equal(
-    await passerKodeord("hvad som helst", "scrypt$16384$zz$zz"),
+    await passerKodeord("hvad som helst", "scrypt.16384.zz.zz"),
     false,
     "Ugyldig hex må ikke lukke alle ind",
   );
   assert.equal(
-    await passerKodeord("hvad som helst", "md5$1$aa$bb"),
+    await passerKodeord("hvad som helst", "md5.1.aa.bb"),
     false,
     "En anden algoritme må ikke accepteres",
   );
@@ -177,7 +181,7 @@ async function main() {
   );
 
   medHemmelighed(undefined);
-  console.log("Husstandslås: 30 prøver holdt.");
+  console.log("Husstandslås: 31 prøver holdt.");
 }
 
 main().catch((fejl) => {
