@@ -12,14 +12,24 @@ import type { Indkøbsliste } from "@/lib/weekPlan/indkoeb";
 /**
  * Tag listen med et andet sted hen.
  *
- * Udklipsholderen og ikke et hentet dokument. Grunden er praktisk: appen
- * ligger bag Cloudflare Access, så alt der skulle HENTE listen udefra --
- * en Genvej, en kalenderfil, et abonnement -- ville ramme Access' login og
- * fejle. Kopiering sker i browseren, hvor man allerede er lukket ind.
+ * DELEMENUEN er hovedvejen, ikke udklipsholderen.
  *
- * Formatet til Påmindelser er én vare per linje og intet andet. Apples
- * Påmindelser laver én påmindelse per linje når man indsætter, så en
- * overskrift ville blive til en påmindelse man skulle krydse af.
+ * Først byggede vi det som "kopiér og indsæt i Påmindelser", fordi den app
+ * skulle lave én påmindelse per linje. Det gør den ikke -- afprøvet på en
+ * rigtig iPhone: hele teksten bliver til ÉN påmindelse. Antagelsen var
+ * forkert, og der er ikke noget i iOS der deler tekst op af sig selv.
+ *
+ * Det der virker, er en Genvej. Man laver den én gang, den tager teksten
+ * fra delemenuen, deler på linjeskift og laver en påmindelse per linje.
+ * Derfor deler vi den NØGNE liste -- én vare per linje, ingen overskrifter,
+ * ingen ugetitel -- for det er præcis hvad Genvejen skal bruge.
+ *
+ * Kopiering bliver som reserve, og til det man selv skal læse.
+ *
+ * Bemærk hvorfor der ikke er et hentet dokument eller et abonnement: appen
+ * ligger bag Cloudflare Access, så alt der skulle HENTE listen udefra ville
+ * ramme Access' login og fejle. Delingen sker i browseren, hvor man
+ * allerede er lukket ind.
  */
 
 type Kopieret = "paamindelser" | "tekst" | null;
@@ -82,11 +92,17 @@ export default function EksportArk({
   }
 
   async function del() {
+    const tekst = tilPåmindelser(liste);
+    if (!tekst) {
+      setFejl("Der er ikke noget tilbage at handle.");
+      return;
+    }
     try {
-      await navigator.share({
-        title: `Indkøb · ${ugeTitel}`,
-        text: somTekst(liste, ugeTitel),
-      });
+      // Kun teksten, ingen titel. En titel ville blive til en ekstra linje
+      // i delearket hos nogle modtagere -- og dermed til en påmindelse der
+      // hed "Indkøb · Uge 34".
+      await navigator.share({ text: tekst });
+      setFejl(null);
     } catch {
       // Fortryder man i delearket, er det ikke en fejl.
     }
@@ -144,10 +160,20 @@ export default function EksportArk({
         ) : null}
 
         <div className="mt-5 space-y-2.5">
+          {kanDele ? (
+            <Valg
+              ikon={<Share2 size={20} strokeWidth={2} />}
+              titel="Send til Påmindelser"
+              forklaring="Åbner delemenuen. Vælg genvejen «Varer til Påmindelser»."
+              klaret={false}
+              onClick={() => void del()}
+            />
+          ) : null}
+
           <Valg
             ikon={<ClipboardList size={20} strokeWidth={2} />}
-            titel="Kopiér til Påmindelser"
-            forklaring="Én vare per linje. Indsæt i Påmindelser — den laver én påmindelse per linje."
+            titel="Kopiér varerne"
+            forklaring="Én vare per linje, uden overskrifter."
             klaret={kopieret === "paamindelser"}
             onClick={() => void kopiér("paamindelser")}
           />
@@ -159,25 +185,14 @@ export default function EksportArk({
             klaret={kopieret === "tekst"}
             onClick={() => void kopiér("tekst")}
           />
-
-          {kanDele ? (
-            <Valg
-              ikon={<Share2 size={20} strokeWidth={2} />}
-              titel="Del …"
-              forklaring="Åbner telefonens delemenu."
-              klaret={false}
-              onClick={() => void del()}
-            />
-          ) : null}
         </div>
 
-        {kopieret === "paamindelser" ? (
-          <p className="mt-4 rounded-2xl bg-[var(--tint-green)] px-4 py-3 text-[0.88rem] leading-[1.5] text-[var(--harvest-green-ink)]">
-            Åbn Påmindelser, lav en ny liste, og hold fingeren nede i den tomme
-            liste → <strong>Indsæt</strong>. Bliver det til én lang påmindelse i
-            stedet for mange, så sig til — så laver vi en anden vej.
-          </p>
-        ) : null}
+        <p className="mt-4 rounded-2xl bg-[var(--tint-gold)] px-4 py-3 text-[0.85rem] leading-[1.5] text-[var(--foreground)]">
+          <strong>Første gang:</strong> Påmindelser kan ikke selv dele en tekst
+          op i linjer — hele listen bliver til én påmindelse. Lav genvejen
+          «Varer til Påmindelser» i Genveje-appen én gang, så gør den arbejdet
+          herefter. Opskriften ligger i <code>docs/paamindelser.md</code>.
+        </p>
       </div>
     </div>
   );
