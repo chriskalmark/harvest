@@ -35,7 +35,8 @@
     "test:netto-zoner": "tsx scripts/testNettoZoner.ts",
     "test:ugeplan-indkoeb": "tsx scripts/testUgeplanIndkoeb.ts",
     "test:husstandslaas": "tsx scripts/testHusstandslaas.ts",
-    "lav-kode": "tsx scripts/lavHusstandskode.ts"
+    "lav-kode": "tsx scripts/lavHusstandskode.ts",
+    "tjek-kode": "tsx scripts/tjekHusstandskode.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
