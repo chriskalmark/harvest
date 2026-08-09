@@ -15,10 +15,43 @@ import {
   type PickerFilters,
 } from "@/lib/catalog/picker";
 import type { PickerCatalog, PickerRecipe } from "@/lib/catalog/types";
+import type { KatalogOmfang } from "@/lib/hooks/useWeekPlanCatalog";
 import { formatMinutes } from "@/lib/weekPlan/view";
 
+function OmfangKnap({
+  aktiv,
+  onClick,
+  children,
+}: {
+  aktiv: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={aktiv}
+      onClick={onClick}
+      className={`min-h-[44px] flex-1 rounded-full px-3 text-[0.85rem] font-bold transition active:scale-95 ${
+        aktiv
+          ? "bg-[var(--field-green)] text-[var(--field-ink)]"
+          : "bg-[var(--tint-stone)] text-[var(--text-muted)]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 /**
- * Retvælgeren: bladr i ugens ~50 opskrifter og vælg én.
+ * Retvælgeren: bladr i opskrifterne og vælg én.
+ *
+ * To omfang, og ugens kasser er standard: ~50 retter frem for kataloget på
+ * 137. Ikke fordi resten er utilgængelig, men fordi ugens kasse er det man
+ * som regel er ude efter. Knappen "Alle opskrifter" står øverst, før
+ * søgefeltet -- søger man forgæves i 49 retter, er det første man skal se,
+ * at der findes flere.
  *
  * Femoghalvtreds retter er mange på en telefon, og hele komponenten er
  * bygget omkring netop det. Tre greb gør bunken overkommelig:
@@ -48,6 +81,8 @@ export default function KatalogVaelger({
   isSaving,
   dayPortions,
   chosenRecipeId,
+  omfang,
+  onOmfang,
   onReload,
   onPick,
 }: {
@@ -55,6 +90,9 @@ export default function KatalogVaelger({
   isLoading: boolean;
   error: string | null;
   isSaving: boolean;
+  /** "uge" = ugens ~50 kasseretter. "alle" = hele kataloget. */
+  omfang: KatalogOmfang;
+  onOmfang: (omfang: KatalogOmfang) => void;
   /** Dagens portionsantal -- til at sige fra, når retten ikke kan laves til det. */
   dayPortions: number;
   chosenRecipeId: number | null;
@@ -118,6 +156,28 @@ export default function KatalogVaelger({
           baandet over soegefeltet -- en stribe madfoto i begge temaer.
           Barren daekker nu sin egen polstring. */}
       <div className="sticky top-0 z-10 -mx-5 -mt-4 bg-[var(--surface-1)] px-5 pb-3 pt-4">
+        {/*
+          Ugens kasse er standard, fordi det er den friske uge -- men den
+          maa ikke vaere et faengsel. Kataloget rummer tre ugers retter, og
+          vil man have onsdagens ret fra ugen foer, skal den kunne naas.
+          Derfor staar valget OEVERST, foer soegefeltet: soeger man forgaeves
+          i 49 retter, er det foerste man skal se, at der findes 137.
+        */}
+        <div role="tablist" aria-label="Hvor mange retter" className="mb-2.5 flex gap-1.5">
+          <OmfangKnap
+            aktiv={omfang === "uge"}
+            onClick={() => onOmfang("uge")}
+          >
+            Ugens kasser
+          </OmfangKnap>
+          <OmfangKnap
+            aktiv={omfang === "alle"}
+            onClick={() => onOmfang("alle")}
+          >
+            Alle opskrifter
+          </OmfangKnap>
+        </div>
+
         <div className="relative">
           <Search
             size={16}

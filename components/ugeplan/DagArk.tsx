@@ -5,7 +5,10 @@ import Link from "next/link";
 import { ChevronRight, Loader2, Minus, Plus, Trash2, X } from "lucide-react";
 import DagFoto from "@/components/ugeplan/DagFoto";
 import KatalogVaelger from "@/components/ugeplan/KatalogVaelger";
-import { useWeekPlanCatalog } from "@/lib/hooks/useWeekPlanCatalog";
+import {
+  useWeekPlanCatalog,
+  type KatalogOmfang,
+} from "@/lib/hooks/useWeekPlanCatalog";
 import { dayHeading, formatMinutes, portionsLabel } from "@/lib/weekPlan/view";
 import {
   MAX_PORTIONS,
@@ -50,11 +53,18 @@ export default function DagArk({
     day.slotKind === "manual" ? "selv" : "katalog",
   );
   const [manualTitle, setManualTitle] = useState(day.manualTitle ?? "");
+  const [omfang, setOmfang] = useState<KatalogOmfang>("uge");
 
-  // Vaelgeren viser den uge dagen ligger i -- ugens egne ~50 retter, ikke
-  // hele kataloget. Ugen udledes af datoen, saa den ikke skal traades
-  // gennem endnu et prop-lag.
-  const catalog = useWeekPlanCatalog(mondayOf(day.date), fane === "katalog");
+  // Ugen udledes af datoen, saa den ikke skal traades gennem endnu et
+  // prop-lag. Omfanget starter paa ugens egne ~50 retter -- det er den
+  // friske kasse -- men man kan skifte til hele kataloget paa 137 inde i
+  // vaelgeren. Valget nulstilles naar arket lukkes, saa naeste dag igen
+  // begynder ved ugens retter.
+  const catalog = useWeekPlanCatalog(
+    mondayOf(day.date),
+    fane === "katalog",
+    omfang,
+  );
 
   // Baggrunden maa ikke rulle med, naar man ruller i listen.
   useEffect(() => {
@@ -194,6 +204,8 @@ export default function DagArk({
               isSaving={isSaving}
               dayPortions={day.portions}
               chosenRecipeId={day.recipe?.recipeId ?? null}
+              omfang={omfang}
+              onOmfang={setOmfang}
               onReload={catalog.reload}
               onPick={(recipe) => void pick(recipe.recipeId)}
             />
