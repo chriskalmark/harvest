@@ -8,8 +8,10 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  Share,
   UtensilsCrossed,
 } from "lucide-react";
+import EksportArk from "@/components/indkoeb/EksportArk";
 import { useUgensIndkøb } from "@/lib/hooks/useUgensIndkoeb";
 import { buildHref } from "@/lib/urlState";
 import { indkøbHeadline, indkøbSummary } from "@/lib/weekPlan/indkoebView";
@@ -42,6 +44,7 @@ export default function IndkoebSkaerm() {
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
   const [skjulKlaret, setSkjulKlaret] = useState(false);
+  const [eksportÅben, setEksportÅben] = useState(false);
 
   const weekStart = useMemo(() => {
     const rå = searchParams.get("uge");
@@ -97,6 +100,7 @@ export default function IndkoebSkaerm() {
               onSkjulKlaret={() => setSkjulKlaret((vis) => !vis)}
               antalKlaret={indkøb.antalKlaret}
               onNulstil={() => void indkøb.nulstil()}
+              onEksport={() => setEksportÅben(true)}
             />
 
             {liste.afsnit.map((afsnit) => {
@@ -136,6 +140,14 @@ export default function IndkoebSkaerm() {
           </>
         )}
       </section>
+
+      {eksportÅben && liste ? (
+        <EksportArk
+          liste={liste}
+          ugeTitel={indkøb.indkøb?.weekLabel ?? ""}
+          onClose={() => setEksportÅben(false)}
+        />
+      ) : null}
     </main>
   );
 }
@@ -304,14 +316,26 @@ function Værktøjslinje({
   onSkjulKlaret,
   antalKlaret,
   onNulstil,
+  onEksport,
 }: {
   skjulKlaret: boolean;
   onSkjulKlaret: () => void;
   antalKlaret: number;
   onNulstil: () => void;
+  onEksport: () => void;
 }) {
   return (
     <div className="mb-5 flex flex-wrap items-center gap-2">
+      {/* Eksport staar foerst: den bruges NAAR man gaar ud ad doeren, mens
+          "skjul klaret" og "ryd flueben" hoerer til inde i butikken. */}
+      <button
+        type="button"
+        onClick={onEksport}
+        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-[var(--tint-green)] px-4 text-[0.85rem] font-bold text-[var(--harvest-green-ink)] transition active:scale-95"
+      >
+        <Share size={15} strokeWidth={2.4} aria-hidden="true" />
+        Eksportér
+      </button>
       <button
         type="button"
         aria-pressed={skjulKlaret}
