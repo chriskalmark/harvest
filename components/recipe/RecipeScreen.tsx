@@ -26,6 +26,10 @@ import {
   writePortionPreference,
 } from "@/lib/recipe/portionPreference";
 import type { CatalogRecipe } from "@/lib/skagenfood/types";
+import {
+  grundopskrifterI,
+  type Grundopskrift,
+} from "@/lib/weekPlan/grundopskrifter";
 
 /**
  * Opskriften ved komfuret.
@@ -352,8 +356,77 @@ function SetOut({ view }: { view: ReturnType<typeof buildRecipeView> }) {
       {view.equipment.length > 0 ? (
         <ChipBlock title="Redskaber" items={view.equipment} tone="stone" />
       ) : null}
+
+      {/*
+        Halvfabrikata fra Skagenfoods kasse.
+
+        Opskriften siger "tilsæt mørbradgryde", fordi den ligger færdig i
+        kassen. Handler man i Netto, findes den ikke -- og uden det her
+        stod man ved komfuret og manglede halvdelen af retten.
+      */}
+      {grundopskrifterI(
+        view.sections.flatMap((afsnit) => afsnit.items.map((i) => i.name)),
+      ).map((grund) => (
+        <Grundafsnit key={grund.navn} grund={grund} />
+      ))}
     </section>
   );
+}
+
+/**
+ * "Sådan laver du mørbradgryden."
+ *
+ * Står ÅBEN, ikke bag et tryk. Er man nået til den her ret, mangler man
+ * den her opskrift -- at gemme den bag en knap ville betyde, at man
+ * opdagede den, når kødet allerede lå på panden.
+ */
+function Grundafsnit({ grund }: { grund: Grundopskrift }) {
+  const købes = grund.slags === "køb-færdig";
+
+  return (
+    <div className="mt-6 rounded-[24px] bg-[var(--tint-green)] px-4 py-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--harvest-green-ink)]">
+        {købes ? "Kan købes færdig" : "Den laver I selv"}
+      </p>
+      <h3 className="mt-1 font-serif text-[1.2rem] font-bold leading-[1.2] tracking-[-0.015em] text-[var(--foreground)]">
+        {grund.visningsnavn}
+      </h3>
+
+      {grund.note ? (
+        <p className="mt-2 text-[0.88rem] leading-[1.5] text-[var(--foreground)]">
+          {grund.note}
+        </p>
+      ) : null}
+
+      {grund.ingredienser.length > 0 ? (
+        <p className="mt-3 text-[0.88rem] leading-[1.5] text-[var(--foreground)]">
+          <span className="font-semibold">Pr. person: </span>
+          {grund.ingredienser
+            .map((i) => `${formatérTal(i.mængde)} ${i.enhed} ${i.navn}`)
+            .join(", ")}
+        </p>
+      ) : null}
+
+      <ol className="mt-3 space-y-2">
+        {grund.fremgangsmåde.map((trin, nummer) => (
+          <li
+            key={trin}
+            className="flex gap-2.5 text-[0.95rem] leading-[1.5] text-[var(--foreground)]"
+          >
+            <span className="shrink-0 font-serif font-bold text-[var(--harvest-green-ink)]">
+              {nummer + 1}.
+            </span>
+            <span>{trin}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/** Dansk komma, og ingen ",0" hængende bagefter. */
+function formatérTal(tal: number): string {
+  return String(Math.round(tal * 100) / 100).replace(".", ",");
 }
 
 function ChipBlock({

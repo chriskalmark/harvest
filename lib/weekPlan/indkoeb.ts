@@ -1,5 +1,11 @@
 import { STORE_CATEGORY_ORDER, type StoreZone } from "@/lib/constants";
 import { erKøbevare, zoneForIngrediens } from "@/lib/weekPlan/zoner";
+import {
+  foldUd,
+  noteFor,
+  skalFoldesUd,
+  zoneFraGrundopskrift,
+} from "@/lib/weekPlan/grundopskrifter";
 
 /**
  * Fra ugeplan til indkøbsliste.
@@ -81,6 +87,8 @@ export interface IndkøbsVare {
   key: string;
   navn: string;
   mængde: string | null;
+  /** Fx "Findes på køl i Netto" ved et halvfabrikat man kan købe. */
+  note?: string;
   /** Ugedagene varen skal bruges på, fx "mandag og torsdag". */
   tilDage: string;
   weekdays: number[];
@@ -236,6 +244,33 @@ export function byggIndkøbsliste(
     for (const ingrediens of dag.recipe.ingredients) {
       if (!erKøbevare(ingrediens.name)) continue;
 
+      /*
+       * Halvfabrikata foldes ud til rigtige varer.
+       *
+       * "mørbradgryde" kan ikke købes i Netto -- den ligger færdig i
+       * Skagenfoods kasse. Uden det her stod den på sedlen som en vare, og
+       * man opdagede det først i butikken.
+       *
+       * Skagenfoods egen mængde bruges IKKE. "400 g mørbradgryde" siger kun
+       * AT retten kræver mørbradgryde, ikke hvad der er i den. Mængderne
+       * kommer fra vores egen grundopskrift, skrevet pr. person.
+       */
+      if (skalFoldesUd(ingrediens.name)) {
+        for (const del of foldUd(ingrediens.name, dag.portions)) {
+          const delnavn = nøgleNavn(del.navn);
+          if (!delnavn || !erKøbevare(del.navn)) continue;
+          læg(
+            samlet,
+            `${delnavn}::${del.enhed}`,
+            del.navn,
+            del.mængde,
+            del.enhed,
+            dag,
+          );
+        }
+        continue;
+      }
+
       const mængde = mængdeTilPortioner(ingrediens.amounts, dag.portions);
       if (!mængde) continue;
 
@@ -315,10 +350,19 @@ function læg(
     visningsnavn: visningsnavn.trim(),
     amount,
     enhed,
-    zone: zoneForIngrediens(visningsnavn),
+    zone: udledZone(visningsnavn),
     weekdays: [dag.weekday],
     dagsnavne: [dag.dayName],
   });
+}
+
+/** Grundopskriftens egen zone slaar klassifikatoren. */
+function udledZone(visningsnavn: string): StoreZone {
+  const fra = zoneFraGrundopskrift(visningsnavn);
+  if (fra && (STORE_CATEGORY_ORDER as readonly string[]).includes(fra)) {
+    return fra as StoreZone;
+  }
+  return zoneForIngrediens(visningsnavn);
 }
 
 function byggAfsnit(
@@ -350,6 +394,7 @@ function tilVarer(
       key: vare.key,
       navn: vare.visningsnavn,
       mængde: vare.amount > 0 ? formatérMængde(vare.amount, vare.enhed) : null,
+      note: noteFor(vare.visningsnavn) ?? undefined,
       tilDage: dageTekst(vare.dagsnavne),
       weekdays: vare.weekdays.slice().sort((a, b) => a - b),
       checked: afkrydsede.has(vare.key),
