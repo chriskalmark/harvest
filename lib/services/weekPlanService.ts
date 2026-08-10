@@ -27,6 +27,18 @@ import type { WeekPlan } from "@/lib/weekPlan/types";
  */
 
 export interface WeekSelector {
+  /**
+   * Hvilken husstands plan.
+   *
+   * PÅKRÆVET, og med vilje uden standardværdi. Havde den en, ville et
+   * glemt kaldsted tavst læse den forkerte husstands madplan -- og det
+   * ville se ud som om alt virkede. Nu naegter TypeScript at oversaette.
+   *
+   * Den maa ALDRIG komme fra forespoergslens krop eller adresse, kun fra
+   * den verificerede identitet. Ellers kan man skrive husstand: "naboen"
+   * og kigge med.
+   */
+  husstand: string;
   /** "ÅÅÅÅ-MM-DD", "denne", "næste", "forrige" -- eller udeladt for denne uge. */
   week?: unknown;
 }
@@ -64,13 +76,13 @@ export function resolveWeekStart(input: WeekSelector, now?: Date): string {
  * i stedet for ingenting -- en uge der ikke er planlagt endnu er stadig en uge.
  */
 export async function getWeekPlan(
-  input: WeekSelector = {},
+  input: WeekSelector,
   now?: Date,
 ): Promise<WeekPlan> {
   const monday = resolveWeekStart(input, now);
   const client = await pool.connect();
   try {
-    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, monday);
+    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, input.husstand, monday);
     if (weekPlanId === null) return buildWeekPlan(monday, []);
     const rows = await weekPlanRepository.readWeekPlanDays(client, weekPlanId);
     return buildWeekPlan(monday, rows);
@@ -95,7 +107,7 @@ export async function setRecipeOnDay(
         `Opskrift ${recipeId} findes ikke i Skagenfood-kataloget. Importér ugen først.`,
       );
     }
-    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, monday);
+    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, input.husstand, monday);
     await weekPlanRepository.setCatalogRecipe(client, {
       weekPlanId,
       weekday,
@@ -121,7 +133,7 @@ export async function setManualDishOnDay(
   const portions = optionalPortions(input.portions);
 
   return withTransaction(async (client) => {
-    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, monday);
+    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, input.husstand, monday);
     await weekPlanRepository.setManualDish(client, {
       weekPlanId,
       weekday,
@@ -144,7 +156,7 @@ export async function clearDay(
   const weekday = requireWeekday(input.weekday);
 
   return withTransaction(async (client) => {
-    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, monday);
+    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, input.husstand, monday);
     await weekPlanRepository.clearDay(client, { weekPlanId, weekday });
     return buildWeekPlan(
       monday,
@@ -162,7 +174,7 @@ export async function setPortionsOnDay(
   const portions = requirePortions(input.portions);
 
   return withTransaction(async (client) => {
-    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, monday);
+    const weekPlanId = await weekPlanRepository.ensureWeekPlan(client, input.husstand, monday);
     await weekPlanRepository.setPortions(client, {
       weekPlanId,
       weekday,

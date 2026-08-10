@@ -97,13 +97,13 @@ async function byggDage(
 }
 
 export async function getShoppingList(
-  input: WeekSelector = {},
+  input: WeekSelector,
   now?: Date,
 ): Promise<UgensIndkøb> {
   const monday = resolveWeekStart(input, now);
   const client = await pool.connect();
   try {
-    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, monday);
+    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, input.husstand, monday);
     const rows =
       weekPlanId === null
         ? []
@@ -137,7 +137,7 @@ export async function setChecked(
   const checked = krævChecked(input.checked);
 
   await withTransaction(async (client) => {
-    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, monday);
+    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, input.husstand, monday);
     if (weekPlanId === null) {
       throw new WeekPlanError(
         "Der er ingen plan for den uge endnu, så der er heller ikke noget at handle.",
@@ -146,21 +146,21 @@ export async function setChecked(
     await shoppingRepository.setChecked(client, weekPlanId, nøgler, checked);
   });
 
-  return getShoppingList({ week: monday }, now);
+  return getShoppingList({ husstand: input.husstand, week: monday }, now);
 }
 
 /** Fjerner alle flueben på ugen. */
 export async function clearChecks(
-  input: WeekSelector = {},
+  input: WeekSelector,
   now?: Date,
 ): Promise<UgensIndkøb> {
   const monday = resolveWeekStart(input, now);
 
   await withTransaction(async (client) => {
-    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, monday);
+    const weekPlanId = await weekPlanRepository.findWeekPlanId(client, input.husstand, monday);
     if (weekPlanId === null) return;
     await shoppingRepository.clearAllChecks(client, weekPlanId);
   });
 
-  return getShoppingList({ week: monday }, now);
+  return getShoppingList({ husstand: input.husstand, week: monday }, now);
 }

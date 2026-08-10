@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createRouteHandler } from "@/lib/apiUtils";
 import { setManualDishOnDay } from "@/lib/services/weekPlanService";
 import {
+  husstandFraRequest,
   noteFromBody,
   portionsFromBody,
   readJsonBody,
@@ -20,8 +21,10 @@ import {
  */
 export const PUT = createRouteHandler(async (request: NextRequest) => {
   const body = await readJsonBody(request);
+  const husstand = await withWeekPlanErrors(() => husstandFraRequest(request));
   const weekPlan = await withWeekPlanErrors(() =>
     setManualDishOnDay({
+      husstand,
       week: weekFromBody(body),
       weekday: weekdayFromBody(body),
       title: body.navn ?? body.titel ?? body.title,

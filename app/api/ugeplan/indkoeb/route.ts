@@ -6,6 +6,7 @@ import {
   setChecked,
 } from "@/lib/services/weekPlanShoppingService";
 import {
+  husstandFraRequest,
   readJsonBody,
   weekFromBody,
   weekFromQuery,
@@ -29,8 +30,10 @@ import {
  */
 
 export const GET = createRouteHandler(async (request: NextRequest) => {
+  const husstand = await withWeekPlanErrors(() => husstandFraRequest(request));
+
   const indkøb = await withWeekPlanErrors(() =>
-    getShoppingList({ week: weekFromQuery(request) }),
+    getShoppingList({ husstand, week: weekFromQuery(request) }),
   );
   return { indkøb };
 });
@@ -38,14 +41,18 @@ export const GET = createRouteHandler(async (request: NextRequest) => {
 export const POST = createRouteHandler(async (request: NextRequest) => {
   const body = await readJsonBody(request);
   const uge = weekFromBody(body);
+  const husstand = await withWeekPlanErrors(() => husstandFraRequest(request));
 
   if (body.nulstil === true) {
-    const indkøb = await withWeekPlanErrors(() => clearChecks({ week: uge }));
+    const indkøb = await withWeekPlanErrors(() =>
+      clearChecks({ husstand, week: uge }),
+    );
     return { indkøb };
   }
 
   const indkøb = await withWeekPlanErrors(() =>
     setChecked({
+      husstand,
       week: uge,
       itemKeys: body.varer ?? body.itemKeys,
       checked: body.afkrydset ?? body.checked,

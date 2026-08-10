@@ -2,7 +2,11 @@ import { NextRequest } from "next/server";
 import { createRouteHandler } from "@/lib/apiUtils";
 import { scheduleAutoImportCheck } from "@/lib/services/skagenfoodAutoImportService";
 import { getWeekPlan } from "@/lib/services/weekPlanService";
-import { weekFromQuery, withWeekPlanErrors } from "@/lib/weekPlan/apiSupport";
+import {
+  husstandFraRequest,
+  weekFromQuery,
+  withWeekPlanErrors,
+} from "@/lib/weekPlan/apiSupport";
 
 /**
  * GET /api/ugeplan            -> indeværende uge
@@ -23,8 +27,11 @@ export const GET = createRouteHandler(async (request: NextRequest) => {
   // hvordan en fejl bliver synlig.
   scheduleAutoImportCheck();
 
+  // Husstanden foerst, og fra det signerede token -- aldrig fra adressen.
+  const husstand = await withWeekPlanErrors(() => husstandFraRequest(request));
+
   const weekPlan = await withWeekPlanErrors(() =>
-    getWeekPlan({ week: weekFromQuery(request) }),
+    getWeekPlan({ husstand, week: weekFromQuery(request) }),
   );
   return { weekPlan };
 });

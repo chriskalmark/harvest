@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createRouteHandler } from "@/lib/apiUtils";
 import { clearDay } from "@/lib/services/weekPlanService";
 import {
+  husstandFraRequest,
   readJsonBody,
   weekFromBody,
   weekdayFromBody,
@@ -18,8 +19,10 @@ import {
  */
 export const POST = createRouteHandler(async (request: NextRequest) => {
   const body = await readJsonBody(request);
+  const husstand = await withWeekPlanErrors(() => husstandFraRequest(request));
   const weekPlan = await withWeekPlanErrors(() =>
     clearDay({
+      husstand,
       week: weekFromBody(body),
       weekday: weekdayFromBody(body),
     }),

@@ -55,11 +55,12 @@ function mapDayRow(row: DayRow): WeekPlanDayRow {
 /** Ugens id, eller null hvis ugen aldrig er blevet rørt. Skriver ingenting. */
 export async function findWeekPlanId(
   client: PoolClient,
+  husstand: string,
   mondayDate: string,
 ): Promise<number | null> {
   const result = await client.query<{ id: string | number }>(
-    `SELECT id FROM week_plans WHERE monday_date = $1::date`,
-    [mondayDate],
+    `SELECT id FROM week_plans WHERE husstand = $1 AND monday_date = $2::date`,
+    [husstand, mondayDate],
   );
   return result.rows[0] ? Number(result.rows[0].id) : null;
 }
@@ -70,17 +71,18 @@ export async function findWeekPlanId(
  */
 export async function ensureWeekPlan(
   client: PoolClient,
+  husstand: string,
   mondayDate: string,
 ): Promise<number> {
   const result = await client.query<{ id: string | number }>(
     `
-      INSERT INTO week_plans (monday_date)
-      VALUES ($1::date)
-      ON CONFLICT (monday_date)
+      INSERT INTO week_plans (husstand, monday_date)
+      VALUES ($1, $2::date)
+      ON CONFLICT (husstand, monday_date)
       DO UPDATE SET updated_at = NOW()
       RETURNING id
     `,
-    [mondayDate],
+    [husstand, mondayDate],
   );
   if (!result.rows[0]) {
     throw new Error(`Kunne ikke oprette ugeplanen for ${mondayDate}.`);

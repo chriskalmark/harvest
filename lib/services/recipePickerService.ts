@@ -3,10 +3,7 @@ import * as catalogPickerRepository from "@/lib/db/catalogPickerRepository";
 import { formatIsoWeek } from "@/lib/skagenfood/isoWeek";
 import type { PickerCatalog, PickerScope } from "@/lib/catalog/types";
 import { isoWeekOfDateOnly, WeekPlanError } from "@/lib/weekPlan/week";
-import {
-  resolveWeekStart,
-  type WeekSelector,
-} from "@/lib/services/weekPlanService";
+import { resolveWeekStart } from "@/lib/services/weekPlanService";
 
 /**
  * Vælgerens servicelag: hvilke opskrifter kan lægges på denne uges dage.
@@ -21,7 +18,19 @@ import {
  * Ingenting herinde skriver i databasen.
  */
 
-export interface PickerCatalogInput extends WeekSelector {
+/**
+ * Kataloget er FÆLLES og har derfor ingen husstand.
+ *
+ * Skagenfoods 137 opskrifter er de samme for alle, og søndagsimporten
+ * kører én gang for alle. Ville man dele kataloget op per husstand, skulle
+ * hver familie importere de samme opskrifter igen -- og de ville stadig
+ * være de samme.
+ *
+ * Derfor arver den her IKKE fra WeekSelector: den bruger kun ugen.
+ */
+export interface PickerCatalogInput {
+  /** "ÅÅÅÅ-MM-DD", "denne", "næste" -- eller udeladt for denne uge. */
+  week?: unknown;
   /** "uge" (standard) eller "alle". */
   scope?: unknown;
 }
@@ -47,7 +56,7 @@ export async function getPickerCatalog(
   input: PickerCatalogInput = {},
   now?: Date,
 ): Promise<PickerCatalog> {
-  const weekStart = resolveWeekStart(input, now);
+  const weekStart = resolveWeekStart({ husstand: "", week: input.week }, now);
   const requestedScope = resolveScope(input.scope);
   const { year, week } = isoWeekOfDateOnly(weekStart);
 

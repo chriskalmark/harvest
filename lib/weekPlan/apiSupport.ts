@@ -2,6 +2,9 @@ import { NextRequest } from "next/server";
 import { ApiError } from "@/lib/apiUtils";
 import { WeekPlanError } from "@/lib/weekPlan/week";
 import { SkagenfoodImportError } from "@/lib/skagenfood/normalize";
+import { emailFraRequest, IngenBrugerError } from "@/lib/auth/bruger";
+import { sikrHusstand } from "@/lib/db/brugerRepository";
+import { withTransaction } from "@/lib/db";
 
 /**
  * Fælles hjælp til ugeplanens API-ruter.
@@ -34,6 +37,11 @@ export async function withWeekPlanErrors<T>(run: () => Promise<T>): Promise<T> {
   try {
     return await run();
   } catch (error) {
+    if (error instanceof IngenBrugerError) {
+      // 401 og ikke 400: det er ikke kaldet der er forkert, det er
+      // identiteten der mangler. Skaermen kan bede om et genindlaes.
+      throw new ApiError(error.message, 401);
+    }
     if (error instanceof WeekPlanError) {
       throw new ApiError(error.message, 400);
     }
@@ -68,4 +76,22 @@ export function portionsFromBody(body: Record<string, unknown>): unknown {
 
 export function noteFromBody(body: Record<string, unknown>): unknown {
   return body.note ?? body.noter ?? undefined;
+}
+
+/**
+ * Husstanden for den der spørger.
+ *
+ * Identiteten kommer fra Cloudflare Access' SIGNEREDE token -- ikke fra
+ * e-mail-headeren, og ALDRIG fra forespørgslens krop eller adresse. Kunne
+ * man skrive husstanden selv, kunne man skrive naboens og kigge med.
+ *
+ * Kender vi ikke e-mailen i forvejen, får den sin egen husstand. Det er
+ * det der gør, at en inviteret familie bare kan logge ind og gå i gang --
+ * de får en tom uge, ikke en fejl.
+ */
+export async function husstandFraRequest(request: NextRequest): Promise<string> {
+  const email = await emailFraRequest(request);
+  if (!email) throw new IngenBrugerError();
+
+  return withTransaction((client) => sikrHusstand(client, email));
 }
