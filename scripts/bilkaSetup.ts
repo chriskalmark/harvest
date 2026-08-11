@@ -5,6 +5,7 @@ import * as readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import {
   erLoggetInd,
+  loginBevis,
   type HarRequest,
   PROFIL_MAPPE,
   profilFindes,
@@ -135,17 +136,44 @@ async function main(): Promise<void> {
       await page.reload({ waitUntil: "domcontentloaded" });
       await page.waitForTimeout(3000);
 
-      if (await erLoggetInd(context)) {
-        log("\nBekræftet af Bilkas eget API: du er logget ind.");
+      const bevis = await loginBevis(context);
+
+      if (bevis.loggetInd) {
+        log(`\nBekræftet af Bilkas API: uid=${bevis.uid}. Du er logget ind.`);
         break;
       }
 
+      /*
+       * Vis beviset, konkludér ikke.
+       *
+       * Scriptet har tre gange sagt noget forkert om login, fordi det
+       * tolkede et tegn -- foerst 'Log ud', saa 'Mit BilkaToGo', som staar
+       * der altid. Her staar raadataene, og brugeren kan se dem selv.
+       */
+      log(`\nBilkas API svarer uid=${bevis.uid} (-1 betyder anonym).`);
+      log(`Hele svaret: ${bevis.svar.slice(0, 200)}`);
       log(
-        "\nSiden viser dig stadig som IKKE logget ind.\n" +
-          "Fortsatte vi nu, ville varerne ryge i en anonym kurv, du aldrig\n" +
-          "kan se -- og pushet ville melde succes alligevel. Log ind i\n" +
-          "browservinduet, og tryk så Enter igen.\n",
+        "\nDET KAN VÆRE MIG DER TAGER FEJL. Kig i browservinduet:\n" +
+          "  - Står der dit navn eller 'Log ind' øverst til højre?\n" +
+          "  - Er du logget ind i DET vindue, eller i din egen Chrome?\n",
       );
+
+      const svar = (
+        await rl.question(
+          "Enter = prøv igen · 's' = fortsæt alligevel · 'q' = stop: ",
+        )
+      )
+        .trim()
+        .toLowerCase();
+
+      if (svar === "q") throw new Error("Afbrudt.");
+      if (svar === "s") {
+        log(
+          "\nFortsætter uden bekræftelse. Tjek kurven på sitet bagefter --\n" +
+            "er den tom, var sessionen anonym alligevel.\n",
+        );
+        break;
+      }
     }
   } finally {
     rl.close();

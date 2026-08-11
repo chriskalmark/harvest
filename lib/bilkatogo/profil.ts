@@ -55,12 +55,36 @@ const PRØVE_URL =
   "?u=w&productId=20824&count=0&fullCart=0";
 
 export async function erLoggetInd(context: HarRequest): Promise<boolean> {
+  return (await loginBevis(context)).loggetInd;
+}
+
+export interface LoginBevis {
+  loggetInd: boolean;
+  uid: string;
+  svar: string;
+}
+
+/**
+ * Hvad API'et faktisk svarer -- ikke en konklusion, men beviset selv.
+ *
+ * Scriptet har tre gange sagt noget forkert om login, fordi det tolkede et
+ * tegn. Nu vises raadataene, saa man kan se hvad de siger i stedet for at
+ * skulle tro paa en overskrift.
+ */
+export async function loginBevis(context: HarRequest): Promise<LoginBevis> {
   try {
     const svar = await context.request.fetch(PRØVE_URL, { method: "POST" });
-    if (!svar.ok()) return false;
-    const uid = /"uid":\s*(-?\d+)/.exec(await svar.text())?.[1];
-    return uid !== undefined && uid !== "-1";
-  } catch {
-    return false;
+    if (!svar.ok()) {
+      return { loggetInd: false, uid: "?", svar: "kaldet fejlede" };
+    }
+    const krop = await svar.text();
+    const uid = /"uid":\s*(-?\d+)/.exec(krop)?.[1] ?? "?";
+    return { loggetInd: uid !== "-1" && uid !== "?", uid, svar: krop };
+  } catch (fejl) {
+    return {
+      loggetInd: false,
+      uid: "?",
+      svar: fejl instanceof Error ? fejl.message : String(fejl),
+    };
   }
 }
