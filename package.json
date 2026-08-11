@@ -39,7 +39,8 @@
     "test:grundopskrifter": "tsx scripts/testGrundopskrifter.ts",
     "test:bilka": "tsx scripts/testBilkatogoSearch.ts",
     "bilka:setup": "tsx scripts/bilkaSetup.ts",
-    "bilka:push": "tsx scripts/pushToBilka.ts"
+    "bilka:push": "tsx scripts/pushToBilka.ts",
+    "bilka:login": "tsx scripts/bilkaLogin.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
