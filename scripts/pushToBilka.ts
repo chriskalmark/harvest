@@ -138,6 +138,7 @@ function loadOverrides(file: string | null): OverrideMap {
  */
 async function loadCartPoster(): Promise<{
   post: CartPoster;
+  læsKurv?: () => Promise<string>;
   close: () => Promise<void>;
 }> {
   /*
@@ -228,10 +229,20 @@ async function main(): Promise<void> {
   }
 
   console.log(`\nLægger ${lines.length} vare(r) i kurven...`);
-  const { post, close } = await loadCartPoster();
+  const { post, læsKurv, close } = await loadCartPoster();
   try {
     const results = await addLines(post, lines);
     console.log(formatPushReport(results));
+
+    /*
+     * Kurven laeses BAGEFTER, og det er den eneste rigtige proeve.
+     * Scriptet meldte engang "19/19 lagt i, 0 fejlede" til en kurv der
+     * stod tom -- fordi succes blev maalt paa API'ets svar. Nu staar der
+     * hvad der faktisk er i kurven.
+     */
+    if (læsKurv) {
+      console.log(`\nKurven på sitet siger nu: ${await læsKurv()}`);
+    }
   } finally {
     await close();
   }

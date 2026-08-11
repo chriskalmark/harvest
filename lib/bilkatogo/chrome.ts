@@ -3,7 +3,6 @@ import type {
   AddToCartResponse,
   CartPoster,
 } from "@/lib/bilkatogo/types";
-import { loginBevis, type HarRequest } from "@/lib/bilkatogo/profil";
 import { chromium } from "playwright";
 
 /**
@@ -38,8 +37,38 @@ function urlFor(body: AddToCartBody): string {
   return url.toString();
 }
 
+/**
+ * Hvad staar der i kurven paa sitet?
+ *
+ * Det er den eneste paalidelige proeve. API'ets svar siger 200 OK og
+ * rigtige tal, ogsaa naar varen ryger et sted hen ingen kan se.
+ */
+async function læsKurv(context: {
+  newPage(): Promise<{
+    goto(u: string, o?: { waitUntil?: string }): Promise<unknown>;
+    innerText(s: string): Promise<string>;
+    waitForTimeout(n: number): Promise<void>;
+    close(): Promise<void>;
+  }>;
+}): Promise<string> {
+  const page = await context.newPage();
+  try {
+    await page.goto("https://www.bilkatogo.dk/kurv/", {
+      waitUntil: "domcontentloaded",
+    });
+    await page.waitForTimeout(4000);
+    const tekst = (await page.innerText("body")).replace(/\s+/g, " ");
+    if (/din kurv er tom/i.test(tekst)) return "TOM";
+    const beløb = /(\d+[.,]\d{2})\s*(?:kr)?/.exec(tekst)?.[1];
+    return beløb ? `${beløb} kr i kurven` : "kurven har indhold";
+  } finally {
+    await page.close();
+  }
+}
+
 export async function createChromeCartPoster(): Promise<{
   post: CartPoster;
+  læsKurv: () => Promise<string>;
   close: () => Promise<void>;
 }> {
   let browser;
@@ -64,15 +93,16 @@ export async function createChromeCartPoster(): Promise<{
   }
   const context = contexts[0];
 
-  // Samme kontrol som alle andre steder: uid, ikke et tegn paa en side.
-  const bevis = await loginBevis(context as unknown as HarRequest);
-  if (!bevis.loggetInd) {
-    await browser.close();
-    throw new Error(
-      `Browseren er ikke logget ind på Bilka (uid=${bevis.uid}).\n` +
-        "Åbn bilkatogo.dk i DEN browser, log ind, og kør så igen.",
-    );
-  }
+  /*
+   * Der spaerres IKKE paa uid.
+   *
+   * Fire runder gik med at afvise pushet, fordi uid var -1. Maalt i Chris'
+   * egen indloggede browser: uid er -1 ogsaa naar varen lander i den
+   * rigtige kurv. Feltet betyder ingenting, og spaerringen var det eneste
+   * der stod i vejen.
+   *
+   * Sandheden staar i kurven. Den laeses efter pushet.
+   */
 
   const post: CartPoster = async (
     body: AddToCartBody,
@@ -86,6 +116,6 @@ export async function createChromeCartPoster(): Promise<{
     return (await response.json()) as AddToCartResponse;
   };
 
-  // Browseren lukkes IKKE -- det er hans egen Chrome. Kun forbindelsen.
-  return { post, close: () => browser.close() };
+  // Browseren lukkes IKKE -- det er hans egen. Kun forbindelsen.
+  return { post, læsKurv: () => læsKurv(context), close: () => browser.close() };
 }
