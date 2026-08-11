@@ -36,7 +36,10 @@
     "test:ugeplan-indkoeb": "tsx scripts/testUgeplanIndkoeb.ts",
     "test:eksport": "tsx scripts/testIndkoebEksport.ts",
     "test:husstande": "tsx scripts/testHusstande.ts",
-    "test:grundopskrifter": "tsx scripts/testGrundopskrifter.ts"
+    "test:grundopskrifter": "tsx scripts/testGrundopskrifter.ts",
+    "test:bilka": "tsx scripts/testBilkatogoSearch.ts",
+    "bilka:setup": "tsx scripts/bilkaSetup.ts",
+    "bilka:push": "tsx scripts/pushToBilka.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -54,6 +57,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "playwright": "^1.62.1",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
     "typescript": "^5"

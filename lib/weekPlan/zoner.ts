@@ -57,6 +57,9 @@ const REGLER: Regel[] = [
       /\bi vand\b|\bi olie\b|\bi lage\b/,
       /\bhenkogt\b|\bsyltet\b|\bsyltede\b/,
       /\bsorte bønner\b|\bhvide bønner\b|\bkidneybønner\b/,
+      // Hvide asparges saelges henkogte paa glas. Friske hvide asparges
+      // findes stort set ikke i en dansk hverdagsbutik.
+      /\bhvide asparges\b/,
     ],
     ord: ["borlottibønner"],
   },
@@ -251,7 +254,9 @@ const REGLER: Regel[] = [
       "dej",
       "bearnaise",
     ],
-    slutter: ["mælk"],
+    // "madlavningsfloede" starter ikke med "floede", saa praefiks-reglen
+    // fanger den ikke. Uden endelsen her havnede den i Kolonial.
+    slutter: ["mælk", "fløde"],
   },
 
   // --- 9. Brød ------------------------------------------------------------

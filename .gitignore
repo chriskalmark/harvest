@@ -36,6 +36,11 @@ yarn-debug.log*
 # local backups (keep private)
 data/backup-week-*.md
 
+# bilka togo: session og faste varer (keep private)
+lib/bilkatogo/session.ts
+.bilka-session.json
+data/bilkatogo-overrides.json
+
 # vercel
 .vercel
 

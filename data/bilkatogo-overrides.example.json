@@ -1,0 +1,7 @@
+{
+  "_comment": "Faste varer: varenavn (små bogstaver) til Bilka produkt-id. Kopiér til data/bilkatogo-overrides.json og udfyld med dine egne. Varer her slås ikke op, de peger direkte på det rigtige produkt. product-id'et er objectID fra en søgning, fx det du ser i pushToBilka-dry-run.",
+  "letmælk": "84120",
+  "hakket oksekød 8-12%": "",
+  "rugbrød": "",
+  "æg": ""
+}
