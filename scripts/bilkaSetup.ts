@@ -52,6 +52,8 @@ interface PwContext {
 }
 interface PwPage {
   goto(url: string, opts?: { waitUntil?: string }): Promise<unknown>;
+  innerText(selector: string): Promise<string>;
+  reload(opts?: { waitUntil?: string }): Promise<unknown>;
 }
 interface PwBrowser {
   newContext(opts?: { storageState?: string }): Promise<PwContext>;
@@ -181,10 +183,11 @@ function notableHeaders(req: PwRequest): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(req.headers())) {
     const k = key.toLowerCase();
-    if (!k.startsWith("x-")) continue;
     if (k.startsWith("x-forwarded")) continue;
     if (k.startsWith("x-datadog")) continue;
-    out[k] = value;
+    // Authorization blev tidligere smidt vaek, fordi filteret kun tog x-*.
+    // Var login baaret af den header, ville vi aldrig have set det.
+    if (k === "authorization" || k.startsWith("x-")) out[k] = value;
   }
   return out;
 }
@@ -393,9 +396,36 @@ async function main(): Promise<void> {
     await page.goto(START_URL, { waitUntil: "domcontentloaded" });
 
     log("Et browservindue er åbnet mod bilkatogo.dk.");
-    await rl.question(
-      "Log ind hvis du ikke allerede er (Gigya). Tryk Enter når du er klar. ",
-    );
+
+    /*
+     * Loginnet KONTROLLERES, det antages ikke.
+     *
+     * Foerste gang blev sessionen gemt, fordi der blev trykket Enter. Den
+     * var ikke logget ind, og alt derefter saa rigtigt ud: kaldet blev
+     * fanget, filerne blev skrevet, og pushet meldte "19/19 lagt i" -- til
+     * en anonym kurv, ingen kunne se. Et tryk paa Enter er ikke et bevis.
+     */
+    for (;;) {
+      await rl.question(
+        "Log ind hvis du ikke allerede er (Gigya). Tryk Enter når du er klar. ",
+      );
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await new Promise((r) => setTimeout(r, 3000));
+
+      const tekst = (await page.innerText("body")).toLowerCase();
+      const loggetInd = /log ud|min konto|mit overblik/.test(tekst);
+
+      if (loggetInd) {
+        log("Bekræftet: du er logget ind.\n");
+        break;
+      }
+
+      log(
+        "\nSiden viser dig stadig som IKKE logget ind (der står 'Log ind').\n" +
+          "Fortsætter vi nu, ryger varerne i en anonym kurv, du aldrig kan se.\n" +
+          "Log ind i browservinduet, og tryk så Enter igen.\n",
+      );
+    }
 
     const captured = await captureAddCall(context, rl);
     log(`\nFangede add-to-cart-kaldet.`);

@@ -115,8 +115,18 @@ export interface AddToCartBody {
   cartVersion: number;
 }
 
-/** Kun det klienten læser af svaret. Resten af kurven ignoreres her. */
+/**
+ * Kun det klienten læser af svaret. Resten af kurven ignoreres her.
+ *
+ * uid er den vigtigste. Bilka svarer 200 OK, selv når man ikke er logget
+ * ind -- varen ryger bare i en ANONYM kurv, som ingen kan se. Det kostede
+ * en runde hvor scriptet meldte "19/19 lagt i, 0 fejlede" til en kurv der
+ * stod tom paa sitet. HTTP-status alene er derfor ikke et svar paa om det
+ * lykkedes.
+ */
 export interface AddToCartResponse {
   offerLimitMessage?: string;
   message?: string;
+  /** -1 = ikke logget ind. Alt andet = den rigtige kurv. */
+  uid?: number;
 }

@@ -51,6 +51,26 @@ export async function addLine(
 ): Promise<AddLineResult> {
   try {
     const response = await post(addToCartBody(line));
+
+    /*
+     * uid === -1 betyder anonym.
+     *
+     * Bilka svarer 200 OK med rigtige tal -- unitCount, sum, pris -- selv
+     * naar ingen er logget ind. Varen ryger bare i en kurv, ingen kan se.
+     * Uden det her tjek meldte scriptet "19/19 lagt i, 0 fejlede" til en
+     * kurv der stod tom paa sitet. Et gron tal man ikke kan stole paa er
+     * vaerre end en fejl.
+     */
+    if (response.uid === -1) {
+      return {
+        line,
+        ok: false,
+        message: null,
+        error:
+          "Ikke logget ind (uid -1). Varen ville ryge i en anonym kurv. Kør npm run bilka:setup igen.",
+      };
+    }
+
     const message = response.offerLimitMessage || response.message || null;
     return { line, ok: true, message, error: null };
   } catch (error) {
