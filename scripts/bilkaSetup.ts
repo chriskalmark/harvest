@@ -103,15 +103,39 @@ async function ensurePlaywright(): Promise<Chromium> {
   }
 }
 
-/** Kald der lægger en vare i kurven: POST til Bilkas shop-API med product_id. */
-function isAddToCall(req: PwRequest): boolean {
-  if (req.method() !== "POST") return false;
-  const url = req.url();
-  if (!url.includes("api.bilkatogo.dk")) return false;
-  if (!url.includes("/shop/")) return false;
-  const body = req.postData() ?? "";
-  return body.includes("product_id");
+/**
+ * Hvor godt ligner det her et "laeg i kurv"-kald?
+ *
+ * Foerste udgave kraevede ALLE fire ting paa én gang: POST, hosten
+ * api.bilkatogo.dk, "/shop/" i stien, og product_id i kroppen. Rammer Bilka
+ * bare én af dem anderledes -- en anden host, PUT i stedet for POST, et
+ * andet feltnavn -- saa opdagede den ingenting OG sagde ikke hvorfor. Man
+ * sad og ventede paa noget der aldrig kom.
+ *
+ * Nu gives der point, og alt hvad der overhovedet ligner, bliver vist. Saa
+ * kan man se sandheden i stedet for at gaette.
+ */
+function scoreAddCall(req: PwRequest): number {
+  const url = req.url().toLowerCase();
+  if (!url.includes("bilkatogo")) return 0;
+
+  const method = req.method().toUpperCase();
+  if (!["POST", "PUT", "PATCH"].includes(method)) return 0;
+
+  const body = (req.postData() ?? "").toLowerCase();
+  let score = 1;
+
+  if (/product_?id/.test(body)) score += 4;
+  if (/\bcart\b|\bbasket\b|kurv/.test(url)) score += 3;
+  if (url.includes("/shop/")) score += 2;
+  if (url.includes("api.bilkatogo.dk")) score += 1;
+  if (/\bcart\b|\bbasket\b/.test(body)) score += 1;
+
+  return score;
 }
+
+/** Point nok til at vi tør vaelge den uden at spoerge. */
+const SIKKER_SCORE = 5;
 
 /** De headers værd at gentage: Bilkas egne x-headers. Cookie klarer konteksten. */
 function notableHeaders(req: PwRequest): Record<string, string> {
@@ -137,21 +161,61 @@ async function captureAddCall(
   rl: readline.Interface,
 ): Promise<Captured> {
   return new Promise<Captured>((resolve, reject) => {
+    /** Alt der overhovedet ligner, saa intet er usynligt. */
+    const set: { score: number; captured: Captured; linje: string }[] = [];
+
     const timeout = setTimeout(() => {
       context.off("request", handler);
-      reject(new Error("Så ingen add-to-cart-kald inden for 3 minutter."));
+
+      if (set.length === 0) {
+        reject(
+          new Error(
+            "Så ingen kald til bilkatogo overhovedet inden for 3 minutter.\n" +
+              "Blev varen lagt i kurven i DET vindue scriptet åbnede? Et andet\n" +
+              "browservindue tæller ikke -- scriptet lytter kun på sit eget.",
+          ),
+        );
+        return;
+      }
+
+      set.sort((a, b) => b.score - a.score);
+      log("\nIngen kald ramte mønsteret sikkert. Her er hvad jeg så:\n");
+      set.slice(0, 12).forEach((k, i) => log(`  ${i + 1}. ${k.linje}`));
+      reject(
+        new Error(
+          "\nKopiér den linje der ligner 'læg i kurv', og send den til Claude -- " +
+            "så retter vi mønsteret.",
+        ),
+      );
     }, 180_000);
 
     const handler = (req: PwRequest): void => {
-      if (!isAddToCall(req)) return;
-      clearTimeout(timeout);
-      context.off("request", handler);
-      resolve({ url: req.url(), headers: notableHeaders(req) });
+      const score = scoreAddCall(req);
+      if (score === 0) return;
+
+      const body = (req.postData() ?? "").slice(0, 160).replace(/\s+/g, " ");
+      const linje = `[${score}] ${req.method()} ${req.url()}${body ? `  krop: ${body}` : "  (ingen krop)"}`;
+
+      set.push({
+        score,
+        linje,
+        captured: { url: req.url(), headers: notableHeaders(req) },
+      });
+
+      // Vis det med det samme. Sidder man og venter, skal man kunne se at
+      // der SKER noget -- ikke stirre paa en tavs prompt.
+      log(`  set: ${linje}`);
+
+      if (score >= SIKKER_SCORE) {
+        clearTimeout(timeout);
+        context.off("request", handler);
+        resolve({ url: req.url(), headers: notableHeaders(req) });
+      }
     };
 
     context.on("request", handler);
     void rl.question(
-      "\nLæg nu ÉN vare i kurven i browservinduet. Jeg lytter efter kaldet...\n",
+      "\nLæg nu ÉN vare i kurven i browservinduet. Jeg lytter og viser alt jeg ser...\n",
     );
   });
 }
