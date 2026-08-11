@@ -7,7 +7,11 @@ import { loginBevis, type HarRequest } from "@/lib/bilkatogo/profil";
 import { chromium } from "playwright";
 
 /**
- * Kurv-poster der bruger DIN EGEN Chrome.
+ * Kurv-poster der bruger DIN EGEN browser.
+ *
+ * Chrome, Brave eller Edge -- alle tre er Chromium og taler samme
+ * fejlfindingsprotokol. Filen hed oprindeligt chrome.ts, fordi Chrome blev
+ * antaget; paa maskinen her findes kun Brave og Edge.
  *
  * Baggrund: en Playwright-browser kunne ikke få en Bilka-session. Der blev
  * logget ud og ind, og API'et svarede uid -1 hver gang. Gigya afviser
@@ -43,9 +47,12 @@ export async function createChromeCartPoster(): Promise<{
     browser = await chromium.connectOverCDP(CDP_URL);
   } catch {
     throw new Error(
-      `Kunne ikke få fat i Chrome på ${CDP_URL}.\n` +
-        "Luk Chrome helt, og start den med fejlfindingsporten:\n" +
-        '  open -a "Google Chrome" --args --remote-debugging-port=9222\n' +
+      `Fik ikke fat i en browser på ${CDP_URL}.\n\n` +
+        "Luk browseren HELT (⌘Q) og start den med fejlfindingsporten.\n" +
+        "Brug den browser hvor du er logget ind på Bilka:\n\n" +
+        '  open -a "Brave Browser"   --args --remote-debugging-port=9222\n' +
+        '  open -a "Microsoft Edge"  --args --remote-debugging-port=9222\n' +
+        '  open -a "Google Chrome"   --args --remote-debugging-port=9222\n\n' +
         "Log ind på bilkatogo.dk, og kør så kommandoen igen.",
     );
   }
@@ -62,8 +69,8 @@ export async function createChromeCartPoster(): Promise<{
   if (!bevis.loggetInd) {
     await browser.close();
     throw new Error(
-      `Chrome er ikke logget ind på Bilka (uid=${bevis.uid}).\n` +
-        "Åbn bilkatogo.dk i Chrome, log ind, og kør så igen.",
+      `Browseren er ikke logget ind på Bilka (uid=${bevis.uid}).\n` +
+        "Åbn bilkatogo.dk i DEN browser, log ind, og kør så igen.",
     );
   }
 

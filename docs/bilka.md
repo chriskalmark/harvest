@@ -2,13 +2,17 @@
 
 ## Sådan bruges den
 
-**Én gang:** luk Chrome helt (⌘Q), og start den med en fejlfindingsport:
+**Én gang:** luk din browser helt (⌘Q), og start den med en fejlfindingsport.
+Brug den browser hvor du er logget ind på Bilka:
 
 ```
-open -a "Google Chrome" --args --remote-debugging-port=9222
+open -a "Brave Browser"  --args --remote-debugging-port=9222
+open -a "Microsoft Edge" --args --remote-debugging-port=9222
+open -a "Google Chrome"  --args --remote-debugging-port=9222
 ```
 
-Log ind på bilkatogo.dk som du plejer. Så:
+Chrome, Brave og Edge er alle Chromium og taler samme protokol. Log ind på
+bilkatogo.dk som du plejer. Så:
 
 ```
 npm run bilka:push -- --week 2026-08-10          # se hvad der ville ske
@@ -17,7 +21,7 @@ npm run bilka:push -- --week 2026-08-10 --push   # læg i kurven
 
 Dry-run er standard. `--file min-liste.json` virker også.
 
-## Hvorfor din egen Chrome, og ikke en automatiseret browser
+## Hvorfor din egen browser, og ikke en automatiseret
 
 Det blev prøvet, og det virker ikke. En Playwright-browser kunne ikke få en
 Bilka-session: der blev logget ud og ind flere gange, vinduet så logget ind
@@ -25,8 +29,8 @@ ud, og API'et svarede `uid: -1` hver eneste gang. Gigya afviser efter alt at
 dømme den automatiserede browser — login *ser* ud til at lykkes, men serveren
 udsteder ingen session.
 
-Chrome er allerede godkendt. Der er intet at logge ind på og intet der kan
-afvises, fordi det ER den browser Bilka kender.
+Din egen browser er allerede godkendt. Der er intet at logge ind på og intet
+der kan afvises, fordi det ER den browser Bilka kender.
 
 ## Hvordan man ved om det virkede
 
