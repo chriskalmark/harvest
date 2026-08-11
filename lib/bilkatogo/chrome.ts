@@ -3,6 +3,7 @@ import type {
   AddToCartResponse,
   CartPoster,
 } from "@/lib/bilkatogo/types";
+import { execSync, spawn } from "node:child_process";
 import { chromium } from "playwright";
 
 /**
@@ -26,6 +27,74 @@ import { chromium } from "playwright";
  */
 
 const CDP_URL = process.env.CHROME_CDP_URL ?? "http://localhost:9222";
+const PORT = Number(new URL(CDP_URL).port || 9222);
+
+/** Chromium-browsere i den raekkefoelge de proeves. Alle taler CDP. */
+const BROWSERE = ["Brave Browser", "Google Chrome", "Microsoft Edge"];
+
+function koerer(navn: string): boolean {
+  try {
+    execSync(`pgrep -f ${JSON.stringify(navn)}`, { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function installeret(navn: string): boolean {
+  try {
+    execSync(`test -d "/Applications/${navn}.app"`, { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function svarerCDP(): Promise<boolean> {
+  try {
+    const r = await fetch(`${CDP_URL}/json/version`, {
+      signal: AbortSignal.timeout(1500),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Start browseren med fejlfindingsporten, hvis den ikke allerede koerer.
+ *
+ * macOS' `open -a ... --args` virker KUN naar appen er lukket. Koerer den
+ * allerede uden porten, bliver flaget stille ignoreret -- derfor siges det
+ * hoejt frem for at proeve i blinde.
+ */
+async function startBrowser(): Promise<string | null> {
+  const valgt = BROWSERE.filter(installeret);
+  if (valgt.length === 0) return null;
+
+  const allerede = valgt.find(koerer);
+  if (allerede) {
+    throw new Error(
+      `${allerede} kører allerede uden fejlfindingsporten.\n\n` +
+        `Luk den HELT med ⌘Q, og kør kommandoen igen -- så starter jeg den selv.\n` +
+        "(macOS ignorerer porten, hvis appen allerede er åben.)",
+    );
+  }
+
+  const navn = valgt[0];
+  spawn(
+    "open",
+    ["-a", navn, "--args", `--remote-debugging-port=${PORT}`],
+    { detached: true, stdio: "ignore" },
+  ).unref();
+
+  // Browseren skal naa at komme op og aabne porten.
+  for (let i = 0; i < 20; i += 1) {
+    await new Promise((r) => setTimeout(r, 1000));
+    if (await svarerCDP()) return navn;
+  }
+  return null;
+}
 
 const BASE_URL =
   "https://api.bilkatogo.dk/api/shop/v6/ChangeLineCount?u=w&fullCart=0";
@@ -75,14 +144,19 @@ export async function createChromeCartPoster(): Promise<{
   try {
     browser = await chromium.connectOverCDP(CDP_URL);
   } catch {
+    // Ikke oppe? Start den selv. Det er den friktion der gjorde, at et
+    // push mislykkedes, fordi browseren var blevet lukket i mellemtiden.
+    const startet = await startBrowser();
+    if (startet) {
+      console.log(`Startede ${startet} med fejlfindingsporten.`);
+      browser = await chromium.connectOverCDP(CDP_URL);
+    }
+  }
+
+  if (!browser) {
     throw new Error(
       `Fik ikke fat i en browser på ${CDP_URL}.\n\n` +
-        "Luk browseren HELT (⌘Q) og start den med fejlfindingsporten.\n" +
-        "Brug den browser hvor du er logget ind på Bilka:\n\n" +
-        '  open -a "Brave Browser"   --args --remote-debugging-port=9222\n' +
-        '  open -a "Microsoft Edge"  --args --remote-debugging-port=9222\n' +
-        '  open -a "Google Chrome"   --args --remote-debugging-port=9222\n\n' +
-        "Log ind på bilkatogo.dk, og kør så kommandoen igen.",
+        "Luk browseren HELT (⌘Q) og kør igen -- så starter jeg den selv.",
     );
   }
 
