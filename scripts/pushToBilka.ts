@@ -140,6 +140,19 @@ async function loadCartPoster(): Promise<{
   post: CartPoster;
   close: () => Promise<void>;
 }> {
+  /*
+   * Din egen Chrome foerst.
+   *
+   * Playwrights egen browser kunne ikke faa en Bilka-session -- uid -1
+   * hver gang, ogsaa efter log ud og ind. Chrome er allerede godkendt.
+   */
+  if (process.env.BILKA_VIA_CHROME !== "0") {
+    const { createChromeCartPoster } = await import(
+      "../lib/bilkatogo/chrome"
+    );
+    return createChromeCartPoster();
+  }
+
   const sessionFile = path.join(process.cwd(), "lib/bilkatogo/session.ts");
   if (!fs.existsSync(sessionFile)) {
     throw new Error(
