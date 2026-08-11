@@ -38,9 +38,9 @@ interface PwAPIResponse {
   statusText(): string;
 }
 interface PwContextRequest {
-  post(
+  fetch(
     url: string,
-    opts: { data: unknown; headers?: Record<string, string> },
+    opts: { method?: string; data?: unknown; headers?: Record<string, string> },
   ): Promise<PwAPIResponse>;
 }
 interface PwContext {
@@ -170,17 +170,28 @@ function scoreAddCall(req: PwRequest): number {
 const SIKKER_SCORE = 7;
 
 /** De headers værd at gentage: Bilkas egne x-headers. Cookie klarer konteksten. */
+/**
+ * De headers vaerd at gentage.
+ *
+ * IKKE x-datadog-*: det er sporings-id'er for netop det ene kald i
+ * browserens RUM. Gentaget paa hvert push ville de vaere loegn -- samme
+ * trace-id paa tyve forskellige kald -- og de betyder intet for Bilka.
+ */
 function notableHeaders(req: PwRequest): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(req.headers())) {
     const k = key.toLowerCase();
-    if (k.startsWith("x-") && !k.startsWith("x-forwarded")) out[k] = value;
+    if (!k.startsWith("x-")) continue;
+    if (k.startsWith("x-forwarded")) continue;
+    if (k.startsWith("x-datadog")) continue;
+    out[k] = value;
   }
   return out;
 }
 
 interface Captured {
   url: string;
+  method: string;
   headers: Record<string, string>;
 }
 
@@ -231,7 +242,11 @@ async function captureAddCall(
       set.push({
         score,
         linje,
-        captured: { url: req.url(), headers: notableHeaders(req) },
+        captured: {
+          url: req.url(),
+          method: req.method().toUpperCase(),
+          headers: notableHeaders(req),
+        },
       });
 
       // Vis det med det samme. Sidder man og venter, skal man kunne se at
@@ -241,7 +256,11 @@ async function captureAddCall(
       if (score >= SIKKER_SCORE) {
         clearTimeout(timeout);
         context.off("request", handler);
-        resolve({ url: req.url(), headers: notableHeaders(req) });
+        resolve({
+          url: req.url(),
+          method: req.method().toUpperCase(),
+          headers: notableHeaders(req),
+        });
       }
     };
 
@@ -254,6 +273,21 @@ async function captureAddCall(
 
 /** Skriv en færdig session.ts med den fundne sti og den gemte session. */
 function writeSession(captured: Captured): void {
+  /*
+   * Det fangede kald er fx
+   *   .../ChangeLineCount?u=w&productId=74278&count=1&fullCart=0
+   *
+   * productId og count staar i ADRESSEN, ikke i kroppen. Skrev vi adressen
+   * ind som den er, ville hvert eneste push laegge netop den vare i kurven
+   * -- den ene man tilfaeldigvis testede med. Derfor pilles de to ud, og
+   * resten af parametrene beholdes som de var.
+   */
+  const parsed = new URL(captured.url);
+  parsed.searchParams.delete("productId");
+  parsed.searchParams.delete("product_id");
+  parsed.searchParams.delete("count");
+  const base = parsed.toString();
+
   const headerLine =
     Object.keys(captured.headers).length > 0
       ? `\nconst EXTRA_HEADERS = ${JSON.stringify(captured.headers, null, 2)};\n`
@@ -267,16 +301,25 @@ function writeSession(captured: Captured): void {
 import { chromium } from "playwright";
 
 /**
- * Genereret af scripts/bilkaSetup.ts. Redigér ved at køre npm run bilka:setup
- * igen, eller ret ADD_TO_CART_URL i hånden hvis Bilka skifter version.
+ * Genereret af scripts/bilkaSetup.ts. Koer npm run bilka:setup igen for at
+ * forny den, eller ret BASE_URL i haanden hvis Bilka skifter version.
  *
- * Leverer en CartPoster oven på en gemt, logget-ind session (.bilka-session.json).
- * Login blev lavet i en rigtig browser; her genbruges kun cookies.
+ * Bilkas kurv-endepunkt tager productId og count som QUERY-PARAMETRE, ikke
+ * i kroppen. cart.ts bygger en krop -- den oversaettes her, fordi
+ * traadformen hoerer til sessionen og ikke til kurv-logikken.
  */
 
-const ADD_TO_CART_URL = ${JSON.stringify(captured.url)};
+const BASE_URL = ${JSON.stringify(base)};
+const METHOD = ${JSON.stringify(captured.method)};
 const STORAGE_STATE = ".bilka-session.json";
 ${headerLine}
+function urlFor(body: AddToCartBody): string {
+  const url = new URL(BASE_URL);
+  url.searchParams.set("productId", body.product_id);
+  url.searchParams.set("count", String(body.count));
+  return url.toString();
+}
+
 export async function createCartPoster(): Promise<{
   post: CartPoster;
   close: () => Promise<void>;
@@ -287,10 +330,22 @@ export async function createCartPoster(): Promise<{
   const post: CartPoster = async (
     body: AddToCartBody,
   ): Promise<AddToCartResponse> => {
-    const response = await context.request.post(ADD_TO_CART_URL, {
-      data: body,
+    const url = urlFor(body);
+
+    // Metoden er den browseren selv brugte. Svarer serveren 405, er den
+    // skiftet siden opsaetningen; saa proeves den anden én gang frem for
+    // at fejle paa noget der er til at rette selv.
+    let response = await context.request.fetch(url, {
+      method: METHOD,
       headers: EXTRA_HEADERS,
     });
+    if (response.status() === 405) {
+      response = await context.request.fetch(url, {
+        method: METHOD === "GET" ? "POST" : "GET",
+        headers: EXTRA_HEADERS,
+      });
+    }
+
     if (!response.ok()) {
       throw new Error(\`HTTP \${response.status()} \${response.statusText()}\`);
     }
@@ -301,7 +356,10 @@ export async function createCartPoster(): Promise<{
 }
 `;
   fs.writeFileSync(SESSION_FILE, content, "utf8");
-  log(`Skrev ${path.relative(ROOT, SESSION_FILE)} med stien:\n  ${captured.url}`);
+  log(
+    `Skrev ${path.relative(ROOT, SESSION_FILE)}:\n  ${captured.method} ${base}\n` +
+      "  (productId og count saettes pr. vare)",
+  );
 }
 
 async function main(): Promise<void> {
