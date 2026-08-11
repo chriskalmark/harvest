@@ -4,15 +4,15 @@ import type {
   CartPoster,
 } from "@/lib/bilkatogo/types";
 import {
+  erLoggetInd,
   IKKE_LOGGET_IND_BESKED,
-  LOGGET_IND,
   profilFindes,
   profilSti,
 } from "@/lib/bilkatogo/profil";
 import { chromium } from "playwright";
 
 /**
- * EKSEMPEL. Den rigtige session.ts genereres af npm run bilka:setup.
+ * EKSEMPEL. Den rigtige session.ts skrives af npm run bilka:setup.
  *
  * Posteren mod Bilkas kurv.
  *
@@ -58,13 +58,13 @@ export async function createCartPoster(): Promise<{
     waitUntil: "domcontentloaded",
   });
   await page.waitForTimeout(3000);
+  await page.close();
 
-  const tekst = await page.innerText("body");
-  if (!LOGGET_IND.test(tekst)) {
+  // Spoerg API'et, ikke siden. uid er svaret; tekst er et gaet.
+  if (!(await erLoggetInd(context))) {
     await context.close();
     throw new Error(IKKE_LOGGET_IND_BESKED);
   }
-  await page.close();
 
   const post: CartPoster = async (
     body: AddToCartBody,

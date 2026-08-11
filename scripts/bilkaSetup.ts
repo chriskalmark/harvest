@@ -4,7 +4,8 @@ import path from "node:path";
 import * as readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import {
-  LOGGET_IND,
+  erLoggetInd,
+  type HarRequest,
   PROFIL_MAPPE,
   profilFindes,
   profilSti,
@@ -47,7 +48,7 @@ interface PwPage {
   innerText(selector: string): Promise<string>;
   waitForTimeout(ms: number): Promise<void>;
 }
-interface PwContext {
+interface PwContext extends HarRequest {
   newPage(): Promise<PwPage>;
   close(): Promise<void>;
 }
@@ -93,7 +94,7 @@ async function alleredeLoggetInd(chromium: Chromium): Promise<boolean> {
     const page = await context.newPage();
     await page.goto(START_URL, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(3000);
-    return LOGGET_IND.test(await page.innerText("body"));
+    return erLoggetInd(context);
   } catch {
     return false;
   } finally {
@@ -134,8 +135,8 @@ async function main(): Promise<void> {
       await page.reload({ waitUntil: "domcontentloaded" });
       await page.waitForTimeout(3000);
 
-      if (LOGGET_IND.test(await page.innerText("body"))) {
-        log("\nBekræftet: du er logget ind. Profilen er gemt.");
+      if (await erLoggetInd(context)) {
+        log("\nBekræftet af Bilkas eget API: du er logget ind.");
         break;
       }
 
