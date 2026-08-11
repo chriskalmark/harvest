@@ -39,6 +39,10 @@ data/backup-week-*.md
 # bilka togo: session og faste varer (keep private)
 lib/bilkatogo/session.ts
 .bilka-session.json
+# Hele browserprofilen: cookies, localStorage for ALLE origins, IndexedDB.
+# Gigya holder sin login-tilstand paa sit eget domaene i en iframe, og den
+# blev tabt af storageState. Profilen beholder den.
+.bilka-profile/
 data/bilkatogo-overrides.json
 
 # vercel
