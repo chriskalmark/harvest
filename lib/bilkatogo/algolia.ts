@@ -61,10 +61,20 @@ function stripHighlight(value: string): string {
  */
 function nameOfHit(hit: WireProductHit): string {
   const highlight = hit._highlightResult;
-  const fromName = highlight?.name?.value;
-  if (fromName) return stripHighlight(fromName);
+
+  /*
+   * searchHierachy[0] FOERST, ikke name.
+   *
+   * Det er produktets fulde navn med pakkestoerrelsen i:
+   *   "Salling Bagekartofler 1,5 kg"
+   * mens name kun er "Bagekartofler". Uden stoerrelsen kan vi ikke regne
+   * ud, hvor mange pakker der skal til -- og saa blev alt med vaegt til
+   * "1 stk", ogsaa naar der skulle bruges halvanden kilo.
+   */
   const fromHierarchy = highlight?.searchHierachy?.[0]?.value;
   if (fromHierarchy) return stripHighlight(fromHierarchy);
+  const fromName = highlight?.name?.value;
+  if (fromName) return stripHighlight(fromName);
   return "";
 }
 

@@ -22,9 +22,13 @@ function line(match: ShoppingMatch): string {
     .map((a) => `${a.productId} ${a.name}`)
     .join(" | ");
   const altLine = alts ? `\n           alt: ${alts}` : "";
+  const hvorfor = match.countBegrundelse
+    ? `\n           antal: ${match.countBegrundelse}`
+    : "";
+
   return (
     `  [søgt]  ${match.query} ×${match.count} -> ` +
-    `${chosen?.productId} ${chosen?.name}${altLine}`
+    `${chosen?.productId} ${chosen?.name}${hvorfor}${altLine}`
   );
 }
 

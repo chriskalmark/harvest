@@ -1,4 +1,5 @@
 import { searchProducts } from "@/lib/bilkatogo/algolia";
+import { antalPakker } from "@/lib/bilkatogo/maengde";
 import type { ProductMatch, ShoppingMatch } from "@/lib/bilkatogo/types";
 
 /**
@@ -67,6 +68,11 @@ export async function matchLine(
   line: ShoppingLineInput,
   overrides: OverrideMap = {},
 ): Promise<ShoppingMatch> {
+  /*
+   * Foreloebigt antal. Er der et soegetraef, regnes det om nedenfor ud fra
+   * pakkestoerrelsen i produktnavnet -- "1,5 kg kartofler" mod en pose paa
+   * 1 kg er to poser, ikke én. Uden det blev alt med vaegt til 1 stk.
+   */
   const count = parseCount(line.q);
   const key = normalizeKey(line.n);
 
@@ -93,9 +99,23 @@ export async function matchLine(
   }
 
   const [best, ...rest] = hits;
+
+  /*
+   * Antallet regnes ud af PAKKESTOERRELSEN i produktnavnet.
+   *
+   * "Salling Bagekartofler 1,5 kg" daekker 500 g med én pose, mens
+   * "Kartofler 1 kg" kraever to til halvanden kilo. Foer det her blev alt
+   * med vaegt til 1 stk, uanset hvor meget der skulle bruges.
+   *
+   * Og "2 stk" ganges kun op, naar varen saelges styksvis -- ellers blev
+   * to nakkekoteletter til to bakker af 3,2 kg.
+   */
+  const beregnet = antalPakker(line.q, best.name);
+
   return {
     query: line.n,
-    count,
+    count: beregnet.antal,
+    countBegrundelse: beregnet.begrundelse,
     source: "search",
     match: best,
     alternatives: rest,

@@ -65,6 +65,8 @@ export interface ProductMatch {
 export type MatchSource = "override" | "search" | "none";
 
 export interface ShoppingMatch {
+  /** Hvorfor netop det antal. Vises i rapporten, saa 1 ikke ligner et gaet. */
+  countBegrundelse?: string;
   /** Varen som den stod på indkøbslisten (ListItem.n). */
   query: string;
   /** Ønsket antal. Udledt af listen; falder tilbage til 1. */

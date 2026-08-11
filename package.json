@@ -37,10 +37,11 @@
     "test:eksport": "tsx scripts/testIndkoebEksport.ts",
     "test:husstande": "tsx scripts/testHusstande.ts",
     "test:grundopskrifter": "tsx scripts/testGrundopskrifter.ts",
-    "test:bilka": "tsx scripts/testBilkatogoSearch.ts",
+    "test:bilka": "tsx scripts/testBilkatogoSearch.ts && tsx scripts/testBilkaMaengde.ts",
     "bilka:setup": "tsx scripts/bilkaSetup.ts",
     "bilka:push": "tsx scripts/pushToBilka.ts",
-    "bilka:login": "tsx scripts/bilkaLogin.ts"
+    "bilka:login": "tsx scripts/bilkaLogin.ts",
+    "test:bilka-maengde": "tsx scripts/testBilkaMaengde.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
