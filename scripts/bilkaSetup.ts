@@ -104,38 +104,70 @@ async function ensurePlaywright(): Promise<Chromium> {
 }
 
 /**
+ * Vaerter der aldrig er kurven: sporing, maaling og reklame.
+ *
+ * Foerste forsoeg filtrerede paa "url indeholder bilkatogo" OG metode
+ * POST/PUT/PATCH. Begge dele var mine antagelser, og de skjulte netop det
+ * kald vi ledte efter -- alt hvad der kom frem, var Datadog, Google
+ * Analytics og DoubleClick. Nu vendes det om: ALT vises, undtagen det vi
+ * med sikkerhed ved er stoej.
+ */
+const STØJ = [
+  "datadoghq",
+  "google-analytics",
+  "analytics.google",
+  "googletagmanager",
+  "doubleclick",
+  "google.com/ads",
+  "googleadservices",
+  "facebook.",
+  "hotjar",
+  "clarity.ms",
+  "sentry.io",
+  "cookiebot",
+  "onetrust",
+  "segment.io",
+  "braze",
+  "adform",
+  "criteo",
+];
+
+/** Filer, ikke kald. En skrifttype er ikke en kurv. */
+const FILENDELSER =
+  /\.(js|mjs|css|png|jpe?g|gif|svg|webp|avif|woff2?|ttf|ico|map)(\?|$)/i;
+
+function erStøj(url: string): boolean {
+  const lav = url.toLowerCase();
+  if (STØJ.some((v) => lav.includes(v))) return true;
+  return FILENDELSER.test(lav);
+}
+
+/**
  * Hvor godt ligner det her et "laeg i kurv"-kald?
  *
- * Foerste udgave kraevede ALLE fire ting paa én gang: POST, hosten
- * api.bilkatogo.dk, "/shop/" i stien, og product_id i kroppen. Rammer Bilka
- * bare én af dem anderledes -- en anden host, PUT i stedet for POST, et
- * andet feltnavn -- saa opdagede den ingenting OG sagde ikke hvorfor. Man
- * sad og ventede paa noget der aldrig kom.
- *
- * Nu gives der point, og alt hvad der overhovedet ligner, bliver vist. Saa
- * kan man se sandheden i stedet for at gaette.
+ * Ingen krav om metode og ingen krav om vaert -- kun point. Et GET med
+ * product_id i adressen taeller lige saa meget som et POST.
  */
 function scoreAddCall(req: PwRequest): number {
-  const url = req.url().toLowerCase();
-  if (!url.includes("bilkatogo")) return 0;
+  const url = req.url();
+  if (erStøj(url)) return 0;
 
-  const method = req.method().toUpperCase();
-  if (!["POST", "PUT", "PATCH"].includes(method)) return 0;
-
+  const lav = url.toLowerCase();
   const body = (req.postData() ?? "").toLowerCase();
-  let score = 1;
+  let score = 0;
 
-  if (/product_?id/.test(body)) score += 4;
-  if (/\bcart\b|\bbasket\b|kurv/.test(url)) score += 3;
-  if (url.includes("/shop/")) score += 2;
-  if (url.includes("api.bilkatogo.dk")) score += 1;
-  if (/\bcart\b|\bbasket\b/.test(body)) score += 1;
+  if (/product_?id/.test(body) || /product_?id/.test(lav)) score += 4;
+  if (/\bcart\b|\bbasket\b|kurv/.test(lav)) score += 3;
+  if (/\bcart\b|\bbasket\b/.test(body)) score += 2;
+  if (lav.includes("bilkatogo") || lav.includes("salling")) score += 2;
+  if (lav.includes("/shop/")) score += 1;
+  if (["POST", "PUT", "PATCH"].includes(req.method().toUpperCase())) score += 1;
 
   return score;
 }
 
 /** Point nok til at vi tør vaelge den uden at spoerge. */
-const SIKKER_SCORE = 5;
+const SIKKER_SCORE = 7;
 
 /** De headers værd at gentage: Bilkas egne x-headers. Cookie klarer konteksten. */
 function notableHeaders(req: PwRequest): Record<string, string> {
@@ -190,8 +222,8 @@ async function captureAddCall(
     }, 180_000);
 
     const handler = (req: PwRequest): void => {
+      if (erStøj(req.url())) return;
       const score = scoreAddCall(req);
-      if (score === 0) return;
 
       const body = (req.postData() ?? "").slice(0, 160).replace(/\s+/g, " ");
       const linje = `[${score}] ${req.method()} ${req.url()}${body ? `  krop: ${body}` : "  (ingen krop)"}`;
