@@ -1,5 +1,5 @@
 import { searchProducts } from "@/lib/bilkatogo/algolia";
-import { antalPakker } from "@/lib/bilkatogo/maengde";
+import { antalPakker, bedsteHit } from "@/lib/bilkatogo/maengde";
 import type { ProductMatch, ShoppingMatch } from "@/lib/bilkatogo/types";
 
 /**
@@ -98,7 +98,15 @@ export async function matchLine(
     };
   }
 
-  const [best, ...rest] = hits;
+  /*
+   * Vaelg efter PAKKESTOERRELSE, ikke efter soegningens raekkefoelge.
+   *
+   * Bilkas oeverste hit for "svinemoerbrad" er en storkoekkenpakke paa
+   * 2,7 kg. Skal der bruges 300 g, er det ni gange for meget -- og det
+   * havnede i kurven, fordi vi altid tog hits[0].
+   */
+  const best = bedsteHit(hits, line.q)!;
+  const rest = hits.filter((h) => h !== best);
 
   /*
    * Antallet regnes ud af PAKKESTOERRELSEN i produktnavnet.

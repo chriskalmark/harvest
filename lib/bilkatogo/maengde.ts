@@ -171,3 +171,64 @@ export function antalPakker(
         : `${antal} × ${pakke.tal} ${pakke.enhed} til ${behov.tal} ${behov.enhed}`,
   };
 }
+
+/**
+ * Hvilket af søgningens hits passer bedst til behovet?
+ *
+ * Bilkas øverste hit for "svinemørbrad" er en storkøkkenpakke på 2,7 kg.
+ * Skal der bruges 300 g, er det ikke et match -- det er ni gange for meget,
+ * og det stod i kurven, fordi vi altid tog det første hit.
+ *
+ * Reglen: den MINDSTE pakke der dækker behovet, vinder. Findes ingen der
+ * dækker, tages den største -- så køber man to af dem i stedet.
+ *
+ * Pakker uden størrelse i navnet (løsvægt, "Soyasauce") sorteres ikke væk;
+ * de får søgningens egen rangering, fordi vi ikke ved bedre. At gætte på
+ * dem ville være at bytte ét blindt valg ud med et andet.
+ */
+export function bedsteHit<T extends { name: string }>(
+  hits: readonly T[],
+  behovTekst: string | undefined,
+): T | undefined {
+  if (hits.length === 0) return undefined;
+
+  const behov = behovFraTekst(behovTekst);
+  const behovGrund = behov ? tilGrundenhed(behov) : null;
+
+  // Uden et behov i en enhed vi forstår, står søgningens rækkefølge ved magt.
+  if (!behovGrund || behovGrund.enhed === "stk") return hits[0];
+
+  interface Vurderet {
+    hit: T;
+    /** Pakkens størrelse i samme grundenhed som behovet. */
+    størrelse: number;
+    plads: number;
+  }
+
+  const vurderede: Vurderet[] = [];
+  for (const hit of hits) {
+    const pakke = pakkestørrelse(hit.name);
+    if (!pakke) continue;
+    const grund = tilGrundenhed(pakke);
+    if (!grund || grund.enhed !== behovGrund.enhed) continue;
+    vurderede.push({
+      hit,
+      størrelse: grund.tal,
+      plads: hits.indexOf(hit),
+    });
+  }
+
+  if (vurderede.length === 0) return hits[0];
+
+  const dækker = vurderede.filter((v) => v.størrelse >= behovGrund.tal);
+
+  if (dækker.length > 0) {
+    // Mindste pakke der raekker. Ved lige stoerrelse vinder soegningens egen
+    // raekkefoelge, saa vi ikke omroder mere end noedvendigt.
+    dækker.sort((a, b) => a.størrelse - b.størrelse || a.plads - b.plads);
+    return dækker[0].hit;
+  }
+
+  vurderede.sort((a, b) => b.størrelse - a.størrelse || a.plads - b.plads);
+  return vurderede[0].hit;
+}

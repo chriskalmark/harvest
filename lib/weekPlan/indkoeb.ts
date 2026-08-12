@@ -29,6 +29,26 @@ import {
  *      aftener er lagt sammen, så to halve bundter bliver til ét.
  */
 
+/**
+ * Enheder der betyder "det har I i skabet".
+ *
+ * 1 spsk hvedemel er ikke en indkøbsvare -- det er en pose paa 2 kg, man
+ * allerede har staaende. Det samme med en teskefuld soja og et nip kanel.
+ * De havnede paa indkoebslisten, fordi grundopskrifterne opgiver dem i
+ * skefulde, og saa foreslog Bilka-koblingen at koebe hele pakken.
+ *
+ * De ryger nu i "Tjek skabet" i stedet: man skal vide de skal bruges, men
+ * ikke koebe dem.
+ */
+const SKABSENHEDER = new Set([
+  "tsk",
+  "spsk",
+  "knivspids",
+  "nip",
+  "dråbe",
+  "dråber",
+]);
+
 /** Enheder hvor en brøkdel ikke kan lægges i en indkøbskurv. */
 const STYKVARER = new Set([
   "stk",
@@ -259,6 +279,13 @@ export function byggIndkøbsliste(
         for (const del of foldUd(ingrediens.name, dag.portions)) {
           const delnavn = nøgleNavn(del.navn);
           if (!delnavn || !erKøbevare(del.navn)) continue;
+
+          // Skefulde koebes ikke. De staar i skabet.
+          if (SKABSENHEDER.has(del.enhed.toLowerCase())) {
+            læg(skabsting, `skab::${delnavn}`, del.navn, 0, "", dag);
+            continue;
+          }
+
           læg(
             samlet,
             `${delnavn}::${del.enhed}`,

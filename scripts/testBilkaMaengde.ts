@@ -8,9 +8,11 @@
 import assert from "node:assert/strict";
 import {
   antalPakker,
+  bedsteHit,
   behovFraTekst,
   pakkestørrelse,
 } from "../lib/bilkatogo/maengde";
+import { byggIndkøbsliste } from "../lib/weekPlan/indkoeb";
 
 // --- 1. Pakkestørrelsen læses af navnet ---------------------------------
 assert.deepEqual(pakkestørrelse("Salling Bagekartofler 1,5 kg"), {
@@ -106,4 +108,84 @@ assert.equal(antalPakker("", "Agurk").antal, 1);
 assert.equal(behovFraTekst(undefined), null);
 assert.deepEqual(behovFraTekst("2"), { tal: 2, enhed: "stk" });
 
-console.log("Bilka-mængder: 7 prøvegrupper holdt.");
+
+// --- 8. Pakken skal PASSE, ikke bare være den første ---------------------
+// Bilkas øverste hit for "svinemørbrad" er en storkøkkenpakke på 2,7 kg.
+// Skal der bruges 300 g, er det ni gange for meget.
+{
+  const hits = [
+    { name: "Mørbrad af gris m. bimørbrad 2,7 kg" },
+    { name: "Mørbrad af gris 1,2 kg" },
+    { name: "Økologisk mørbrad af gris 500 g" },
+  ];
+
+  assert.equal(
+    bedsteHit(hits, "300 g")?.name,
+    "Økologisk mørbrad af gris 500 g",
+    "mindste pakke der dækker behovet vinder",
+  );
+  assert.equal(
+    bedsteHit(hits, "2 kg")?.name,
+    "Mørbrad af gris m. bimørbrad 2,7 kg",
+    "til 2 kg er storpakken den rigtige",
+  );
+  assert.equal(
+    bedsteHit(hits, "5 kg")?.name,
+    "Mørbrad af gris m. bimørbrad 2,7 kg",
+    "dækker ingen, tages den største -- så køber man to",
+  );
+
+  // Uden en mængde vi forstår, står søgningens rækkefølge ved magt.
+  assert.equal(bedsteHit(hits, "2 stk")?.name, hits[0].name);
+  assert.equal(bedsteHit(hits, undefined)?.name, hits[0].name);
+  assert.equal(bedsteHit([], "300 g"), undefined);
+
+  // Pakker uden størrelse sorteres ikke væk -- vi ved bare ikke bedre.
+  assert.equal(
+    bedsteHit([{ name: "Soyasauce" }, { name: "Soyasauce 500 ml" }], "1 dl")
+      ?.name,
+    "Soyasauce 500 ml",
+    "den vi KAN måle, foretrækkes når den dækker",
+  );
+}
+
+// --- 9. Skefulde købes ikke -- de står i skabet -------------------------
+{
+  const dag = {
+    weekday: 3,
+    dayName: "Onsdag",
+    slotKind: "catalog" as const,
+    portions: 2,
+    manualTitle: null,
+    recipe: {
+      recipeId: 1,
+      name: "x",
+      pantryItems: [],
+      ingredients: [
+        { name: "millionbøf", amounts: [{ portions: 2, amount: 400, unitKey: "g" }] },
+      ],
+    },
+  };
+  const tomme = [1, 2, 4, 5, 6, 7].map((weekday) => ({
+    weekday,
+    dayName: "x",
+    slotKind: "empty" as const,
+    portions: 2,
+    manualTitle: null,
+    recipe: null,
+  }));
+
+  const liste = byggIndkøbsliste([dag, ...tomme]);
+  const købes = liste.afsnit.flatMap((a) => a.varer).map((v) => v.navn);
+  const skab = liste.skabet.map((v) => v.navn);
+
+  assert.ok(købes.includes("hakket oksekød"), "kødet skal købes");
+  assert.ok(
+    !købes.includes("hvedemel"),
+    "1 spsk mel må IKKE blive til en pose på 2 kg i kurven",
+  );
+  assert.ok(skab.includes("hvedemel"), "melet står i skabet");
+  assert.ok(skab.includes("soja"), "en teskefuld soja købes heller ikke");
+}
+
+console.log("Bilka-mængder: 9 prøvegrupper holdt.");
