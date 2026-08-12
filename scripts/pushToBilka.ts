@@ -3,10 +3,10 @@ import path from "node:path";
 import {
   matchList,
   matchedProductIds,
-  type OverrideMap,
   type ShoppingLineInput,
 } from "../lib/bilkatogo/matching";
 import { addLines } from "../lib/bilkatogo/cart";
+import { loadOverrides } from "../lib/bilkatogo/overrides";
 import { formatMatchReport, formatPushReport } from "../lib/bilkatogo/report";
 import type { CartPoster } from "../lib/bilkatogo/types";
 import { hentUgeliste, harAccessToken } from "../lib/bilkatogo/ugeliste";
@@ -105,30 +105,6 @@ function loadList(file: string | null): ShoppingLineInput[] {
   return raw
     .map((item) => item as ShoppingLineInput)
     .filter((item) => typeof item.n === "string" && item.n.trim().length > 0);
-}
-
-/**
- * Override-mapping fra fil. Standardstien er data/bilkatogo-overrides.json;
- * findes den ikke, køres uden faste varer. Nøgler der starter med _ (fx
- * _comment i eksempelfilen) og tomme værdier springes over.
- */
-function loadOverrides(file: string | null): OverrideMap {
-  const target =
-    file ?? path.join(process.cwd(), "data/bilkatogo-overrides.json");
-  const abs = path.isAbsolute(target) ? target : path.join(process.cwd(), target);
-  if (!fs.existsSync(abs)) {
-    if (file) throw new Error(`Override-fil ikke fundet: ${abs}`);
-    return {};
-  }
-  const raw = readJsonFile<Record<string, unknown>>(abs);
-  const map: OverrideMap = {};
-  for (const [key, value] of Object.entries(raw)) {
-    if (key.startsWith("_")) continue;
-    if (typeof value === "string" && value.trim().length > 0) {
-      map[key.trim().toLowerCase()] = value.trim();
-    }
-  }
-  return map;
 }
 
 /**

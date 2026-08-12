@@ -8,9 +8,11 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  ShoppingCart,
   Share,
   UtensilsCrossed,
 } from "lucide-react";
+import BilkaArk from "@/components/indkoeb/BilkaArk";
 import EksportArk from "@/components/indkoeb/EksportArk";
 import { useUgensIndkøb } from "@/lib/hooks/useUgensIndkoeb";
 import { buildHref } from "@/lib/urlState";
@@ -45,6 +47,7 @@ export default function IndkoebSkaerm() {
   const queryString = searchParams.toString();
   const [skjulKlaret, setSkjulKlaret] = useState(false);
   const [eksportÅben, setEksportÅben] = useState(false);
+  const [bilkaÅben, setBilkaÅben] = useState(false);
 
   const weekStart = useMemo(() => {
     const rå = searchParams.get("uge");
@@ -101,6 +104,7 @@ export default function IndkoebSkaerm() {
               antalKlaret={indkøb.antalKlaret}
               onNulstil={() => void indkøb.nulstil()}
               onEksport={() => setEksportÅben(true)}
+              onBilka={() => setBilkaÅben(true)}
             />
 
             {liste.afsnit.map((afsnit) => {
@@ -140,6 +144,18 @@ export default function IndkoebSkaerm() {
           </>
         )}
       </section>
+
+      {bilkaÅben ? (
+        <BilkaArk
+          uge={weekStart}
+          onClose={() => {
+            setBilkaÅben(false);
+            // Kurven kan have aendret sig -- hent listen igen, saa flueben
+            // og antal staar rigtigt naar arket lukkes.
+            void indkøb.reload?.();
+          }}
+        />
+      ) : null}
 
       {eksportÅben && liste ? (
         <EksportArk
@@ -317,12 +333,14 @@ function Værktøjslinje({
   antalKlaret,
   onNulstil,
   onEksport,
+  onBilka,
 }: {
   skjulKlaret: boolean;
   onSkjulKlaret: () => void;
   antalKlaret: number;
   onNulstil: () => void;
   onEksport: () => void;
+  onBilka: () => void;
 }) {
   return (
     <div className="mb-5 flex flex-wrap items-center gap-2">
@@ -335,6 +353,16 @@ function Værktøjslinje({
       >
         <Share size={15} strokeWidth={2.4} aria-hidden="true" />
         Eksportér
+      </button>
+      {/* Bilka staar ved siden af eksport: begge handler om at faa listen
+          UD af appen. Forskellen er om man selv gaar i butikken. */}
+      <button
+        type="button"
+        onClick={onBilka}
+        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-[var(--tint-green)] px-4 text-[0.85rem] font-bold text-[var(--harvest-green-ink)] transition active:scale-95"
+      >
+        <ShoppingCart size={15} strokeWidth={2.4} aria-hidden="true" />
+        Til Bilka
       </button>
       <button
         type="button"
